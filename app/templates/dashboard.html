@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">Monitor de Sensores</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <select id="chipidSelect" class="form-select">
+                <option value="">Todos los dispositivos</option>
+                {% for chipid in chipids %}
+                <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="periodSelect" class="form-select">
+                <option value="day">Último día</option>
+                <option value="week">Última semana</option>
+                <option value="month">Último mes</option>
+                <option value="year">Último año</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="tempChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <canvas id="humChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}
