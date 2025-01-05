@@ -5,6 +5,23 @@ function initCharts() {
     const tempCtx = document.getElementById('tempChart').getContext('2d');
     const humCtx = document.getElementById('humChart').getContext('2d');
     
+    const commonOptions = {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            title: {
+                display: true,
+                font: {
+                    size: 16
+                }
+            }
+        }
+    };
+    
     tempChart = new Chart(tempCtx, {
         type: 'line',
         data: {
@@ -12,10 +29,12 @@ function initCharts() {
             datasets: []
         },
         options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Temperatura (°C)'
                 }
             }
         }
@@ -28,10 +47,12 @@ function initCharts() {
             datasets: []
         },
         options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Humedad (%)'
                 }
             }
         }
@@ -43,110 +64,114 @@ function updateCharts() {
     const chipid = document.getElementById('chipidSelect').value;
     const period = document.getElementById('periodSelect').value;
     const customDate = document.getElementById('customDate').value;
-    const customMonth = document.getElementById('customMonth').value;
-
+    
     let url = `/api/data?period=${period}`;
     if (chipid) url += `&chipid=${chipid}`;
-    if (customDate && period === 'custom') url += `&date=${customDate}`;
-    if (customMonth && period === 'month') url += `&month=${customMonth}`;
+    
+    if (period === 'custom' && customDate) {
+        url += `&date=${customDate}`;
+    } else if (period === 'month') {
+        const year = document.getElementById('yearSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        url += `&month=${year}-${month}`;
+    }
 
     fetch(url)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Datos recibidos para los gráficos:', data);
-
-            // Limpiar gráficos
+            
             tempChart.data.labels = [];
             tempChart.data.datasets = [];
             humChart.data.labels = [];
             humChart.data.datasets = [];
-
-            // Agregar datos por dispositivo
+            
             Object.keys(data).forEach((chipid, index) => {
                 const color = `hsl(${index * 60}, 70%, 50%)`;
-
-                // Actualizar gráfico de temperatura
-                tempChart.data.labels = data[chipid].labels;
-                tempChart.data.datasets.push({
-                    label: `Dispositivo ${chipid} - Temperatura Máxima`,
-                    data: data[chipid].max_temp,
-                    borderColor: color,
-                    fill: false,
-                    tension: 0.4
-                });
-                tempChart.data.datasets.push({
-                    label: `Dispositivo ${chipid} - Temperatura Mínima`,
-                    data: data[chipid].min_temp,
-                    borderColor: color,
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.4
-                });
-
-                // Actualizar gráfico de humedad
-                humChart.data.labels = data[chipid].labels;
-                humChart.data.datasets.push({
-                    label: `Dispositivo ${chipid} - Humedad Máxima`,
-                    data: data[chipid].max_hum,
-                    borderColor: color,
-                    fill: false,
-                    tension: 0.4
-                });
-                humChart.data.datasets.push({
-                    label: `Dispositivo ${chipid} - Humedad Mínima`,
-                    data: data[chipid].min_hum,
-                    borderColor: color,
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.4
-                });
+                const deviceData = data[chipid];
+                
+                function createDataset(label, data, isDashed = false) {
+                    return {
+                        label: label,
+                        data: data,
+                        borderColor: color,
+                        borderDash: isDashed ? [5, 5] : [],
+                        fill: false,
+                        tension: 0.4
+                    };
+                }
+                
+                tempChart.data.labels = deviceData.labels;
+                tempChart.data.datasets.push(
+                    createDataset(`Dispositivo ${chipid} - Temperatura Máxima`, deviceData.max_temp),
+                    createDataset(`Dispositivo ${chipid} - Temperatura Mínima`, deviceData.min_temp, true)
+                );
+                
+                humChart.data.labels = deviceData.labels;
+                humChart.data.datasets.push(
+                    createDataset(`Dispositivo ${chipid} - Humedad Máxima`, deviceData.max_hum),
+                    createDataset(`Dispositivo ${chipid} - Humedad Mínima`, deviceData.min_hum, true)
+                );
             });
+            
+            const titleSuffix = getTitleSuffix(period);
+            tempChart.options.plugins.title.text = `Temperatura (°C) ${titleSuffix}`;
+            humChart.options.plugins.title.text = `Humedad (%) ${titleSuffix}`;
 
             tempChart.update();
             humChart.update();
         })
-        .catch(error => console.error('Error al actualizar los gráficos:', error));
+        .catch(error => {
+            console.error('Error al actualizar los gráficos:', error);            
+            [tempChart, humChart].forEach(chart => {
+                chart.data.labels = [];
+                chart.data.datasets = [];
+                chart.update();
+            });
+        });
 }
 
-// Generar dinámicamente los meses en el menú desplegable
-function populateMonths(startYear, endYear) {
-    const monthNames = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    const customMonthSelect = document.getElementById('customMonth');
-
-    customMonthSelect.innerHTML = '';
-    
-    for (let year = startYear; year <= endYear; year++) {
-        monthNames.forEach((month, index) => {
-            const option = document.createElement('option');
-            const monthValue = `${year}-${String(index + 1).padStart(2, '0')}`;
-            option.value = monthValue;
-            option.textContent = `${month} ${year}`;
-            customMonthSelect.appendChild(option);
-        });
+// Función helper para obtener el sufijo del título según el período
+function getTitleSuffix(period) {
+    switch (period) {
+        case 'day':
+            return '- Último día';
+        case 'week':
+            return '- Última semana';
+        case 'month':
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect');
+            const monthName = month.options[month.selectedIndex].text;
+            return `- ${monthName} ${year}`;
+        case 'custom':
+            const date = document.getElementById('customDate').value;
+            return date ? `- ${date}` : '';
+        default:
+            return '';
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     initCharts();
     updateCharts();
-    const currentYear = new Date().getFullYear();
-    populateMonths(currentYear - 1, currentYear + 1);
+    
+    const filterElements = [
+        'chipidSelect',
+        'periodSelect',
+        'yearSelect',
+        'monthSelect',
+        'customDate'
+    ];
 
-
-    // Configurar eventos de los filtros
-    document.getElementById('periodSelect').addEventListener('change', function() {
-        const period = this.value;
-        document.getElementById('customDateContainer').style.display = 
-            (period === 'custom') ? 'block' : 'none';
-        document.getElementById('customMonthContainer').style.display = 
-            (period === 'month') ? 'block' : 'none';
-        updateCharts();
+    filterElements.forEach(elementId => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener('change', updateCharts);
+        }
     });
-
-    document.getElementById('chipidSelect').addEventListener('change', updateCharts);
-    document.getElementById('customDate').addEventListener('change', updateCharts);
-    document.getElementById('customMonth').addEventListener('change', updateCharts);
 });

@@ -17,8 +17,8 @@ def index():
 def get_data():
     period = request.args.get('period', 'day')
     chipid = request.args.get('chipid')
-    custom_date = request.args.get('date')  # Para el período "custom"
-    custom_month = request.args.get('month')  # Para el período "month"
+    custom_date = request.args.get('date')
+    custom_month = request.args.get('month')
     now = datetime.now()
 
     if period == 'day':
@@ -27,19 +27,23 @@ def get_data():
     elif period == 'week':
         start_date = now - timedelta(weeks=1)
         group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
-    elif period == 'month':
-        start_date = now.replace(day=1)
-        group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
+    elif period == 'month' and custom_month:        
+        try:
+            year, month = custom_month.split('-')
+            start_date = datetime(int(year), int(month), 1)            
+            if int(month) == 12:
+                end_date = datetime(int(year) + 1, 1, 1)
+            else:
+                end_date = datetime(int(year), int(month) + 1, 1)
+            group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
+        except (ValueError, AttributeError):
+            return jsonify({'error': 'Invalid month format. Use YYYY-MM'}), 400
     elif period == 'custom' and custom_date:
         start_date = datetime.strptime(custom_date, '%Y-%m-%d')
         end_date = start_date + timedelta(days=1)
         group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d %H:00')
-    elif period == 'custom' and custom_month:
-        start_date = datetime.strptime(custom_month, '%Y-%m')
-        end_date = (start_date + timedelta(days=31)).replace(day=1)
-        group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
     else:
-        return jsonify({'error': 'Invalid period'}), 400
+        return jsonify({'error': 'Invalid period or missing date/month'}), 400
 
     query = db.session.query(
         group_by.label('group'),
@@ -48,15 +52,17 @@ def get_data():
         func.min(NodeTH.temperatura).label('min_temp'),
         func.max(NodeTH.humedad).label('max_hum'),
         func.min(NodeTH.humedad).label('min_hum')
-    ).filter(NodeTH.fecha >= start_date)
+    )
+    
+    if period == 'month' and custom_month:
+        query = query.filter(NodeTH.fecha >= start_date, NodeTH.fecha < end_date)
+    else:
+        query = query.filter(NodeTH.fecha >= start_date)
+        if period == 'custom' and (custom_date or custom_month):
+            query = query.filter(NodeTH.fecha < end_date)
 
     if chipid:
         query = query.filter(NodeTH.chipid == chipid)
-
-    if period == 'custom' and custom_date:
-        query = query.filter(NodeTH.fecha < end_date)
-    elif period == 'custom' and custom_month:
-        query = query.filter(NodeTH.fecha < end_date)
 
     query = query.group_by('group', NodeTH.chipid).order_by('group')
 
@@ -79,20 +85,32 @@ def get_data():
 
     return jsonify(result)
 
+@main.route('/api/years')
+def get_years():
+    try:        
+        start_year = 2024        
+        current_year = datetime.now().year        
+        years = list(range(start_year, current_year + 1))
+
+        return jsonify(years)
+    except Exception as e:
+        print(f"Error al obtener años: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @main.route('/latest-data')
 def latest_data():
     latest = NodeTH.query.order_by(NodeTH.fecha.desc()).first()
-    print("Último registro encontrado:", latest)  # Para debugging
+    print("Último registro encontrado:", latest)
     if latest:
         response_data = {
-            "temperatura": float(latest.temperatura),  # Convertir a float para asegurar serialización
+            "temperatura": float(latest.temperatura),
             "humedad": float(latest.humedad),
             "fecha_hora": latest.fecha.strftime('%Y-%m-%d %H:%M:%S')
         }
-        print("Datos a enviar:", response_data)  # Para debugging
+        print("Datos a enviar:", response_data)
         return jsonify(response_data)
     else:
-        print("No se encontraron registros")  # Para debugging
+        print("No se encontraron registros")
         return jsonify({
             "temperatura": None,
             "humedad": None,

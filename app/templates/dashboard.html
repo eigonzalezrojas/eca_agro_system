@@ -40,36 +40,68 @@
     </div>
 
     <!-- Filtros -->
-    <div class="row mb-4">
-    <div class="col-md-3">
-        <select id="chipidSelect" class="form-select">
-            <option value="">Todos los dispositivos</option>
-            {% for chipid in chipids %}
-            <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
-            {% endfor %}
-        </select>
+    <div class="row mb-4 align-items-end">
+        <!-- Selector de dispositivo -->
+        <div class="col-md-3 mb-3">
+            <label for="chipidSelect" class="form-label">Dispositivo</label>
+            <select id="chipidSelect" class="form-select">
+                <option value="">Todos los dispositivos</option>
+                {% for chipid in chipids %}
+                <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Selector de período -->
+        <div class="col-md-3 mb-3">
+            <label for="periodSelect" class="form-label">Período</label>
+            <select id="periodSelect" class="form-select">
+                <option value="day">Último día</option>
+                <option value="week">Última semana</option>
+                <option value="month">Por mes</option>
+                <option value="custom">Por fecha</option>
+            </select>
+        </div>
+
+        <!-- Contenedor para selección por mes (año y mes) -->
+        <div class="col-md-6 mb-3" id="monthYearContainer" style="display: none;">
+            <div class="row">
+                <!-- Selector de año -->
+                <div class="col-md-6">
+                    <label for="yearSelect" class="form-label">Año</label>
+                    <select id="yearSelect" class="form-select">
+                        <!-- Se llenará dinámicamente desde JavaScript -->
+                    </select>
+                </div>
+                <!-- Selector de mes -->
+                <div class="col-md-6">
+                    <label for="monthSelect" class="form-label">Mes</label>
+                    <select id="monthSelect" class="form-select">
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor para fecha específica -->
+        <div class="col-md-3 mb-3" id="customDateContainer" style="display: none;">
+            <label for="customDate" class="form-label">Fecha específica</label>
+            <input type="date" id="customDate" class="form-control">
+        </div>
     </div>
-    <div class="col-md-3">
-        <select id="periodSelect" class="form-select">
-            <option value="day">Último día</option>
-            <option value="week">Última semana</option>
-            <option value="month">Último mes</option>
-            <option value="custom">Por fecha</option>
-        </select>
-    </div>
-    <div class="col-md-3" id="customDateContainer" style="display: none;">
-        <input type="date" id="customDate" class="form-control">
-    </div>
-    <div class="col-md-3" id="customMonthContainer" style="display: none;">
-        <select id="customMonth" class="form-select">
-            {% for month in range(1, 13) %}
-            <option value="{{ month }}">{{ month }}</option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
     
-    <!-- Gráficos -->
+    <!-- Gráficos (mantener sin cambios) -->
     <div class="row">
         <div class="col-md-6">
             <canvas id="tempChart"></canvas>
