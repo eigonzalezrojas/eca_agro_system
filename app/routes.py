@@ -39,3 +39,17 @@ def get_data():
         'temperatura': [d.temperatura for d in data],
         'humedad': [d.humedad for d in data]
     })
+
+@main.route('/latest-data')
+def latest_data():
+    latest = NodeTH.query.order_by(NodeTH.fecha.desc()).first()
+    if latest:
+        return jsonify({
+            "temperatura": latest.temperatura,
+            "humedad": latest.humedad
+        })
+    else:
+        return jsonify({
+            "temperatura": None,
+            "humedad": None
+        })

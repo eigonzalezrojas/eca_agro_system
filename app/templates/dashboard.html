@@ -2,8 +2,35 @@
 
 {% block content %}
 <div class="container-fluid mt-4">
-    <h1 class="mb-4">Monitor de Sensores</h1>
+    <h1 class="mb-4">Panel de monitoreo</h1>
     
+    <!-- Bloque de información de temperatura y humedad -->
+    <div class="card bg-light shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">Estado general</h5>
+            <div class="row text-center">
+                <!-- Bloque de temperatura -->
+                <div class="col-md-6">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="bi bi-thermometer-half fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Temperatura</p>
+                        <p id="temperatura" class="h4 fw-bold">25°C</p>
+                    </div>
+                </div>
+            
+                <!-- Bloque de humedad -->
+                <div class="col-md-6">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="bi bi-water fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Humedad</p>
+                        <p id="humedad" class="h4 fw-bold">60%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
     <div class="row mb-4">
         <div class="col-md-3">
             <select id="chipidSelect" class="form-select">
@@ -23,6 +50,7 @@
         </div>
     </div>
     
+    <!-- Gráficos -->
     <div class="row">
         <div class="col-md-6">
             <canvas id="tempChart"></canvas>
@@ -36,4 +64,5 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}
