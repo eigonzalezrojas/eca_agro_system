@@ -14,10 +14,10 @@
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-thermometer-half fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Temperatura</p>
-                        <p id="temperatura" class="h4 fw-bold">25°C</p>
+                        <p id="temperatura" class="h4 fw-bold">--°C</p>
                     </div>
                 </div>
-
+    
                 <!-- Bloque de fecha y hora -->
                 <div class="col-md-4">
                     <div class="d-flex flex-column align-items-center">
@@ -32,7 +32,7 @@
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-water fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Humedad</p>
-                        <p id="humedad" class="h4 fw-bold">60%</p>
+                        <p id="humedad" class="h4 fw-bold">--%</p>
                     </div>
                 </div>
             </div>
@@ -41,23 +41,33 @@
 
     <!-- Filtros -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <select id="chipidSelect" class="form-select">
-                <option value="">Todos los dispositivos</option>
-                {% for chipid in chipids %}
-                <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select id="periodSelect" class="form-select">
-                <option value="day">Último día</option>
-                <option value="week">Última semana</option>
-                <option value="month">Último mes</option>
-                <option value="year">Último año</option>
-            </select>
-        </div>
+    <div class="col-md-3">
+        <select id="chipidSelect" class="form-select">
+            <option value="">Todos los dispositivos</option>
+            {% for chipid in chipids %}
+            <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
+            {% endfor %}
+        </select>
     </div>
+    <div class="col-md-3">
+        <select id="periodSelect" class="form-select">
+            <option value="day">Último día</option>
+            <option value="week">Última semana</option>
+            <option value="month">Último mes</option>
+            <option value="custom">Por fecha</option>
+        </select>
+    </div>
+    <div class="col-md-3" id="customDateContainer" style="display: none;">
+        <input type="date" id="customDate" class="form-control">
+    </div>
+    <div class="col-md-3" id="customMonthContainer" style="display: none;">
+        <select id="customMonth" class="form-select">
+            {% for month in range(1, 13) %}
+            <option value="{{ month }}">{{ month }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
     
     <!-- Gráficos -->
     <div class="row">
@@ -72,6 +82,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/charts.js', v='1.0') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js', v='1.0') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js', v='1.0') }}"></script>
 {% endblock %}
