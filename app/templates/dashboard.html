@@ -10,16 +10,25 @@
             <h5 class="card-title text-center mb-4">Estado general</h5>
             <div class="row text-center">
                 <!-- Bloque de temperatura -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-thermometer-half fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Temperatura</p>
                         <p id="temperatura" class="h4 fw-bold">25°C</p>
                     </div>
                 </div>
+
+                <!-- Bloque de fecha y hora -->
+                <div class="col-md-4">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="bi bi-clock fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Última actualización</p>
+                        <p id="fecha-hora" class="h5 fw-bold">--/--/---- --:--:--</p>
+                    </div>
+                </div>
             
                 <!-- Bloque de humedad -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-water fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Humedad</p>
@@ -63,6 +72,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js', v='1.0') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js', v='1.0') }}"></script>
 {% endblock %}

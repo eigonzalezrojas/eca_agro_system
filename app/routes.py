@@ -46,10 +46,12 @@ def latest_data():
     if latest:
         return jsonify({
             "temperatura": latest.temperatura,
-            "humedad": latest.humedad
+            "humedad": latest.humedad,
+            "fecha_hora": latest.fecha.strftime('%Y-%m-%d %H:%M:%S')
         })
     else:
         return jsonify({
             "temperatura": None,
-            "humedad": None
+            "humedad": None,
+            "fecha_hora":None
         })
