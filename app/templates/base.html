@@ -14,17 +14,75 @@
         <div class="d-flex align-items-center">
             <h4 class="ms-3 mb-0">ECA INNOVATION</h4>
         </div>
-        <div class="dropdown">
-            <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle me-2" style="font-size: 24px;"></i>
-                <span>Usuario</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                <li><a class="dropdown-item" href="#">Contraseña</a></li>
-                <li><a class="dropdown-item" href="#">Soporte</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-            </ul>
+        <div class="d-flex align-items-center">
+            <!-- Campana de notificaciones -->
+            <div class="dropdown me-4">
+                <button class="btn btn-light position-relative" type="button" id="notificationMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell" style="font-size: 24px;"></i>
+                    <!-- Indicador de notificaciones -->
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                        <span class="visually-hidden">notificaciones no leídas</span>
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationMenu">
+                    <li>
+                        <h6 class="dropdown-header">Alertas</h6>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-thermometer-high text-danger me-2"></i>
+                                <div>
+                                    <p class="mb-0"><strong>Alerta de temperatura alta</strong></p>
+                                    <small class="text-muted">Temperatura superior a 30°C - Hace 5 minutos</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-thermometer-low text-primary me-2"></i>
+                                <div>
+                                    <p class="mb-0"><strong>Alerta de temperatura baja</strong></p>
+                                    <small class="text-muted">Temperatura inferior a 10°C - Hace 15 minutos</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-thermometer-high text-warning me-2"></i>
+                                <div>
+                                    <p class="mb-0"><strong>Cambio brusco de temperatura</strong></p>
+                                    <small class="text-muted">Variación de 8°C en 1 hora - Hace 30 minutos</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-center" href="{{ url_for('main.alertas') }}">
+                            Ver todas las alertas
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Menú de usuario -->
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-2" style="font-size: 24px;"></i>
+                    <span>Usuario</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item" href="#">Contraseña</a></li>
+                    <li><a class="dropdown-item" href="#">Soporte</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+                </ul>
+            </div>
         </div>
     </header>
 
@@ -51,6 +109,11 @@
                 <li class="nav-item mb-3">
                     <a class="nav-link" href="{{ url_for('main.viento') }}">
                         <i class="bi bi-wind"></i>Viento
+                    </a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="nav-link" href="{{ url_for('main.alertas') }}">
+                        <i class="bi bi-exclamation-triangle"></i>Alertas
                     </a>
                 </li>
             </ul>

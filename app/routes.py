@@ -26,6 +26,10 @@ def humedad():
 def viento():
     return render_template('viento.html')
 
+@main.route('/alertas')
+def alertas():
+    return render_template('alertas.html')
+
 @main.route('/api/data')
 def get_data():
     period = request.args.get('period', 'day')

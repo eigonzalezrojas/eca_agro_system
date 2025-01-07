@@ -55,7 +55,7 @@ header h4 {
 }
 
 header .dropdown-menu {
-    background-color: var(--verde-agua);
+    background-color: var(--gris-ingeniero);
     color: var(--negro-tecnologico);
 }
 
@@ -66,4 +66,43 @@ header .dropdown-menu a {
 header .dropdown-menu a:hover {
     background-color: var(--verde-vivo);
     color: white;
+}
+
+/* Estilos para las notificaciones */
+.notification-dropdown {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background-color: var(--gris-ingeniero);
+}
+
+.notification-dropdown .dropdown-item i {
+    font-size: 1.2rem;
+}
+
+/* Nuevos estilos para el texto de las notificaciones */
+.notification-dropdown .dropdown-item p {
+    font-size: 0.9rem;  /* Texto principal más pequeño */
+    margin-bottom: 0.2rem;
+}
+
+.notification-dropdown .dropdown-item small {
+    font-size: 0.75rem;  /* Texto secundario aún más pequeño */
+    color: #6c757d;
+}
+
+.notification-dropdown .dropdown-header {
+    font-size: 0.95rem;  /* Tamaño del encabezado */
+    font-weight: bold;
+}
+
+.notification-dropdown .dropdown-item:last-child {
+    font-size: 0.85rem;  /* Tamaño del enlace "Ver todas las alertas" */
 }
