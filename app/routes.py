@@ -7,11 +7,24 @@ from sqlalchemy import func
 main = Blueprint('main', __name__)
 
 @main.route('/')
-def index():
+@main.route('/inicio')
+def inicio():
     chipids = db.session.query(NodeTH.chipid).distinct().all()
     chipids = [c[0] for c in chipids if c[0] != 0]
 
-    return render_template('dashboard.html', chipids=chipids)
+    return render_template('inicio.html', chipids=chipids)
+
+@main.route('/temperatura')
+def temperatura():
+    return render_template('temperatura.html')
+
+@main.route('/humedad')
+def humedad():
+    return render_template('humedad.html')
+
+@main.route('/viento')
+def viento():
+    return render_template('viento.html')
 
 @main.route('/api/data')
 def get_data():

@@ -1,0 +1,69 @@
+/* Paleta de colores */
+:root {
+    --negro-tecnologico: #0D1F1D;
+    --verde-vivo: #00C853;
+    --verde-agua: #009688;
+    --gris-ingeniero: #B2DFDB;
+}
+
+/* Estilos generales */
+/* body {
+    background-color: var(--gris-ingeniero);
+    color: var(--negro-tecnologico);
+} */
+
+.bloque-inicio{
+    background-color: var(--gris-ingeniero);
+    color: var(--negro-tecnologico);
+}
+
+/* Barra lateral */
+.sidebar {
+    background-color: var(--negro-tecnologico);
+    color: var(--gris-ingeniero);
+}
+
+.sidebar .nav-link {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--gris-ingeniero);
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--verde-vivo);
+    color: white;
+}
+
+/* Cabecera */
+header {
+    background-color: var(--verde-vivo);
+    color: white;
+}
+
+header h4 {
+    font-weight: bold;
+}
+
+header .dropdown-menu {
+    background-color: var(--verde-agua);
+    color: var(--negro-tecnologico);
+}
+
+header .dropdown-menu a {
+    color: var(--negro-tecnologico);
+}
+
+header .dropdown-menu a:hover {
+    background-color: var(--verde-vivo);
+    color: white;
+}

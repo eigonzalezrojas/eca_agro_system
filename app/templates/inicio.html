@@ -1,38 +1,58 @@
 {% extends "base.html" %}
 
+{% block title %}Inicio{% endblock %}
+
 {% block content %}
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <h1 class="mb-4">Métricas de cultivo</h1>
     
     <!-- Bloque de información de temperatura y humedad -->
-    <div class="card bg-light shadow-sm mb-4">
+    <div class="card bg-light shadow-sm mb-4" id="bloque-inicio">
         <div class="card-body">
             <h5 class="card-title text-center mb-4">Estado general</h5>
-            <div class="row text-center">
+            <div class="row text-center justify-content-center">
                 <!-- Bloque de temperatura -->
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-thermometer-half fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Temperatura</p>
                         <p id="temperatura" class="h4 fw-bold">--°C</p>
                     </div>
                 </div>
-    
+
+                <!-- Bloque de humedad -->
+                <div class="col-md-2">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="bi bi-water fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Humedad</p>
+                        <p id="humedad" class="h4 fw-bold">--%</p>
+                    </div>
+                </div>
+
                 <!-- Bloque de fecha y hora -->
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-clock fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Última actualización</p>
                         <p id="fecha-hora" class="h5 fw-bold">--/--/---- --:--:--</p>
                     </div>
                 </div>
-            
-                <!-- Bloque de humedad -->
-                <div class="col-md-4">
+
+                <!-- Bloque de horas frío -->
+                <div class="col-md-2">
                     <div class="d-flex flex-column align-items-center">
-                        <i class="bi bi-water fa-3x text-secondary" style="font-size: 50px;"></i>
-                        <p class="mt-2 mb-1">Humedad</p>
-                        <p id="humedad" class="h4 fw-bold">--%</p>
+                        <i class="bi bi-snow fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Horas frío</p>
+                        <p id="horas-frio" class="h4 fw-bold">--</p>
+                    </div>
+                </div>
+
+                <!-- Bloque de grados días -->
+                <div class="col-md-2">
+                    <div class="d-flex flex-column align-items-center">
+                        <i class="bi bi-brightness-high fa-3x text-secondary" style="font-size: 50px;"></i>
+                        <p class="mt-2 mb-1">Grados días acumulados</p>
+                        <p id="grados-dias" class="h4 fw-bold">--</p>
                     </div>
                 </div>
             </div>
