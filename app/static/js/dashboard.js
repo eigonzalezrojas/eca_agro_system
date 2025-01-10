@@ -86,9 +86,27 @@ function getMonthFilterValue() {
     return null;
 }
 
+// Función para obtener las Horas Frío
+function actualizarHorasFrio() {
+    fetch('/api/horas-frio')
+        .then(response => response.json())
+        .then(data => {
+            if (data.horas_frio !== undefined) {
+                document.getElementById('horas-frio').textContent = data.horas_frio + " h";
+            } else {
+                document.getElementById('horas-frio').textContent = "--";
+            }
+        })
+        .catch(error => {
+            console.error("Error al obtener las Horas Frío:", error);
+            document.getElementById('horas-frio').textContent = "--";
+        });
+}
+
 // Inicializar cuando el documento esté listo
 document.addEventListener('DOMContentLoaded', function() {    
     updateData();
+    actualizarHorasFrio();
     setInterval(updateData, 60000);
     
     populateYears();

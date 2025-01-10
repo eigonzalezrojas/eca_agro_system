@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, request
 from app.models import NodeTH
 from app import db
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import func
 
 main = Blueprint('main', __name__)
@@ -117,19 +117,33 @@ def get_years():
 @main.route('/latest-data')
 def latest_data():
     latest = NodeTH.query.order_by(NodeTH.fecha.desc()).first()
-    print("Último registro encontrado:", latest)
     if latest:
         response_data = {
             "temperatura": float(latest.temperatura),
             "humedad": float(latest.humedad),
             "fecha_hora": latest.fecha.strftime('%Y-%m-%d %H:%M:%S')
         }
-        print("Datos a enviar:", response_data)
         return jsonify(response_data)
     else:
-        print("No se encontraron registros")
         return jsonify({
             "temperatura": None,
             "humedad": None,
             "fecha_hora": None
         })
+
+@main.route('/api/horas-frio', methods=['GET'])
+def calcular_horas_frio():
+    try:        
+        ahora = datetime.now(timezone.utc)
+        hace_24_horas = ahora - timedelta(hours=24)
+
+        horas_frio = (
+            db.session.query(func.count(NodeTH.id))
+            .filter(NodeTH.temperatura >= 0, NodeTH.temperatura <= 7.2)
+            .filter(NodeTH.timestamp >= hace_24_horas, NodeTH.timestamp <= ahora)
+            .scalar()
+        )
+
+        return jsonify({"horas_frio": horas_frio})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
