@@ -86,27 +86,64 @@ function getMonthFilterValue() {
     return null;
 }
 
-// Función para obtener las Horas Frío
+// Función para formatear las horas frío
+function formatearHorasFrio(horas) {
+    if (horas === 1) {
+        return "1 hora";
+    }
+    return `${horas} horas`;
+}
+
+// Función para obtener y actualizar las Horas Frío
 function actualizarHorasFrio() {
+    const horasFrioElement = document.getElementById('horas-frio');
+    
     fetch('/api/horas-frio')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.horas_frio !== undefined) {
-                document.getElementById('horas-frio').textContent = data.horas_frio + " h";
+                const horasFormateadas = formatearHorasFrio(data.horas_frio);
+                horasFrioElement.textContent = horasFormateadas;
+                
+                if (data.periodo) {
+                    const inicio = new Date(data.periodo.inicio).toLocaleString();
+                    const fin = new Date(data.periodo.fin).toLocaleString();
+                    horasFrioElement.title = `Período: ${inicio} - ${fin}`;
+                }
+                
+                if (data.horas_frio > 0) {
+                    horasFrioElement.classList.add('text-primary');
+                } else {
+                    horasFrioElement.classList.remove('text-primary');
+                }
             } else {
-                document.getElementById('horas-frio').textContent = "--";
+                horasFrioElement.textContent = "Sin datos";
+                horasFrioElement.title = "No hay datos disponibles";
             }
         })
         .catch(error => {
             console.error("Error al obtener las Horas Frío:", error);
-            document.getElementById('horas-frio').textContent = "--";
+            horasFrioElement.textContent = "Error";
+            horasFrioElement.title = "Error al obtener los datos";
+            horasFrioElement.classList.add('text-danger');
         });
+}
+
+// Función para inicializar las actualizaciones
+function inicializarActualizaciones() {    
+    actualizarHorasFrio();
+    setInterval(actualizarHorasFrio, 300000);
 }
 
 // Inicializar cuando el documento esté listo
 document.addEventListener('DOMContentLoaded', function() {    
     updateData();
-    actualizarHorasFrio();
+    inicializarActualizaciones();
     setInterval(updateData, 60000);
     
     populateYears();

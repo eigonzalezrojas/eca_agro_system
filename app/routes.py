@@ -133,17 +133,35 @@ def latest_data():
 
 @main.route('/api/horas-frio', methods=['GET'])
 def calcular_horas_frio():
-    try:        
-        ahora = datetime.now(timezone.utc)
+    try:
+        chile_tz = timezone(timedelta(hours=-3))
+
+        ahora = datetime.now(chile_tz)
         hace_24_horas = ahora - timedelta(hours=24)
 
         horas_frio = (
             db.session.query(func.count(NodeTH.id))
-            .filter(NodeTH.temperatura >= 0, NodeTH.temperatura <= 7.2)
-            .filter(NodeTH.timestamp >= hace_24_horas, NodeTH.timestamp <= ahora)
+            .filter(
+                NodeTH.temperatura >= 0,
+                NodeTH.temperatura <= 7.2,
+                NodeTH.fecha >= hace_24_horas,
+                NodeTH.fecha <= ahora,
+                NodeTH.chipid != 48
+            )
             .scalar()
         )
 
-        return jsonify({"horas_frio": horas_frio})
+        return jsonify({
+            "horas_frio": horas_frio,
+            "periodo": {
+                "inicio": hace_24_horas.isoformat(),
+                "fin": ahora.isoformat()
+            }
+        })
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error en calcular_horas_frio: {str(e)}")
+        return jsonify({
+            "error": str(e),
+            "mensaje": "Error al calcular las horas frío"
+        }), 500

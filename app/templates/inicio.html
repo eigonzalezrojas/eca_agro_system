@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <h1 class="mb-4">Métricas de cultivo</h1>
     
-    <!-- Bloque de información de temperatura y humedad -->
+    <!-- Bloque estado general -->
     <div class="card bg-light shadow-sm mb-4" id="bloque-inicio">
         <div class="card-body">
             <h5 class="card-title text-center mb-4">Estado general</h5>
@@ -43,7 +43,13 @@
                     <div class="d-flex flex-column align-items-center">
                         <i class="bi bi-snow fa-3x text-secondary" style="font-size: 50px;"></i>
                         <p class="mt-2 mb-1">Horas frío</p>
-                        <p id="horas-frio" class="h4 fw-bold">--</p>
+                        <div class="text-center">
+                            <p id="horas-frio" class="h4 fw-bold mb-0" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="bottom" 
+                            title="Calculando...">--</p>
+                            <small class="text-muted">últimas 24h</small>
+                        </div>
                     </div>
                 </div>
 
