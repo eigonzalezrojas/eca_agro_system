@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify, request
 from app.models import NodeTH
 from app import db
 from datetime import datetime, timedelta, timezone
-from sqlalchemy import func
+from sqlalchemy import Date, cast, func
 
 main = Blueprint('main', __name__)
 
@@ -164,4 +164,67 @@ def calcular_horas_frio():
         return jsonify({
             "error": str(e),
             "mensaje": "Error al calcular las horas frío"
+        }), 500
+
+@main.route('/api/gda', methods=['GET'])
+def calcular_gda():
+    try:
+        chile_tz = timezone(timedelta(hours=-3))
+        
+        temp_base = float(request.args.get('temp_base', 10))
+        dias = int(request.args.get('dias', 7))
+
+        ahora = datetime.now(chile_tz)
+        inicio_periodo = ahora - timedelta(days=dias)
+
+        resultados = (
+            db.session.query(
+                cast(NodeTH.fecha, Date).label('fecha'),
+                func.max(NodeTH.temperatura).label('temp_max'),
+                func.min(NodeTH.temperatura).label('temp_min')
+            )
+            .filter(
+                NodeTH.fecha >= inicio_periodo,
+                NodeTH.fecha <= ahora,
+                NodeTH.chipid != 48
+            )
+            .group_by(cast(NodeTH.fecha, Date))
+            .order_by(cast(NodeTH.fecha, Date))
+            .all()
+        )
+
+        gda_diarios = []
+        gda_acumulado = 0
+
+        for resultado in resultados:
+            temp_media = (resultado.temp_max + resultado.temp_min) / 2
+            gda_dia = max(0, temp_media - temp_base)
+            gda_acumulado += gda_dia
+
+            gda_diarios.append({
+                'fecha': resultado.fecha.isoformat(),
+                'temp_max': round(resultado.temp_max, 1),
+                'temp_min': round(resultado.temp_min, 1),
+                'temp_media': round(temp_media, 1),
+                'gda_dia': round(gda_dia, 1)
+            })
+
+        respuesta = {
+            'gda_acumulado': round(gda_acumulado, 1),
+            'temp_base': temp_base,
+            'periodo': {
+                'inicio': inicio_periodo.isoformat(),
+                'fin': ahora.isoformat(),
+                'dias': dias
+            },
+            'detalle_diario': gda_diarios
+        }
+
+        return jsonify(respuesta)
+
+    except Exception as e:
+        print(f"Error en calcular_gda: {str(e)}")
+        return jsonify({
+            "error": str(e),
+            "mensaje": "Error al calcular los GDA"
         }), 500

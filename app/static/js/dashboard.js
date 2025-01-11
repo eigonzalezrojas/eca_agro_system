@@ -109,7 +109,7 @@ function actualizarHorasFrio() {
             if (data.horas_frio !== undefined) {
                 const horasFormateadas = formatearHorasFrio(data.horas_frio);
                 horasFrioElement.textContent = horasFormateadas;
-                
+
                 if (data.periodo) {
                     const inicio = new Date(data.periodo.inicio).toLocaleString();
                     const fin = new Date(data.periodo.fin).toLocaleString();
@@ -140,12 +140,43 @@ function inicializarActualizaciones() {
     setInterval(actualizarHorasFrio, 300000);
 }
 
+function actualizarGDA() {
+    const gdaElement = document.getElementById('gda');
+    const tempBase = 7.2;
+    const dias = 7;
+    
+    const isProduction = window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost';
+    const apiUrl = `${isProduction ? '/monitor' : ''}/api/gda?temp_base=${tempBase}&dias=${dias}`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.gda_acumulado !== undefined) {
+                gdaElement.textContent = `${data.gda_acumulado.toFixed(1)} GDA`;
+                gdaElement.title = `Período: ${new Date(data.periodo.inicio).toLocaleDateString()} - ${new Date(data.periodo.fin).toLocaleDateString()}`;
+            } else {
+                gdaElement.textContent = "Sin datos";
+                gdaElement.title = "No hay datos disponibles";
+            }
+        })
+        .catch(error => {
+            console.error("Error al obtener los GDA:", error);
+            gdaElement.textContent = "Error";
+            gdaElement.title = "Error al obtener los datos";
+        });
+}
+
 // Inicializar cuando el documento esté listo
 document.addEventListener('DOMContentLoaded', function() {    
     updateData();
     inicializarActualizaciones();
     setInterval(updateData, 60000);
-    
+    actualizarGDA();    
     populateYears();
 
     document.getElementById('periodSelect').addEventListener('change', function() {
