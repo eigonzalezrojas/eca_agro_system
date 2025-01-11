@@ -6,12 +6,6 @@
     --gris-ingeniero: #B2DFDB;
 }
 
-/* Estilos generales */
-/* body {
-    background-color: var(--gris-ingeniero);
-    color: var(--negro-tecnologico);
-} */
-
 .bloque-inicio{
     background-color: var(--gris-ingeniero);
     color: var(--negro-tecnologico);
@@ -45,8 +39,66 @@
 }
 
 /* Cabecera */
+.logo {
+    height: 80px;
+    width: auto;
+}
+
+#userMenu {
+    padding: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+/* Ajustar los íconos dentro del botón */
+#userMenu .bi-person-circle {
+    margin-bottom: -2px;
+}
+
+#userMenu .bi-caret-down-fill {
+    margin-top: -5px;
+}
+
+@media (max-width: 576px) {
+    /* Ajustar la cabecera para pantallas pequeñas */
+    header {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+    }
+
+    /* Tamaño del logo */
+    .logo {
+        height: 50px;
+        margin-right: auto;
+    }
+
+    /* Tamaño de los íconos */
+    header .bi {
+        font-size: 18px;
+    }
+
+    /* Contenedor de los íconos */
+    header .d-flex.align-items-center {
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    /* Espaciado entre los íconos */
+    header .dropdown {
+        margin-left: 5px;
+    }
+
+    /* Tamaño del botón de menú hamburguesa */
+    #sidebarToggle {
+        padding: 5px;
+    }
+}
+
 header {
-    background-color: var(--verde-vivo);
+    background-color: var(--gris-ingeniero);
     color: white;
 }
 
@@ -89,20 +141,20 @@ header .dropdown-menu a:hover {
 
 /* Nuevos estilos para el texto de las notificaciones */
 .notification-dropdown .dropdown-item p {
-    font-size: 0.9rem;  /* Texto principal más pequeño */
+    font-size: 0.9rem;
     margin-bottom: 0.2rem;
 }
 
 .notification-dropdown .dropdown-item small {
-    font-size: 0.75rem;  /* Texto secundario aún más pequeño */
+    font-size: 0.75rem;
     color: #6c757d;
 }
 
 .notification-dropdown .dropdown-header {
-    font-size: 0.95rem;  /* Tamaño del encabezado */
+    font-size: 0.95rem;
     font-weight: bold;
 }
 
 .notification-dropdown .dropdown-item:last-child {
-    font-size: 0.85rem;  /* Tamaño del enlace "Ver todas las alertas" */
+    font-size: 0.85rem;
 }
