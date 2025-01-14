@@ -92,9 +92,7 @@
                 <!-- Selector de año -->
                 <div class="col-md-6">
                     <label for="yearSelect" class="form-label">Año</label>
-                    <select id="yearSelect" class="form-select">
-                        <!-- Se llenará dinámicamente desde JavaScript -->
-                    </select>
+                    <select id="yearSelect" class="form-select"></select>
                 </div>
                 <!-- Selector de mes -->
                 <div class="col-md-6">
@@ -125,13 +123,47 @@
     </div>
     
     <!-- Gráficos -->
-    <div class="row">
-        <div class="col-md-6">
-            <canvas id="tempChart"></canvas>
+    <div id="chartContainer">
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="tempChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="humChart"></canvas>
+            </div>
         </div>
-        <div class="col-md-6">
-            <canvas id="humChart"></canvas>
-        </div>
+    </div>
+
+    <!-- Tabla de Temperatura -->
+    <div id="temperatureTableContainer" class="table-container">
+        <table id="temperatureTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dispositivo</th>
+                    <th>Temperatura Máxima (°C)</th>
+                    <th>Temperatura Mínima (°C)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas se generarán dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tabla de Humedad -->
+    <div id="humidityTableContainer" class="table-container">
+        <table id="humidityTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dispositivo</th>
+                    <th>Humedad Máxima (%)</th>
+                    <th>Humedad Mínima (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas se generarán dinámicamente -->
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

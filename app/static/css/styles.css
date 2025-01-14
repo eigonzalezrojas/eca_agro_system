@@ -59,8 +59,11 @@
     margin-top: -5px;
 }
 
+.table-container {
+    margin-bottom: 20px;
+}
+
 @media (max-width: 576px) {
-    /* Ajustar la cabecera para pantallas pequeñas */
     header {
         display: flex;
         flex-wrap: nowrap;
@@ -69,31 +72,37 @@
         padding: 5px 10px;
     }
 
-    /* Tamaño del logo */
     .logo {
         height: 50px;
         margin-right: auto;
     }
 
-    /* Tamaño de los íconos */
     header .bi {
         font-size: 18px;
     }
 
-    /* Contenedor de los íconos */
     header .d-flex.align-items-center {
         flex: 1;
         justify-content: flex-end;
     }
 
-    /* Espaciado entre los íconos */
     header .dropdown {
         margin-left: 5px;
     }
 
-    /* Tamaño del botón de menú hamburguesa */
     #sidebarToggle {
         padding: 5px;
+    }
+
+    #chartContainer {
+        display: none;
+    }
+    .table-container {
+        width: 100%;
+    }
+
+    table {
+        font-size: 0.9rem;
     }
 }
 

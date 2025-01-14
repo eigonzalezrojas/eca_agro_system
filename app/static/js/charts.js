@@ -59,15 +59,49 @@ function initCharts() {
     });
 }
 
+
+function updateTables(data) {
+    // Actualizar tabla de temperatura
+    const temperatureTableBody = document.querySelector('#temperatureTable tbody');
+    temperatureTableBody.innerHTML = ''; // Limpia las filas existentes
+
+    // Actualizar tabla de humedad
+    const humidityTableBody = document.querySelector('#humidityTable tbody');
+    humidityTableBody.innerHTML = ''; // Limpia las filas existentes
+
+    Object.keys(data).forEach((chipid) => {
+        const deviceData = data[chipid];
+
+        // Crear fila para la tabla de temperatura
+        const tempRow = document.createElement('tr');
+        tempRow.innerHTML = `
+            <td>${chipid}</td>
+            <td>${Math.max(...deviceData.max_temp)}</td>
+            <td>${Math.min(...deviceData.min_temp)}</td>
+        `;
+        temperatureTableBody.appendChild(tempRow);
+
+        // Crear fila para la tabla de humedad
+        const humRow = document.createElement('tr');
+        humRow.innerHTML = `
+            <td>${chipid}</td>
+            <td>${Math.max(...deviceData.max_hum)}</td>
+            <td>${Math.min(...deviceData.min_hum)}</td>
+        `;
+        humidityTableBody.appendChild(humRow);
+    });
+}
+
+
 // Actualizar los gráficos con datos de la API
 function updateCharts() {
     const chipid = document.getElementById('chipidSelect').value;
     const period = document.getElementById('periodSelect').value;
     const customDate = document.getElementById('customDate').value;
-    
+
     let url = `/api/data?period=${period}`;
     if (chipid) url += `&chipid=${chipid}`;
-    
+
     if (period === 'custom' && customDate) {
         url += `&date=${customDate}`;
     } else if (period === 'month') {
@@ -84,17 +118,18 @@ function updateCharts() {
             return response.json();
         })
         .then(data => {
-            console.log('Datos recibidos para los gráficos:', data);
-            
+            console.log('Datos recibidos para los gráficos y las tablas:', data);
+
+            // Actualizar gráficos
             tempChart.data.labels = [];
             tempChart.data.datasets = [];
             humChart.data.labels = [];
             humChart.data.datasets = [];
-            
+
             Object.keys(data).forEach((chipid, index) => {
                 const color = `hsl(${index * 60}, 70%, 50%)`;
                 const deviceData = data[chipid];
-                
+
                 function createDataset(label, data, isDashed = false) {
                     return {
                         label: label,
@@ -105,29 +140,32 @@ function updateCharts() {
                         tension: 0.4
                     };
                 }
-                
+
                 tempChart.data.labels = deviceData.labels;
                 tempChart.data.datasets.push(
                     createDataset(`Dispositivo ${chipid} - Temperatura Máxima`, deviceData.max_temp),
                     createDataset(`Dispositivo ${chipid} - Temperatura Mínima`, deviceData.min_temp, true)
                 );
-                
+
                 humChart.data.labels = deviceData.labels;
                 humChart.data.datasets.push(
                     createDataset(`Dispositivo ${chipid} - Humedad Máxima`, deviceData.max_hum),
                     createDataset(`Dispositivo ${chipid} - Humedad Mínima`, deviceData.min_hum, true)
                 );
             });
-            
+
             const titleSuffix = getTitleSuffix(period);
             tempChart.options.plugins.title.text = `Temperatura (°C) ${titleSuffix}`;
             humChart.options.plugins.title.text = `Humedad (%) ${titleSuffix}`;
 
             tempChart.update();
             humChart.update();
+
+            // Actualizar tablas
+            updateTables(data);
         })
         .catch(error => {
-            console.error('Error al actualizar los gráficos:', error);            
+            console.error('Error al actualizar los gráficos y las tablas:', error);
             [tempChart, humChart].forEach(chart => {
                 chart.data.labels = [];
                 chart.data.datasets = [];
