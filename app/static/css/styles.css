@@ -6,15 +6,54 @@
     --gris-ingeniero: #B2DFDB;
 }
 
-.bloque-inicio{
+/* Estructura principal */
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    min-height: 100vh;
+    padding-left: 0;
+}
+
+.d-flex.flex-grow-1 {
+    min-height: calc(100vh - 80px);
+}
+
+/* Cabecera */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
     background-color: var(--gris-ingeniero);
-    color: var(--negro-tecnologico);
+    z-index: 1030;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    height: 80px;
+    width: auto;
+}
+
+canvas {
+    width: 100% !important;
 }
 
 /* Barra lateral */
-.sidebar {
+#sidebar {
+    width: 250px;
+    min-height: calc(100vh - 80px);
     background-color: var(--negro-tecnologico);
     color: var(--gris-ingeniero);
+    position: sticky;
+    top: 80px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .sidebar .nav-link {
@@ -38,95 +77,33 @@
     color: white;
 }
 
-/* Cabecera */
-.logo {
-    height: 80px;
-    width: auto;
+/* Contenido principal */
+main {
+    flex: 1;
+    padding: 20px;
+    background-color: white;
+    min-height: calc(100vh - 80px);
 }
 
+/* Estilos de bloques */
+.bloque-inicio {
+    background-color: var(--gris-ingeniero);
+    color: var(--negro-tecnologico);
+}
+
+/* Menú de usuario */
 #userMenu {
     padding: 5px;
     width: 50px;
     height: 50px;
 }
 
-/* Ajustar los íconos dentro del botón */
 #userMenu .bi-person-circle {
     margin-bottom: -2px;
 }
 
 #userMenu .bi-caret-down-fill {
     margin-top: -5px;
-}
-
-.table-container {
-    margin-bottom: 20px;
-}
-
-@media (max-width: 576px) {
-    header {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 10px;
-    }
-
-    .logo {
-        height: 50px;
-        margin-right: auto;
-    }
-
-    header .bi {
-        font-size: 18px;
-    }
-
-    header .d-flex.align-items-center {
-        flex: 1;
-        justify-content: flex-end;
-    }
-
-    header .dropdown {
-        margin-left: 5px;
-    }
-
-    #sidebarToggle {
-        padding: 5px;
-    }
-
-    #chartContainer {
-        display: none;
-    }
-    .table-container {
-        width: 100%;
-    }
-
-    table {
-        font-size: 0.9rem;
-    }
-}
-
-header {
-    background-color: var(--gris-ingeniero);
-    color: white;
-}
-
-header h4 {
-    font-weight: bold;
-}
-
-header .dropdown-menu {
-    background-color: var(--gris-ingeniero);
-    color: var(--negro-tecnologico);
-}
-
-header .dropdown-menu a {
-    color: var(--negro-tecnologico);
-}
-
-header .dropdown-menu a:hover {
-    background-color: var(--verde-vivo);
-    color: white;
 }
 
 /* Estilos para las notificaciones */
@@ -148,7 +125,6 @@ header .dropdown-menu a:hover {
     font-size: 1.2rem;
 }
 
-/* Nuevos estilos para el texto de las notificaciones */
 .notification-dropdown .dropdown-item p {
     font-size: 0.9rem;
     margin-bottom: 0.2rem;
@@ -166,4 +142,79 @@ header .dropdown-menu a:hover {
 
 .notification-dropdown .dropdown-item:last-child {
     font-size: 0.85rem;
+}
+
+/* Estilos de la cabecera */
+header h4 {
+    font-weight: bold;
+}
+
+header .dropdown-menu {
+    background-color: var(--gris-ingeniero);
+    color: var(--negro-tecnologico);
+}
+
+header .dropdown-menu a {
+    color: var(--negro-tecnologico);
+}
+
+header .dropdown-menu a:hover {
+    background-color: var(--verde-vivo);
+    color: white;
+}
+
+/* Utilidades */
+.table-container {
+    margin-top: 5rem;
+    margin-bottom: 20px;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-top: 60px;
+    }
+
+    #sidebar {
+        position: fixed;
+        width: 100%;
+        height: auto;
+        z-index: 1020;
+        top: 60px;
+    }
+
+    main {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        height: 60px;
+        padding: 5px 10px;
+    }
+
+    .logo {
+        height: 50px;
+    }
+
+    header .bi {
+        font-size: 18px;
+    }
+
+    #sidebarToggle {
+        padding: 5px;
+    }
+
+    #chartContainer {
+        display: none !important;
+    }
+
+    .table-container {
+        width: 100%;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
 }
