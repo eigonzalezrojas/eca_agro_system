@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
-from app.models import NodeTH
+from app.models import SensorData
 from app import db
 from datetime import datetime, timedelta, timezone
 from sqlalchemy import Date, cast, func
@@ -9,7 +9,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @main.route('/inicio')
 def inicio():
-    chipids = db.session.query(NodeTH.chipid).distinct().all()
+    chipids = db.session.query(SensorData.chipid).distinct().all()
     chipids = [c[0] for c in chipids if c[0] != 0]
 
     return render_template('inicio.html', chipids=chipids)
@@ -40,10 +40,10 @@ def get_data():
 
     if period == 'day':
         start_date = now - timedelta(days=1)
-        group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d %H:00')
+        group_by = func.date_format(SensorData.fecha, '%Y-%m-%d %H:00')
     elif period == 'week':
         start_date = now - timedelta(weeks=1)
-        group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
+        group_by = func.date_format(SensorData.fecha, '%Y-%m-%d')
     elif period == 'month' and custom_month:        
         try:
             year, month = custom_month.split('-')
@@ -52,36 +52,36 @@ def get_data():
                 end_date = datetime(int(year) + 1, 1, 1)
             else:
                 end_date = datetime(int(year), int(month) + 1, 1)
-            group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d')
+            group_by = func.date_format(SensorData.fecha, '%Y-%m-%d')
         except (ValueError, AttributeError):
             return jsonify({'error': 'Invalid month format. Use YYYY-MM'}), 400
     elif period == 'custom' and custom_date:
         start_date = datetime.strptime(custom_date, '%Y-%m-%d')
         end_date = start_date + timedelta(days=1)
-        group_by = func.date_format(NodeTH.fecha, '%Y-%m-%d %H:00')
+        group_by = func.date_format(SensorData.fecha, '%Y-%m-%d %H:00')
     else:
         return jsonify({'error': 'Invalid period or missing date/month'}), 400
 
     query = db.session.query(
         group_by.label('group'),
-        NodeTH.chipid,
-        func.max(NodeTH.temperatura).label('max_temp'),
-        func.min(NodeTH.temperatura).label('min_temp'),
-        func.max(NodeTH.humedad).label('max_hum'),
-        func.min(NodeTH.humedad).label('min_hum')
+        SensorData.chipid,
+        func.max(SensorData.temperatura).label('max_temp'),
+        func.min(SensorData.temperatura).label('min_temp'),
+        func.max(SensorData.humedad).label('max_hum'),
+        func.min(SensorData.humedad).label('min_hum')
     )
     
     if period == 'month' and custom_month:
-        query = query.filter(NodeTH.fecha >= start_date, NodeTH.fecha < end_date)
+        query = query.filter(SensorData.fecha >= start_date, SensorData.fecha < end_date)
     else:
-        query = query.filter(NodeTH.fecha >= start_date)
+        query = query.filter(SensorData.fecha >= start_date)
         if period == 'custom' and (custom_date or custom_month):
-            query = query.filter(NodeTH.fecha < end_date)
+            query = query.filter(SensorData.fecha < end_date)
 
     if chipid:
-        query = query.filter(NodeTH.chipid == chipid)
+        query = query.filter(SensorData.chipid == chipid)
 
-    query = query.group_by('group', NodeTH.chipid).order_by('group')
+    query = query.group_by('group', SensorData.chipid).order_by('group')
 
     data = query.all()
     result = {}
@@ -116,7 +116,7 @@ def get_years():
 
 @main.route('/latest-data')
 def latest_data():
-    latest = NodeTH.query.order_by(NodeTH.fecha.desc()).first()
+    latest = SensorData.query.order_by(SensorData.fecha.desc()).first()
     if latest:
         response_data = {
             "temperatura": float(latest.temperatura),
@@ -140,13 +140,13 @@ def calcular_horas_frio():
         hace_24_horas = ahora - timedelta(hours=24)
 
         horas_frio = (
-            db.session.query(func.count(NodeTH.id))
+            db.session.query(func.count(SensorData.id))
             .filter(
-                NodeTH.temperatura >= 0,
-                NodeTH.temperatura <= 7.2,
-                NodeTH.fecha >= hace_24_horas,
-                NodeTH.fecha <= ahora,
-                NodeTH.chipid != 48
+                SensorData.temperatura >= 0,
+                SensorData.temperatura <= 7.2,
+                SensorData.fecha >= hace_24_horas,
+                SensorData.fecha <= ahora,
+                SensorData.chipid != 48
             )
             .scalar()
         )
@@ -179,17 +179,17 @@ def calcular_gda():
 
         resultados = (
             db.session.query(
-                cast(NodeTH.fecha, Date).label('fecha'),
-                func.max(NodeTH.temperatura).label('temp_max'),
-                func.min(NodeTH.temperatura).label('temp_min')
+                cast(SensorData.fecha, Date).label('fecha'),
+                func.max(SensorData.temperatura).label('temp_max'),
+                func.min(SensorData.temperatura).label('temp_min')
             )
             .filter(
-                NodeTH.fecha >= inicio_periodo,
-                NodeTH.fecha <= ahora,
-                NodeTH.chipid != 48
+                SensorData.fecha >= inicio_periodo,
+                SensorData.fecha <= ahora,
+                SensorData.chipid != 48
             )
-            .group_by(cast(NodeTH.fecha, Date))
-            .order_by(cast(NodeTH.fecha, Date))
+            .group_by(cast(SensorData.fecha, Date))
+            .order_by(cast(SensorData.fecha, Date))
             .all()
         )
 

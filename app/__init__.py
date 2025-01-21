@@ -1,9 +1,8 @@
-from flask import Flask, request
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 
 db = SQLAlchemy()
-db.session.expire_on_commit = True
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +17,13 @@ def create_app():
         response.headers['Expires'] = '-1'
         return response
 
-    from app.routes import main
-    app.register_blueprint(main)
+    register_blueprints(app)
 
     return app
+
+def register_blueprints(app):
+    from app.routes import main, auth, dashboard
+
+    app.register_blueprint(main)
+    app.register_blueprint(auth)
+    app.register_blueprint(dashboard)

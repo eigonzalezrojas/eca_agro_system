@@ -63,16 +63,15 @@ function initCharts() {
 function updateTables(data) {
     // Actualizar tabla de temperatura
     const temperatureTableBody = document.querySelector('#temperatureTable tbody');
-    temperatureTableBody.innerHTML = ''; // Limpia las filas existentes
+    temperatureTableBody.innerHTML = '';
 
     // Actualizar tabla de humedad
     const humidityTableBody = document.querySelector('#humidityTable tbody');
-    humidityTableBody.innerHTML = ''; // Limpia las filas existentes
+    humidityTableBody.innerHTML = '';
 
     Object.keys(data).forEach((chipid) => {
         const deviceData = data[chipid];
-
-        // Crear fila para la tabla de temperatura
+        
         const tempRow = document.createElement('tr');
         tempRow.innerHTML = `
             <td>${chipid}</td>
@@ -118,7 +117,6 @@ function updateCharts() {
             return response.json();
         })
         .then(data => {
-            console.log('Datos recibidos para los gráficos y las tablas:', data);
 
             // Actualizar gráficos
             tempChart.data.labels = [];
