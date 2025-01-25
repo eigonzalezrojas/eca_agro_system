@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.extensions import db
 
 
 class SensorData(db.Model):
@@ -17,6 +18,7 @@ class Rol(db.Model):
     __tablename__ = 'rol'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
+
 
 class Usuario(db.Model):
     __tablename__ = 'usuario'
@@ -36,6 +38,7 @@ class Usuario(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Cliente(db.Model):
     __tablename__ = 'cliente'
     id = db.Column(db.Integer, primary_key=True)
@@ -44,10 +47,10 @@ class Cliente(db.Model):
     apellido = db.Column(db.String(100), nullable=False)
     correo = db.Column(db.String(100), unique=True, nullable=False)
     fono = db.Column(db.Integer, nullable=True)
-    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=True)
     fk_rol = db.Column(db.Integer, db.ForeignKey('rol.id'), nullable=False)
     rol = db.relationship('Rol', backref='clientes')
-    parcela = db.relationship('Parcela', backref='clientes')
+    parcelas = db.relationship('Parcela', back_populates='cliente', cascade='all, delete-orphan')
+
 
 class Parcela(db.Model):
     __tablename__ = 'parcela'
@@ -57,6 +60,9 @@ class Parcela(db.Model):
     comuna = db.Column(db.String(100), nullable=False)
     direccion = db.Column(db.String(200), nullable=True)
     fk_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
+    cliente = db.relationship('Cliente', back_populates='parcelas')
+    cultivos = db.relationship('Cultivo', back_populates='parcela', cascade='all, delete-orphan')
+
 
 class Cultivo(db.Model):
     __tablename__ = 'cultivo'
@@ -65,8 +71,10 @@ class Cultivo(db.Model):
     tipo = db.Column(db.String(50), nullable=False)
     variedad = db.Column(db.String(50), nullable=True)
     fase = db.Column(db.String(50), nullable=True)
-    fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
+    parcela = db.relationship('Parcela', back_populates='cultivos')
+    dispositivos = db.relationship('Dispositivo', back_populates='cultivo', cascade='all, delete-orphan')
+
 
 class Dispositivo(db.Model):
     __tablename__ = 'dispositivo'
@@ -75,6 +83,8 @@ class Dispositivo(db.Model):
     modelo = db.Column(db.String(50), nullable=False)
     caracteristica = db.Column(db.String(100), nullable=True)
     fecha = db.Column(db.Date, nullable=True)
+    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
+    cultivo = db.relationship('Cultivo', back_populates='dispositivos')
 
 class Registro(db.Model):
     __tablename__ = 'registro'

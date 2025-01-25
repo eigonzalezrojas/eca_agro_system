@@ -1,8 +1,11 @@
 from flask import Blueprint, request, flash, redirect, url_for, session, render_template
-from app.models import db, Usuario
+from werkzeug.security import check_password_hash
+from app.extensions import db
+from app.models import Usuario, Cliente
 from app.services.password_service import generar_password
 from app.services.email_service import enviar_correo
 from app.services.whatssap_service import enviar_whatsapp
+import bcrypt
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -43,16 +46,34 @@ def crear_usuario():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        correo = request.form.get('correo')
+        rut = request.form.get('rut')
         password = request.form.get('password')
 
-        usuario = Usuario.query.filter_by(correo=correo).first()
-        if usuario and usuario.check_password(password):
-            session['user_id'] = usuario.id
-            session['user_role'] = usuario.fk_rol
-            flash('Inicio de sesión exitoso', 'success')
-            return redirect(url_for('dashboard.index'))
+        usuario = Usuario.query.filter_by(rut=rut).first()
+        if not usuario:
+            usuario = Cliente.query.filter_by(rut=rut).first()
+
+        if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario.password_hash.encode('utf-8')):
+            session['user_id'] = usuario.rut
+
+            if isinstance(usuario, Usuario):
+                if usuario.fk_rol == 1:
+                    session['user_role'] = 'admin'
+                    flash('Inicio de sesión como Administrador', 'success')
+                    return redirect(url_for('dashboard.admin'))
+                elif usuario.fk_rol == 3:
+                    session['user_role'] = 'visita'
+                    flash('Inicio de sesión como Visita', 'success')
+                    return redirect(url_for('dashboard.visita'))
+            elif isinstance(usuario, Cliente):
+                session['user_role'] = 'cliente'
+                flash('Inicio de sesión como Cliente', 'success')
+                return redirect(url_for('dashboard.client'))
+
+            flash('Rol no reconocido', 'danger')
+            return redirect(url_for('auth.login'))
         else:
-            flash('Correo o contraseña incorrectos', 'danger')
+            flash('RUT o contraseña incorrectos', 'danger')
+            return redirect(url_for('auth.login'))
 
     return render_template('auth/login.html')
