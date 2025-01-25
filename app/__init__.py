@@ -25,5 +25,5 @@ def register_blueprints(app):
     from app.routes import main, auth, dashboard
 
     app.register_blueprint(main)
-    app.register_blueprint(auth)
-    app.register_blueprint(dashboard)
+    app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(dashboard, url_prefix='/dashboard')
