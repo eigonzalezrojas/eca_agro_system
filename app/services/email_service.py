@@ -1,10 +1,13 @@
+import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def enviar_correo(destinatario, asunto, mensaje):
-    remitente = "tu_correo@example.com"
-    contraseña = "tu_contraseña"
+    remitente = os.getenv('EMAIL_USER')
+    contraseña = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
 
     # Configurar el mensaje
     msg = MIMEMultipart()
@@ -15,7 +18,7 @@ def enviar_correo(destinatario, asunto, mensaje):
 
     try:
         # Conectar al servidor SMTP
-        servidor = smtplib.SMTP('smtp.gmail.com', 587)
+        servidor = smtplib.SMTP(host, port)
         servidor.starttls()
         servidor.login(remitente, contraseña)
         servidor.send_message(msg)
