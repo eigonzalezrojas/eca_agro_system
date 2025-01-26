@@ -13,15 +13,6 @@ body {
     padding: 0;
 }
 
-.container-fluid {
-    min-height: 100vh;
-    padding-left: 0;
-}
-
-.d-flex.flex-grow-1 {
-    min-height: calc(100vh - 80px);
-}
-
 /* Cabecera */
 header {
     position: fixed;
@@ -40,41 +31,43 @@ header {
     width: auto;
 }
 
-canvas {
-    width: 100% !important;
-}
-
 /* Barra lateral */
 #sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
     width: 250px;
-    min-height: calc(100vh - 80px);
+    height: calc(100vh - 80px);
     background-color: var(--negro-tecnologico);
     color: var(--gris-ingeniero);
-    position: sticky;
-    top: 80px;
-    height: 100%;
     overflow-y: auto;
+    transition: transform 0.3s ease;
 }
 
-.sidebar .nav-link {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--gris-ingeniero);
+#sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+#sidebar .nav-link {
     display: flex;
     align-items: center;
     padding: 10px 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--gris-ingeniero);
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
-.sidebar .nav-link i {
-    font-size: 1.5rem;
-    margin-right: 10px;
-}
-
-.sidebar .nav-link:hover {
+#sidebar .nav-link:hover {
     background-color: var(--verde-vivo);
     color: white;
+}
+
+#sidebar .nav-link svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 10px;
 }
 
 /* Contenido principal */
@@ -83,165 +76,20 @@ main {
     padding: 20px;
     background-color: white;
     min-height: calc(100vh - 80px);
-}
-
-/* Estilos de bloques */
-.bloque-inicio {
-    background-color: var(--gris-ingeniero);
-    color: var(--negro-tecnologico);
-}
-
-
-/* Bloque Estado General */
-#bloque-inicio .card-title {
-    font-size: 1.2rem;
-}
-
-#bloque-inicio i {
-    font-size: 24px !important;
-}
-
-#bloque-inicio p {
-    font-size: 0.9rem;
-}
-
-#bloque-inicio .h4 {
-    font-size: 1.2rem;
-}
-
-#bloque-inicio .h5 {
-    font-size: 1rem;
-}
-
-#bloque-inicio small {
-    font-size: 0.8rem;
-}
-
-
-/* Menú de usuario */
-#userMenu {
-    padding: 5px;
-    width: 50px;
-    height: 50px;
-}
-
-#userMenu .bi-person-circle {
-    margin-bottom: -2px;
-}
-
-#userMenu .bi-caret-down-fill {
-    margin-top: -5px;
-}
-
-/* Estilos para las notificaciones */
-.notification-dropdown {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.notification-dropdown .dropdown-item {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.notification-dropdown .dropdown-item:hover {
-    background-color: var(--gris-ingeniero);
-}
-
-.notification-dropdown .dropdown-item i {
-    font-size: 1.2rem;
-}
-
-.notification-dropdown .dropdown-item p {
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
-}
-
-.notification-dropdown .dropdown-item small {
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
-.notification-dropdown .dropdown-header {
-    font-size: 0.95rem;
-    font-weight: bold;
-}
-
-.notification-dropdown .dropdown-item:last-child {
-    font-size: 0.85rem;
-}
-
-/* Estilos de la cabecera */
-header h4 {
-    font-weight: bold;
-}
-
-header .dropdown-menu {
-    background-color: var(--gris-ingeniero);
-    color: var(--negro-tecnologico);
-}
-
-header .dropdown-menu a {
-    color: var(--negro-tecnologico);
-}
-
-header .dropdown-menu a:hover {
-    background-color: var(--verde-vivo);
-    color: white;
-}
-
-/* Utilidades */
-.table-container {
-    margin-top: 5rem;
-    margin-bottom: 20px;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
 }
 
 /* Media queries */
 @media (max-width: 768px) {
-    .container-fluid {
-        padding-top: 60px;
-    }
-
     #sidebar {
-        position: fixed;
-        width: 100%;
+        width: 100%; /* Ocupa todo el ancho en pantallas pequeñas */
         height: auto;
         z-index: 1020;
-        top: 60px;
+        top: 80px;
     }
 
     main {
         margin-left: 0;
-    }
-}
-
-@media (max-width: 576px) {
-    header {
-        height: 60px;
-        padding: 5px 10px;
-    }
-
-    .logo {
-        height: 50px;
-    }
-
-    header .bi {
-        font-size: 18px;
-    }
-
-    #sidebarToggle {
-        padding: 5px;
-    }
-
-    #chartContainer {
-        display: none !important;
-    }
-
-    .table-container {
-        width: 100%;
-    }
-
-    table {
-        font-size: 0.9rem;
     }
 }
