@@ -1,0 +1,33 @@
+{% extends "dashboard/admin.html" %}
+
+{% block title %}Inicio - Admin Dashboard{% endblock %}
+
+{% block content %}
+<!-- Resumen de estadísticas -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Usuarios</h2>
+        <p class="text-4xl">{{ total_usuarios }}</p>
+    </div>
+    <div class="bg-green-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Clientes</h2>
+        <p class="text-4xl">{{ total_clientes }}</p>
+    </div>
+    <div class="bg-yellow-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Visitas</h2>
+        <p class="text-4xl">{{ total_visitas }}</p>
+    </div>
+    <div class="bg-purple-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Parcelas</h2>
+        <p class="text-4xl">{{ total_parcelas }}</p>
+    </div>
+    <div class="bg-red-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Cultivos</h2>
+        <p class="text-4xl">{{ total_cultivos }}</p>
+    </div>
+    <div class="bg-teal-500 text-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl">Dispositivos</h2>
+        <p class="text-4xl">{{ total_dispositivos }}</p>
+    </div>
+</div>
+{% endblock %}
