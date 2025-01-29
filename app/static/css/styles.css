@@ -6,29 +6,35 @@
     --gris-ingeniero: #B2DFDB;
 }
 
-/* Estructura principal */
-body {
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
+main {
+    margin-top: 80px;
+    padding: 20px;
+    background-color: #f9fafb;
+    min-height: calc(100vh - 80px);
 }
 
-/* Cabecera */
+
 header {
+    height: 80px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 80px;
     background-color: var(--gris-ingeniero);
-    z-index: 1030;
-    padding: 0 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
     height: 80px;
     width: auto;
+}
+
+/* Estructura principal */
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* Barra lateral */
@@ -70,20 +76,10 @@ header {
     margin-right: 10px;
 }
 
-/* Contenido principal */
-main {
-    flex: 1;
-    padding: 20px;
-    background-color: white;
-    min-height: calc(100vh - 80px);
-    margin-left: 250px;
-    transition: margin-left 0.3s ease;
-}
-
 /* Media queries */
 @media (max-width: 768px) {
     #sidebar {
-        width: 100%; /* Ocupa todo el ancho en pantallas pequeñas */
+        width: 100%;
         height: auto;
         z-index: 1020;
         top: 80px;

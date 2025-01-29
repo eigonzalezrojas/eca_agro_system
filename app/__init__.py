@@ -1,6 +1,8 @@
 from flask import Flask
 from config import Config
 from app.extensions import db
+from app.routes.admin import admin
+from app.routes.user import user
 
 def create_app():
     app = Flask(__name__)
@@ -25,3 +27,5 @@ def register_blueprints(app):
     app.register_blueprint(main)
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(dashboard, url_prefix='/dashboard')
+    app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(user, url_prefix='/admin')

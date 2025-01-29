@@ -1,4 +1,3 @@
-from app import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
@@ -22,13 +21,13 @@ class Rol(db.Model):
 
 class Usuario(db.Model):
     __tablename__ = 'usuario'
-    id = db.Column(db.Integer, primary_key=True)
-    rut = db.Column(db.String(50), unique=True, nullable=False)
+    rut = db.Column(db.String(50), primary_key=True)
     nombre = db.Column(db.String(100), nullable=True)
     apellido = db.Column(db.String(100), nullable=True)
     correo = db.Column(db.String(100), unique=True, nullable=True)
-    fono = db.Column(db.Integer, nullable=True)
+    fono = db.Column(db.String(15), nullable=True)
     fk_rol = db.Column(db.Integer, db.ForeignKey('rol.id'), nullable=True)
+    rol = db.relationship('Rol', backref='usuarios')
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
@@ -39,19 +38,6 @@ class Usuario(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Cliente(db.Model):
-    __tablename__ = 'cliente'
-    id = db.Column(db.Integer, primary_key=True)
-    rut = db.Column(db.String(20), unique=True, nullable=False)
-    nombre = db.Column(db.String(100), nullable=False)
-    apellido = db.Column(db.String(100), nullable=False)
-    correo = db.Column(db.String(100), unique=True, nullable=False)
-    fono = db.Column(db.Integer, nullable=True)
-    fk_rol = db.Column(db.Integer, db.ForeignKey('rol.id'), nullable=False)
-    rol = db.relationship('Rol', backref='clientes')
-    parcelas = db.relationship('Parcela', back_populates='cliente', cascade='all, delete-orphan')
-
-
 class Parcela(db.Model):
     __tablename__ = 'parcela'
     id = db.Column(db.Integer, primary_key=True)
@@ -59,8 +45,8 @@ class Parcela(db.Model):
     region = db.Column(db.String(100), nullable=False)
     comuna = db.Column(db.String(100), nullable=False)
     direccion = db.Column(db.String(200), nullable=True)
-    fk_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
-    cliente = db.relationship('Cliente', back_populates='parcelas')
+    fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
+    usuario = db.relationship('Usuario')
     cultivos = db.relationship('Cultivo', back_populates='parcela', cascade='all, delete-orphan')
 
 
