@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función para abrir el modal de edición
 function openEditModal(rut) {
-    fetch(`/admin/usuarios/${rut}`) // Cambiar a la ruta correcta en `user.py`
+    fetch(`/admin/usuarios/${rut}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al obtener los datos del usuario");
@@ -39,7 +39,7 @@ function openEditModal(rut) {
             document.getElementById('editFono').value = data.fono;
             document.getElementById('editCorreo').value = data.correo;
             document.getElementById('editRol').value = data.fk_rol;
-            document.getElementById('editForm').action = `/admin/usuarios/editar/${rut}`; // Cambiar a la ruta correcta
+            document.getElementById('editForm').action = `/admin/usuarios/editar/${rut}`;
             document.getElementById('editModal').classList.remove('hidden');
         })
         .catch(error => console.error('Error al obtener los datos del usuario:', error));
@@ -52,7 +52,7 @@ function closeEditModal() {
 
 // Función para abrir el modal de eliminación
 function openDeleteModal(rut) {
-    document.getElementById('deleteForm').action = `/admin/usuarios/eliminar/${rut}`; // Cambiar a la ruta correcta
+    document.getElementById('deleteForm').action = `/admin/usuarios/eliminar/${rut}`;
     document.getElementById('deleteModal').classList.remove('hidden');
 }
 

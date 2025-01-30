@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-6">Métricas de cultivo</h1>
+    
+    <!-- Bloque estado general -->
+    <div class="bg-gray-100 shadow-md rounded-lg p-6 mb-6" id="bloque-inicio">
+        <h5 class="text-lg font-semibold text-center mb-6">Estado general</h5>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 text-center">
+            <!-- Bloque de temperatura -->
+            <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                </svg>
+                <p class="mt-2 text-sm">Temperatura</p>
+                <p id="temperatura" class="text-xl font-bold">--°C</p>
+            </div>
+
+            <!-- Bloque de humedad -->
+            <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                </svg>
+                <p class="mt-2 text-sm">Humedad</p>
+                <p id="humedad" class="text-xl font-bold">--%</p>
+            </div>
+
+            <!-- Bloque de fecha y hora -->
+            <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                </svg>
+                <p class="mt-2 text-sm">Última actualización</p>
+                <p id="fecha-hora" class="text-lg font-bold">--/--/---- --:--:--</p>
+            </div>
+
+            <!-- Bloque de horas frío -->
+            <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                </svg>
+                <p class="mt-2 text-sm">Horas frío</p>
+                <div class="text-center">
+                    <p id="horas-frio" class="text-xl font-bold mb-0" title="Calculando...">--</p>
+                    <small class="text-gray-500">últimas 24h</small>
+                </div>
+            </div>
+
+            <!-- Bloque de grados días -->
+            <div class="flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+                </svg>
+                <p class="mt-2 text-sm">Grados días acumulados</p>
+                <p id="gda" class="text-xl font-bold">--</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
+        <!-- Selector de dispositivo -->
+        <div>
+            <label for="chipidSelect" class="block text-sm font-medium text-gray-700">Dispositivo</label>
+            <select id="chipidSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <option value="">Todos los dispositivos</option>
+                {% for chipid in chipids %}
+                <option value="{{ chipid }}">Dispositivo {{ chipid }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Selector de período -->
+        <div>
+            <label for="periodSelect" class="block text-sm font-medium text-gray-700">Período</label>
+            <select id="periodSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <option value="day">Último día</option>
+                <option value="week">Última semana</option>
+                <option value="month">Por mes</option>
+                <option value="custom">Por fecha</option>
+            </select>
+        </div>
+
+        <!-- Contenedor para selección por mes (año y mes) -->
+        <div id="monthYearContainer" class="hidden">
+            <label for="yearSelect" class="block text-sm font-medium text-gray-700">Año</label>
+            <select id="yearSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></select>
+            <label for="monthSelect" class="block text-sm font-medium text-gray-700 mt-4">Mes</label>
+            <select id="monthSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </div>
+
+        <!-- Contenedor para fecha específica -->
+        <div id="customDateContainer" class="hidden">
+            <label for="customDate" class="block text-sm font-medium text-gray-700">Fecha específica</label>
+            <input type="date" id="customDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+        </div>
+    </div>
+    
+    <!-- Gráficos -->
+    <div id="chartContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <canvas id="tempChart"></canvas>
+        </div>
+        <div>
+            <canvas id="humChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabla de Temperatura -->
+    <div id="temperatureTableContainer" class="overflow-x-auto mt-6">
+        <table id="temperatureTable" class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Dispositivo</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Temperatura Máxima (°C)</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Temperatura Mínima (°C)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas se generarán dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tabla de Humedad -->
+    <div id="humidityTableContainer" class="overflow-x-auto mt-6">
+        <table id="humidityTable" class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Dispositivo</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Humedad Máxima (%)</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Humedad Mínima (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas se generarán dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js', v='1.0') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js', v='1.0') }}"></script>
+{% endblock %}
