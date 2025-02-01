@@ -12,12 +12,8 @@ def login():
         rut = request.form.get('rut')
         password = request.form.get('password')
 
-        print(f"RUT ingresado: {rut}")
-        print(f"Contraseña ingresada: {password}")
-
         # Buscar al usuario en la tabla `usuario`
         usuario = Usuario.query.filter_by(rut=rut).first()
-        print(f"Usuario encontrado: {usuario}")
 
         # Verificar si el usuario existe y la contraseña es correcta
         if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario.password_hash.encode('utf-8')):

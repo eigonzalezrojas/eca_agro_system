@@ -1,17 +1,18 @@
 from flask import Flask
-from .admin import admin
-from .user import user
-from .parcela import parcela
-from .cultivo import cultivo
-from .dispositivo import dispositivo
-from .auth import auth
+from app.routes.admin import admin
+from app.routes.user import user
+from app.routes.parcela import parcela
+from app.routes.cultivo import cultivo
+from app.routes.dispositivo import dispositivo
+from app.routes.auth import auth
 from app.routes.dashboard import dashboard
 from app.routes.main import main
+import os
 
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'UT.17116'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     register_blueprints(app)
 
@@ -23,7 +24,7 @@ def register_blueprints(app):
     app.register_blueprint(auth)
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(user, url_prefix='/admin/usuarios')
-    app.register_blueprint(parcela, url_prefix='/admin/parcela')
-    app.register_blueprint(cultivo, url_prefix='/admin/cultivo')
-    app.register_blueprint(dispositivo, url_prefix='/admin/dispositivo')
+    app.register_blueprint(parcela, url_prefix='/admin/parcelas')
+    app.register_blueprint(cultivo, url_prefix='/admin/cultivos')
+    app.register_blueprint(dispositivo, url_prefix='/admin/dispositivos')
     app.register_blueprint(dashboard, url_prefix='/admin/dashboard')

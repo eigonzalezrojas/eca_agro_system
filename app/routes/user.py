@@ -1,7 +1,7 @@
 from itertools import cycle
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from app.models import Usuario, Rol
-from app import db
+from app.extensions import db
 import random, string
 import re
 from app.services.email_service import enviar_correo_bienvenida

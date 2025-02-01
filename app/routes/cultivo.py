@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from app.models import Cultivo
-from app import db
+from app.extensions import db
 
 cultivo = Blueprint('cultivo', __name__)
 

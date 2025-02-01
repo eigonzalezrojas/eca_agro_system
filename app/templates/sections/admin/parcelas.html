@@ -1,0 +1,63 @@
+{% extends "dashboard/admin.html" %}
+
+{% block title %}Parcelas - Admin Dashboard{% endblock %}
+
+{% block content %}
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Parcelas</h1>
+        <button id="openModal" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Tabla de parcelas -->
+    <table class="min-w-full bg-white border border-gray-200">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 bg-gray-200 border">id</th>
+                <th class="py-2 px-4 bg-gray-200 border">Nombre</th>
+                <th class="py-2 px-4 bg-gray-200 border">Region</th>
+                <th class="py-2 px-4 bg-gray-200 border">Comuna</th>
+                <th class="py-2 px-4 bg-gray-200 border">Dirección</th>
+                <th class="py-2 px-4 bg-gray-200 border">Cliente</th>
+                <th class="py-2 px-4 bg-gray-200 border">Cultivo</th>
+                <th class="py-2 px-4 bg-gray-200 border">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parcela in parcelas %}
+            <tr>
+                <td class="border px-4 py-2">{{ parcela.id }}</td>
+                <td class="border px-4 py-2">{{ parcela.nombre }}</td>
+                <td class="border px-4 py-2">{{ parcela.region }}</td>
+                <td class="border px-4 py-2">{{ parcela.comuna }}</td>
+                <td class="border px-4 py-2">{{ parcela.direccion }}</td>
+                <td class="border px-4 py-2">{{ parcela.cliente }}</td>
+                <td class="border px-4 py-2">{{ parcela.cultivo }}</td>
+                <td class="border px-4 py-2">
+                    <div class="flex space-x-2">
+                        <button class="btn-edit bg-blue-500 text-white p-2 rounded" onclick="">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M17.414 2.586a2 2 0 00-2.828 0L13 4.172 15.828 7l1.586-1.586a2 2 0 000-2.828zM12 5l3 3-9 9H3v-3l9-9z"/>
+                            </svg>
+                        </button>
+                        <button class="btn-delete bg-red-500 text-white p-2 rounded" onclick="">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a1 1 0 011-1h2a1 1 0 011 1v1h5a1 1 0 110 2h-1v9a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 110-2h5V4zm1 3a1 1 0 00-1 1v7a1 1 0 102 0V8a1 1 0 00-1-1zm4 1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

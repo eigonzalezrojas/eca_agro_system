@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session
 from app.models import Usuario, Parcela, Cultivo, Dispositivo
-from app import db
 
 admin = Blueprint('admin', __name__)
 

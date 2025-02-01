@@ -7,6 +7,16 @@
         <h1 class="text-2xl font-bold">Usuarios</h1>
         <button id="openModal" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
     </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 
     <!-- Tabla de usuarios -->
     <table class="min-w-full bg-white border border-gray-200">
@@ -145,13 +155,4 @@
             </form>
         </div>
     </div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li class="alert alert-{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
 {% endblock %}
