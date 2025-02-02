@@ -42,7 +42,7 @@ def validar_correo(correo):
     return bool(re.match(patron, correo))
 
 
-def es_telefono_valido(telefono):
+def validar_telefono(telefono):
     """Valida un número de teléfono formato de 9 dígitos """
     patron = r'^\d{9}$'
     return bool(re.match(patron, telefono))
@@ -72,7 +72,7 @@ def crear_usuario():
         errores.append("El apellido es obligatorio.")
 
     # Validar teléfono
-    if not fono or not es_telefono_valido(fono):
+    if not fono or not validar_telefono(fono):
         errores.append("El teléfono debe tener 9 dígitos y ser válido.")
 
     # Validar correo
@@ -87,7 +87,7 @@ def crear_usuario():
         # Si hay errores, mostramos los mensajes y redirigimos de vuelta
         for error in errores:
             flash(error, 'danger')
-        return redirect(url_for('user.usuarios'))  # O la ruta del formulario
+        return redirect(url_for('user.usuarios'))
 
     # Generar contraseña aleatoria
     password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
