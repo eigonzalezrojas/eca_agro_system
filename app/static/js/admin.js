@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función para abrir el modal de edición
 function openEditModal(rut) {
-    console.log("RUT recibido:", rut);
     fetch(`/admin/usuarios/buscar/${rut}`)
         .then(response => {
             if (!response.ok) {
@@ -38,7 +37,6 @@ function openEditModal(rut) {
             return response.json();
         })
         .then(data => {
-            console.log(data)
             document.getElementById('editRut').value = data.rut;
             document.getElementById('editNombre').value = data.nombre;
             document.getElementById('editApellido').value = data.apellido;
