@@ -5,14 +5,14 @@ from app.extensions import db
 parcela = Blueprint('parcela', __name__)
 
 
-@parcela.route('/parcelas')
+@parcela.route('/mostrar')
 def parcelas():
     parcelas = Parcela.query.all()
     usuarios = Usuario.query.all()
     return render_template('sections/admin/parcelas.html', parcelas=parcelas, usuarios=usuarios)
 
 
-@parcela.route('/parcela/crear', methods=['POST'])
+@parcela.route('/crear', methods=['POST'])
 def crear_parcela():
     print(request.form)
     nombre = request.form['nombre']
@@ -72,13 +72,13 @@ def crear_parcela():
         return redirect(url_for('parcela.parcelas'))
 
 
-@parcela.route('/parcela/editar/<int:id>', methods=['POST'])
+@parcela.route('/editar/<int:id>', methods=['POST'])
 def editar_parcela(id):
     # Implementar lógica para editar una parcela
     pass
 
 
-@parcela.route('/parcelas/eliminar/<int:id>', methods=['POST'])
+@parcela.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar_parcela(id):
     # Implementar lógica para eliminar una parcela
     pass

@@ -23,9 +23,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+
+
+
+
 // Función para abrir el modal de edición
 function openEditModal(rut) {
-    fetch(`/admin/usuarios/${rut}`)
+    console.log("RUT recibido:", rut);
+    fetch(`/admin/usuarios/buscar/${rut}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al obtener los datos del usuario");
@@ -33,6 +38,7 @@ function openEditModal(rut) {
             return response.json();
         })
         .then(data => {
+            console.log(data)
             document.getElementById('editRut').value = data.rut;
             document.getElementById('editNombre').value = data.nombre;
             document.getElementById('editApellido').value = data.apellido;
@@ -45,10 +51,11 @@ function openEditModal(rut) {
         .catch(error => console.error('Error al obtener los datos del usuario:', error));
 }
 
-// Función para cerrar el modal de edición
+// Función para cerrar el modal
 function closeEditModal() {
     document.getElementById('editModal').classList.add('hidden');
 }
+
 
 // Función para abrir el modal de eliminación
 function openDeleteModal(rut) {
@@ -60,3 +67,10 @@ function openDeleteModal(rut) {
 function closeDeleteModal() {
     document.getElementById('deleteModal').classList.add('hidden');
 }
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        modal.classList.add("hidden");
+        editModal.classList.add("hidden");
+    }
+});

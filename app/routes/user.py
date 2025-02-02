@@ -8,7 +8,7 @@ from app.services.email_service import enviar_correo_bienvenida
 
 user = Blueprint('user', __name__)
 
-@user.route('/usuarios')
+@user.route('/mostrar')
 def usuarios():
     usuarios = Usuario.query.all()
     roles = Rol.query.all()
@@ -29,11 +29,8 @@ def validar_rut(rut):
     suma = sum(d * f for d, f in zip(revertido, factors))
     residuo = suma % 11
 
-    if dv == 'K':
-        return residuo == 1
-    if dv == '0':
-        return residuo == 11
-    return residuo == 11 - int(dv)
+    dv_calculado = 'K' if residuo == 1 else '0' if residuo == 11 else str(11 - residuo)
+    return dv == dv_calculado
 
 
 def validar_correo(correo):
@@ -48,7 +45,7 @@ def validar_telefono(telefono):
     return bool(re.match(patron, telefono))
 
 
-@user.route('/usuarios/crear', methods=['POST'])
+@user.route('/crear', methods=['POST'])
 def crear_usuario():
     rut = request.form['rut']
     nombre = request.form['nombre']
@@ -117,21 +114,23 @@ def crear_usuario():
     return redirect(url_for('user.usuarios'))
 
 
-@user.route('/usuarios/editar/<rut>', methods=['POST'])
+@user.route('/editar/<rut>', methods=['POST'])
 def editar_usuario(rut):
     usuario = Usuario.query.get_or_404(rut)
-    usuario.nombre = request.form['nombre']
-    usuario.apellido = request.form['apellido']
-    usuario.fono = request.form['fono']
-    usuario.correo = request.form['correo']
-    usuario.fk_rol = request.form['fk_rol']
+
+    # Actualizar los datos del usuario
+    usuario.nombre = request.form.get('editNombre', usuario.nombre)
+    usuario.apellido = request.form.get('editApellido', usuario.apellido)
+    usuario.fono = request.form.get('editFono', usuario.fono)
+    usuario.correo = request.form.get('editCorreo', usuario.correo)
+    usuario.fk_rol = request.form.get('editRol', usuario.fk_rol)
 
     db.session.commit()
     flash('Usuario actualizado exitosamente', 'success')
     return redirect(url_for('user.usuarios'))
 
 
-@user.route('/usuarios/eliminar/<rut>', methods=['POST'])
+@user.route('/eliminar/<rut>', methods=['POST'])
 def eliminar_usuario(rut):
     usuario = Usuario.query.get_or_404(rut)
     db.session.delete(usuario)
@@ -140,14 +139,18 @@ def eliminar_usuario(rut):
     return redirect(url_for('user.usuarios'))
 
 
-@user.route('/usuarios/<rut>', methods=['GET'])
+@user.route('/buscar/<rut>', methods=['GET'])
 def obtener_usuario(rut):
-    usuario = Usuario.query.get_or_404(rut)
+    usuario = Usuario.query.filter_by(rut=rut).first()
+
+    if not usuario:
+        return {"error": f"Usuario con RUT {rut} no encontrado"}, 404
+
     return {
         "rut": usuario.rut,
         "nombre": usuario.nombre,
         "apellido": usuario.apellido,
-        "fono": usuario.fono,
         "correo": usuario.correo,
+        "fono": usuario.fono,
         "fk_rol": usuario.fk_rol
     }
