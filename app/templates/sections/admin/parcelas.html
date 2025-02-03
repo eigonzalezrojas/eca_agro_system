@@ -7,7 +7,7 @@
     <script defer src="{{ url_for('static', filename='js/menu_ciudades.js') }}"></script>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Parcelas</h1>
-        <button id="openModal" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
+        <button id="openModalParcela" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
     </div>
 
     <!-- Mensajes alertas -->
@@ -61,7 +61,7 @@
     </table>
 
     <!-- Modal para crear parcela -->
-    <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div id="ParcelaModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
             <h2 class="text-2xl mb-4">Crear Parcela</h2>
             <form method="POST" action="{{ url_for('parcela.crear_parcela') }}">
@@ -92,7 +92,7 @@
                     </select>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" id="closeModal" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Cancelar</button>
+                    <button type="button" id="closeParcelaModal" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Cancelar</button>
                     <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
                 </div>
             </form>

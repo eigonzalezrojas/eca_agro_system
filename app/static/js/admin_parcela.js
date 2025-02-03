@@ -1,3 +1,16 @@
+const openModal = document.getElementById("openModalParcela");
+const closeModal = document.getElementById("closeParcelaModal");
+
+if (openModal && closeModal) {
+    openModal.addEventListener("click", () => {
+        ParcelaModal.classList.remove("hidden");
+    });
+
+    closeModal.addEventListener("click", () => {
+        ParcelaModal.classList.add("hidden");
+    });
+}
+
 // Función para abrir el modal de edición usuario
 function openEditParcelaModal(id) {
     fetch(`/admin/parcela/buscar/${id}`)
@@ -39,7 +52,8 @@ function closeDeleteParcelaModal() {
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        modal.classList.add("hidden");
-        editModal.classList.add("hidden");
+        ParcelaModal.classList.add("hidden");
+        editParcelaModal.classList.add("hidden");
+        deleteParcelaModal.classList.add("hidden")
     }
 });

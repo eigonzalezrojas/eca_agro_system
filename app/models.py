@@ -54,9 +54,10 @@ class Cultivo(db.Model):
     __tablename__ = 'cultivo'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    tipo = db.Column(db.String(50), nullable=False)
+    tipo = db.Column(db.String(100), nullable=False)
     variedad = db.Column(db.String(50), nullable=True)
-    fase = db.Column(db.String(50), nullable=True)
+    fase = db.Column(db.String(100), nullable=True)
+    detalle = db.Column(db.String(100), nullable=True)
     fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
     parcela = db.relationship('Parcela', back_populates='cultivos')
     dispositivos = db.relationship('Dispositivo', back_populates='cultivo', cascade='all, delete-orphan')
