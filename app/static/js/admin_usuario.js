@@ -1,6 +1,6 @@
 // Función para abrir el modal de edición usuario
 function openEditModal(rut) {
-    fetch(`/admin/usuarios/buscar/${rut}`)
+    fetch(`/admin/usuario/buscar/${rut}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al obtener los datos del usuario");
@@ -28,7 +28,7 @@ function closeEditModal() {
 
 // Función para abrir el modal de eliminación
 function openDeleteModal(rut) {
-    document.getElementById('deleteForm').action = `/admin/usuarios/eliminar/${rut}`;
+    document.getElementById('deleteForm').action = `/admin/usuario/eliminar/${rut}`;
     document.getElementById('deleteModal').classList.remove('hidden');
 }
 

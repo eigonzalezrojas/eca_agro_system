@@ -14,7 +14,6 @@ def parcelas():
 
 @parcela.route('/crear', methods=['POST'])
 def crear_parcela():
-    print(request.form)
     nombre = request.form['nombre']
     region = request.form['regiones']
     comuna = request.form['comunas']
@@ -27,21 +26,21 @@ def crear_parcela():
     if not nombre:
         errores.append("El nombre de parcela es obligatorio.")
 
-    # Validar apellido
+    # Validar región
     if not region:
         errores.append("Debe seleccionar una Región")
 
-    # Validar teléfono
+    # Validar comuna
     if not comuna:
         errores.append("Debe seleccionar una Comuna")
 
-    # Validar correo
+    # Validar dirección
     if not direccion:
         errores.append("Debe ingersar una Dirección")
 
-    # Validar RUT
+    # Validar cliente
     if not fk_usuario:
-        errores.append("Debe seleccionar el usuario")
+        errores.append("Debe seleccionar un usuario")
 
     if errores:
         # Si hay errores, mostramos los mensajes y redirigimos
@@ -74,11 +73,43 @@ def crear_parcela():
 
 @parcela.route('/editar/<int:id>', methods=['POST'])
 def editar_parcela(id):
-    # Implementar lógica para editar una parcela
-    pass
+    parcela = Parcela.query.get_or_404(id)
 
+    # Actualizar los datos del parcela
+    parcela.nombre = request.form.get('editNombre', parcela.nombre)
+    parcela.region = request.form.get('editRegiones', parcela.region)
+    parcela.comuna = request.form.get('editComunas', parcela.comuna)
+    parcela.direccion = request.form.get('editDireccion', parcela.direccion)
+    parcela.fk_usuario = request.form.get('editUsuario', parcela.fk_usuario)
+
+    db.session.commit()
+    flash('parcela actualizado exitosamente', 'success')
+    return redirect(url_for('parcela.parcelas'))
+
+
+@parcela.route('/buscar/<id>', methods=['GET'])
+def obtener_parcela(id):
+    parcela = Parcela.query.filter_by(id=id).first()
+
+    if not parcela:
+        return {"error": f"Parcela con id {id} no encontrado"}, 404
+
+    return {
+        "id": parcela.id,
+        "nombre": parcela.nombre,
+        "region": parcela.region,
+        "comuna": parcela.comuna,
+        "direccion": parcela.direccion,
+        "fk_usuario": parcela.fk_usuario
+    }
 
 @parcela.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar_parcela(id):
-    # Implementar lógica para eliminar una parcela
-    pass
+    parcela = Parcela.query.get_or_404(id)
+    if not parcela:
+        return {"error": f"Parcela con id {id} no encontrado"}, 404
+
+    db.session.delete(parcela)
+    db.session.commit()
+    flash('parcela eliminada exitosamente', 'success')
+    return redirect(url_for('parcela.parcelas'))

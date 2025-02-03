@@ -46,7 +46,7 @@ const RegionesYcomunas = {
 	},
 		{
 			"NombreRegion": "Región de Los Lagos",
-			"comunas": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "FruVllar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"]
+			"comunas": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"]
 	},
 		{
 			"NombreRegion": "Región Aisén del Gral. Carlos Ibáñez del Campo",
@@ -63,34 +63,42 @@ const RegionesYcomunas = {
 }
 
 
+function loadRegionesAndComunas(regionSelectId, comunaSelectId) {
+    const regionSelect = document.getElementById(regionSelectId);
+    const comunaSelect = document.getElementById(comunaSelectId);
+
+    // Llenar el select de regiones
+    regionSelect.innerHTML = '<option value="">Seleccione región</option>';
+    RegionesYcomunas.regiones.forEach(region => {
+        let option = document.createElement("option");
+        option.value = region.NombreRegion;
+        option.textContent = region.NombreRegion;
+        regionSelect.appendChild(option);
+    });
+
+    // Evento para cargar comunas cuando cambia la región
+    regionSelect.addEventListener("change", function () {
+        const selectedRegion = regionSelect.value;
+        comunaSelect.innerHTML = '<option value="">Seleccione comuna</option>';
+
+        if (selectedRegion) {
+            const regionData = RegionesYcomunas.regiones.find(region => region.NombreRegion === selectedRegion);
+            if (regionData) {
+                regionData.comunas.forEach(comuna => {
+                    let option = document.createElement("option");
+                    option.value = comuna;
+                    option.textContent = comuna;
+                    comunaSelect.appendChild(option);
+                });
+            }
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-            const regionSelect = document.getElementById("regiones");
-            const comunaSelect = document.getElementById("comunas");
+    // Cargar regiones y comunas para el modal de creación
+    loadRegionesAndComunas("regiones", "comunas");
 
-            // Llenar el select de regiones
-            regionSelect.innerHTML = '<option value="">Seleccione región</option>';
-            RegionesYcomunas.regiones.forEach(region => {
-                let option = document.createElement("option");
-                option.value = region.NombreRegion;
-                option.textContent = region.NombreRegion;
-                regionSelect.appendChild(option);
-            });
-
-            // Evento para cargar comunas cuando cambia la región
-            regionSelect.addEventListener("change", function () {
-                const selectedRegion = regionSelect.value;
-                comunaSelect.innerHTML = '<option value="">Seleccione comuna</option>';
-
-                if (selectedRegion) {
-                    const regionData = RegionesYcomunas.regiones.find(region => region.NombreRegion === selectedRegion);
-                    if (regionData) {
-                        regionData.comunas.forEach(comuna => {
-                            let option = document.createElement("option");
-                            option.value = comuna;
-                            option.textContent = comuna;
-                            comunaSelect.appendChild(option);
-                        });
-                    }
-                }
-            });
-        });
+    // Cargar regiones y comunas para el modal de edición
+    loadRegionesAndComunas("editRegiones", "editComunas");
+});
