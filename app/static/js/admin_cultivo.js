@@ -11,7 +11,7 @@ if (openModal && closeModal) {
     });
 }
 
-// Función para abrir el modal de edición usuario
+// Función para abrir el modal de edición cultivo
 function openEditCultivoModal(id) {
     fetch(`/admin/cultivo/buscar/${id}`)
         .then(response => {

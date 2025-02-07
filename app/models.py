@@ -64,7 +64,7 @@ class Dispositivo(db.Model):
     __tablename__ = 'dispositivo'
     id = db.Column(db.Integer, primary_key=True)
     chipid = db.Column(db.String(50), unique=True, nullable=False)
-    modelo = db.Column(db.String(50), nullable=False)
+    modelo = db.Column(db.String(100), nullable=False)
     caracteristica = db.Column(db.String(100), nullable=True)
     fecha = db.Column(db.Date, nullable=True)
 

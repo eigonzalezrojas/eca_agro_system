@@ -11,7 +11,7 @@ if (openModal && closeModal) {
     });
 }
 
-// Función para abrir el modal de edición usuario
+// Función para abrir el modal de edición parcela
 function openEditParcelaModal(id) {
     fetch(`/admin/parcela/buscar/${id}`)
         .then(response => {
