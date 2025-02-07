@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from app.models import Cultivo, Parcela
+from app.models import Cultivo
 from app.extensions import db
 
 cultivo = Blueprint('cultivo', __name__)
@@ -7,17 +7,14 @@ cultivo = Blueprint('cultivo', __name__)
 @cultivo.route('/mostrar')
 def cultivos():
     cultivos = Cultivo.query.all()
-    parcelas = Parcela.query.all()
-    return render_template('sections/admin/cultivos.html', cultivos=cultivos, parcelas=parcelas)
+    return render_template('sections/admin/cultivos.html', cultivos=cultivos)
+
 
 @cultivo.route('/crear', methods=['POST'])
 def crear_cultivo():
     nombre = request.form['nombre']
-    tipo = request.form['tipo']
     variedad = request.form['variedad']
-    fase = request.form['fase']
     detalle = request.form['detalle']
-    fk_parcela = request.form['parcela']
 
     errores = []
 
@@ -25,25 +22,9 @@ def crear_cultivo():
     if not nombre:
         errores.append("El nombre de cultivo es obligatorio.")
 
-    # Validar tipo
-    if not tipo:
-        errores.append("El tipo de cultivo es obligatorio.")
-
     # Validar variedad
     if not variedad:
         errores.append("La variedad de cultivo es obligatorio.")
-
-    # Validar fase
-    if not fase:
-        errores.append("La fase de cultivo es obligatorio.")
-
-    # Validar detalle
-    if not detalle:
-        errores.append("El detalle de cultivo es obligatorio.")
-
-    # Validar parcela
-    if not fk_parcela:
-        errores.append("Debe seleccionar una parcela.")
 
     if errores:
         # Si hay errores, mostramos los mensajes y redirigimos
@@ -54,10 +35,7 @@ def crear_cultivo():
     # Crear Cultivo
     nuevo_cultivo = Cultivo(
         nombre=nombre,
-        tipo=tipo,
         variedad=variedad,
-        fase=fase,
-        fk_parcela=fk_parcela,
         detalle=detalle
     )
 
@@ -74,12 +52,43 @@ def crear_cultivo():
         db.session.close()
         return redirect(url_for('cultivo.cultivos'))
 
-@cultivo.route('/cultivos/editar/<int:id>', methods=['POST'])
-def editar_cultivo(id):
-    # Implementar lógica para editar un cultivo
-    pass
 
-@cultivo.route('/cultivos/eliminar/<int:id>', methods=['POST'])
+@cultivo.route('/editar/<int:id>', methods=['POST'])
+def editar_cultivo(id):
+    cultivo = Cultivo.query.get_or_404(id)
+
+    # Actualizar los datos del cultivo
+    cultivo.nombre = request.form.get('editNombre', cultivo.nombre)
+    cultivo.variedad = request.form.get('editVariedad', cultivo.variedad)
+    cultivo.detalle = request.form.get('editDetalle', cultivo.detalle)
+
+    db.session.commit()
+    flash('cultivo actualizado exitosamente', 'success')
+    return redirect(url_for('cultivo.cultivos'))
+
+
+@cultivo.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar_cultivo(id):
-    # Implementar lógica para eliminar un cultivo
-    pass
+    cultivo = Cultivo.query.get_or_404(id)
+    if not cultivo:
+        return {"error": f"Cultivo con id {id} no encontrado"}, 404
+
+    db.session.delete(cultivo)
+    db.session.commit()
+    flash('Cultivo eliminado exitosamente', 'success')
+    return redirect(url_for('cultivo.cultivos'))
+
+
+@cultivo.route('/buscar/<id>', methods=['GET'])
+def obtener_cultivo(id):
+    cultivo = Cultivo.query.filter_by(id=id).first()
+
+    if not cultivo:
+        return {"error": f"Cultivo con id {id} no encontrado"}, 404
+
+    return {
+        "id": cultivo.id,
+        "nombre": cultivo.nombre,
+        "variedad": cultivo.variedad,
+        "detalle": cultivo.detalle
+    }
