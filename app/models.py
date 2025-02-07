@@ -68,3 +68,20 @@ class Dispositivo(db.Model):
     caracteristica = db.Column(db.String(100), nullable=True)
     fecha = db.Column(db.Date, nullable=True)
 
+
+class Registro(db.Model):
+    __tablename__ = 'registro'
+    id = db.Column(db.Integer, primary_key=True)
+    fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
+    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
+    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
+    fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
+    fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    dispositivo = db.relationship('Dispositivo', backref='registros')
+    cultivo = db.relationship('Cultivo', backref='registros')
+    parcela = db.relationship('Parcela', backref='registros')
+    usuario = db.relationship('Usuario', backref='registros')
+
+    def __repr__(self):
+        return f'<Registro {self.id}>'

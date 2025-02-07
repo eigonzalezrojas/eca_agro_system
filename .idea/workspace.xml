@@ -7,10 +7,9 @@
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/cultivo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/cultivo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_cultivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin_cultivo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/auth/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/auth/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/cultivos.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/cultivos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/parcelas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/parcelas.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
         <option value="JavaScript File" />
       </list>
     </option>
@@ -152,6 +151,8 @@
       <workItem from="1738670341850" duration="1236000" />
       <workItem from="1738694259675" duration="4470000" />
       <workItem from="1738757778919" duration="10918000" />
+      <workItem from="1738886387615" duration="4704000" />
+      <workItem from="1738929971942" duration="9393000" />
     </task>
     <servers />
   </component>
@@ -170,6 +171,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1738791139774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1738936764844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

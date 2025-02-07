@@ -6,6 +6,7 @@ from app.routes.cultivo import cultivo
 from app.routes.dispositivo import dispositivo
 from app.routes.auth import auth
 from app.routes.dashboard import dashboard
+from app.routes.registro import registro
 from app.routes.main import main
 import os
 
@@ -28,3 +29,4 @@ def register_blueprints(app):
     app.register_blueprint(cultivo, url_prefix='/admin/cultivo')
     app.register_blueprint(dispositivo, url_prefix='/admin/dispositivo')
     app.register_blueprint(dashboard, url_prefix='/admin/dashboard')
+    app.register_blueprint(registro, url_prefix='/admin/registro')

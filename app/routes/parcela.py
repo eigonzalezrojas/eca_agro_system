@@ -113,3 +113,22 @@ def eliminar_parcela(id):
     db.session.commit()
     flash('parcela eliminada exitosamente', 'success')
     return redirect(url_for('parcela.parcelas'))
+
+
+@parcela.route('/buscar_por_usuario/<rut_usuario>', methods=['GET'])
+def obtener_parcelas_por_usuario(rut_usuario):
+    parcelas = Parcela.query.filter_by(fk_usuario=rut_usuario).all()
+
+    if not parcelas:
+        return {"error": f"No se encontraron parcelas para el usuario con RUT {rut_usuario}"}, 404
+    return [
+        {
+            "id": parcela.id,
+            "nombre": parcela.nombre,
+            "region": parcela.region,
+            "comuna": parcela.comuna,
+            "direccion": parcela.direccion,
+            "fk_usuario": parcela.fk_usuario
+        }
+        for parcela in parcelas
+    ]
