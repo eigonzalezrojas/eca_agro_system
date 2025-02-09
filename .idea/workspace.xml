@@ -5,26 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/cultivo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/cultivo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/dispositivo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/dispositivo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/parcela.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/parcela.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/registro.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/registro.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_cultivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_cultivo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_dispositivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_dispositivo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_parcela.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_parcela.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_registro.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_registro.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin_usuario.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_usuario.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/charts.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/client/inicio.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/client_registro.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/menu_ciudades.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/menu_ciudades.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/admin/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/client/inicio.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/client/inicio.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/admin.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/dashboard/client.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/client.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/tests/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/tests/test_auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/tests/test_dashboard.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/tests/test_models.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +166,7 @@
       <workItem from="1738929971942" duration="9393000" />
       <workItem from="1738954961916" duration="15630000" />
       <workItem from="1739015507829" duration="25934000" />
-      <workItem from="1739102157504" duration="7846000" />
+      <workItem from="1739102157504" duration="9585000" />
     </task>
     <servers />
   </component>
@@ -193,6 +185,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739108987207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739114649282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

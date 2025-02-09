@@ -38,3 +38,11 @@ def login():
 
     # Renderizar la página de inicio de sesión
     return render_template('auth/login.html')
+
+
+@auth.route('/logout')
+def logout():
+    """ Cierra la sesión del usuario """
+    session.clear()
+    flash("Has cerrado sesión exitosamente.", "success")
+    return redirect(url_for('auth.login'))
