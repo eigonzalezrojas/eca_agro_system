@@ -1,14 +1,15 @@
 from flask import Flask
-from app.routes.admin import admin
-from app.routes.user import user
-from app.routes.parcela import parcela
-from app.routes.cultivo import cultivo
-from app.routes.dispositivo import dispositivo
+from app.routes.admin.admin import admin
+from app.routes.admin.user import user
+from app.routes.admin.parcela import parcela
+from app.routes.admin.cultivo import cultivo
+from app.routes.admin.dispositivo import dispositivo
 from app.routes.auth import auth
 from app.routes.dashboard import dashboard
-from app.routes.registro import registro
+from app.routes.admin.registro import registro
 from app.routes.main import main
-from app.routes.client import client
+from app.routes.client.client import client
+from app.routes.client.datos import datos
 import os
 
 
@@ -32,3 +33,4 @@ def register_blueprints(app):
     app.register_blueprint(dispositivo, url_prefix='/admin/dispositivo')
     app.register_blueprint(registro, url_prefix='/admin/registro')
     app.register_blueprint(client, url_prefix='/client')
+    app.register_blueprint(datos, url_prefix='/client/datos')

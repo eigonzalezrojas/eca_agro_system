@@ -107,7 +107,7 @@ function actualizarResumen(tempChart, humChart) {
     const mes = document.getElementById("mes").value;
     const anio = document.getElementById("anio").value;
 
-    let url = `/client/resumen?chipid=${chipid}&periodo=${periodo}`;
+    let url = `/client/datos/resumen?chipid=${chipid}&periodo=${periodo}`;
     if (periodo === "day") url += `&fecha=${fecha}`;
     if (periodo === "month") url += `&mes=${mes}&anio=${anio}`;
     if (periodo === "year") url += `&anio=${anio}`;

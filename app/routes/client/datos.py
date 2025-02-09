@@ -1,42 +1,14 @@
-from flask import Blueprint, jsonify, session, render_template, request
-from app.models import Usuario, Parcela, Cultivo, Registro, Dispositivo, DataP0, HistorialClima
+from flask import Blueprint, session, jsonify, request
+from app.models import Registro, Dispositivo, DataP0, HistorialClima
 from datetime import datetime, timedelta
 from app.extensions import db
 from sqlalchemy import func
 
-client = Blueprint('client', __name__)
-
-@client.route('/inicio')
-def inicio():
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({"error": "Usuario no autenticado"}), 401
-
-    # Obtener el usuario
-    usuario = Usuario.query.filter_by(rut=user_id).first()
-    if not usuario:
-        return jsonify({"error": "Usuario no encontrado"}), 404
-
-    # Obtener las parcelas asociadas al usuario
-    parcelas = Registro.query.filter_by(fk_usuario=user_id).join(Parcela, Registro.fk_parcela == Parcela.id).add_columns(Parcela.id, Parcela.nombre).distinct().all()
-
-    # Obtener los cultivos asociados al usuario
-    cultivos = Registro.query.filter_by(fk_usuario=user_id).join(Cultivo, Registro.fk_cultivo == Cultivo.id).add_columns(Cultivo.id, Cultivo.nombre).distinct().all()
-
-    # Obtener los dispositivos asociados al usuario
-    dispositivos = Registro.query.filter_by(fk_usuario=user_id).join(Dispositivo, Registro.fk_dispositivo == Dispositivo.id).add_columns(Dispositivo.id, Dispositivo.chipid).distinct().all()
-
-    return render_template(
-        'sections/cliente/inicio.html',
-        usuario=usuario,
-        parcelas=[{"id": p.id, "nombre": p.nombre} for p in parcelas],
-        cultivos=[{"id": c.id, "nombre": c.nombre} for c in cultivos],
-        dispositivos=[{"id": d.id, "chipid": d.chipid} for d in dispositivos]
-    )
+datos = Blueprint('datos', __name__)
 
 
-@client.route('/datos')
-def datos():
+@datos.route('/')
+def obtener_datos():
     user_id = session.get('user_id')
 
     if not user_id:
@@ -116,7 +88,7 @@ def datos():
     })
 
 
-@client.route('/resumen', methods=['GET'])
+@datos.route('/resumen', methods=['GET'])
 def obtener_resumen():
     user_id = session.get('user_id')
     if not user_id:
@@ -126,7 +98,7 @@ def obtener_resumen():
     periodo = request.args.get('periodo')
     fecha = request.args.get('fecha')
     mes = request.args.get('mes')
-    anio = request.args.get('anio')  # Cambiamos año por anio
+    anio = request.args.get('anio')
 
     if not chipid:
         return jsonify({"error": "Debe seleccionar un dispositivo"}), 400
@@ -186,5 +158,3 @@ def obtener_resumen():
         })
 
     return jsonify(datos)
-
-
