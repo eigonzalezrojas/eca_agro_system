@@ -1,0 +1,31 @@
+{% extends "/dashboard/client.html" %}
+
+{% block title %}Clima{% endblock %}
+
+{% block content %}
+<div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-6 mt-6">
+    <h1 class="mb-6 text-2xl font-bold text-center">Clima Actual y Pronóstico</h1>
+
+    <!-- Clima Actual -->
+    <div class="text-center">
+        <h2 class="text-2xl font-bold" id="ubicacion"></h2>
+        <div class="flex justify-center mt-2">
+            <span id="icono-clima"></span>
+        </div>
+        <p id="descripcion"></p>
+        <p class="text-4xl font-bold" id="temp_actual"></p>
+        <p id="humedad"></p>
+        <p id="viento"></p>
+    </div>
+
+    <!-- Pronóstico para 5 días -->
+    <h2 class="text-lg font-semibold mt-6 text-center">Pronóstico de los Próximos 5 Días</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 text-center" id="pronostico-container">
+        <!-- Aquí se llenará el pronóstico con JS -->
+    </div>
+</div>
+
+<!-- Scripts cargados después del contenido -->
+<script defer src="https://unpkg.com/lucide@latest"></script>
+<script defer src="{{ url_for('static', filename='js/client/clima.js') }}"></script>
+{% endblock %}
