@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, session, render_template
-from app.models import Usuario, Registro, Dispositivo, DataP0, HistorialClima
+from flask import Blueprint, jsonify, session, render_template, request
+from app.models import Usuario, Parcela, Cultivo, Registro, Dispositivo, DataP0, HistorialClima
 from datetime import datetime, timedelta
 from app.extensions import db
+from sqlalchemy import func
 
 client = Blueprint('client', __name__)
 
@@ -16,32 +17,21 @@ def inicio():
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    # Obtener el registro asociado al usuario (cliente)
-    registro = Registro.query.filter_by(fk_usuario=user_id).first()
-    if not registro:
-        return jsonify({"error": "No hay dispositivos asociados al usuario"}), 404
+    # Obtener las parcelas asociadas al usuario
+    parcelas = Registro.query.filter_by(fk_usuario=user_id).join(Parcela, Registro.fk_parcela == Parcela.id).add_columns(Parcela.id, Parcela.nombre).distinct().all()
 
-    # Obtener el dispositivo asociado al registro
-    dispositivo = Dispositivo.query.filter_by(id=registro.fk_dispositivo).first()
-    if not dispositivo:
-        return jsonify({"error": "No se encontró el dispositivo asociado"}), 404
+    # Obtener los cultivos asociados al usuario
+    cultivos = Registro.query.filter_by(fk_usuario=user_id).join(Cultivo, Registro.fk_cultivo == Cultivo.id).add_columns(Cultivo.id, Cultivo.nombre).distinct().all()
 
-    chipid = dispositivo.chipid
+    # Obtener los dispositivos asociados al usuario
+    dispositivos = Registro.query.filter_by(fk_usuario=user_id).join(Dispositivo, Registro.fk_dispositivo == Dispositivo.id).add_columns(Dispositivo.id, Dispositivo.chipid).distinct().all()
 
-    # Obtener la última lectura del dispositivo en dataP0
-    ultima_medicion = DataP0.query.filter_by(chipid=chipid).order_by(DataP0.fecha.desc()).first()
-
-    if not ultima_medicion:
-        return jsonify({"error": "No hay mediciones disponibles para el dispositivo"}), 404
-
-    # Pasar los datos
     return render_template(
         'sections/cliente/inicio.html',
         usuario=usuario,
-        chipid=chipid,
-        temperatura=ultima_medicion.temperatura,
-        humedad=ultima_medicion.humedad,
-        fecha_hora=ultima_medicion.fecha
+        parcelas=[{"id": p.id, "nombre": p.nombre} for p in parcelas],
+        cultivos=[{"id": c.id, "nombre": c.nombre} for c in cultivos],
+        dispositivos=[{"id": d.id, "chipid": d.chipid} for d in dispositivos]
     )
 
 
@@ -126,4 +116,74 @@ def datos():
     })
 
 
+@client.route('/resumen', methods=['GET'])
+def obtener_resumen():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    chipid = request.args.get('chipid')
+    periodo = request.args.get('periodo')
+    fecha = request.args.get('fecha')
+    mes = request.args.get('mes')
+    año = request.args.get('año')
+
+    if not chipid:
+        return jsonify({"error": "Debe seleccionar un dispositivo"}), 400
+
+    query = db.session.query(
+        func.max(DataP0.temperatura).label('temp_max'),
+        func.min(DataP0.temperatura).label('temp_min'),
+        func.max(DataP0.humedad).label('hum_max'),
+        func.min(DataP0.humedad).label('hum_min')
+    ).filter(DataP0.chipid == chipid)
+
+    if periodo == "day":
+        query = query.filter(func.date(DataP0.fecha) == fecha)
+
+    elif periodo == "month":
+        query = db.session.query(
+            func.week(DataP0.fecha).label('semana'),
+            func.max(DataP0.temperatura).label('temp_max'),
+            func.min(DataP0.temperatura).label('temp_min'),
+            func.max(DataP0.humedad).label('hum_max'),
+            func.min(DataP0.humedad).label('hum_min')
+        ).filter(
+            func.year(DataP0.fecha) == año,
+            func.month(DataP0.fecha) == mes
+        ).group_by(func.week(DataP0.fecha))
+
+    elif periodo == "year":
+        query = db.session.query(
+            func.month(DataP0.fecha).label('mes'),
+            func.max(DataP0.temperatura).label('temp_max'),
+            func.min(DataP0.temperatura).label('temp_min'),
+            func.max(DataP0.humedad).label('hum_max'),
+            func.min(DataP0.humedad).label('hum_min')
+        ).filter(func.year(DataP0.fecha) == año).group_by(func.month(DataP0.fecha))
+
+    resultados = query.all()
+
+    datos = []
+    for res in resultados:
+        if periodo == "month":
+            label = f"Semana {res.semana}"
+        elif periodo == "year":
+            meses = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ]
+            label = meses[res.mes - 1]
+        else:
+            label = str(fecha)
+
+        datos.append({
+            "periodo": label,
+            "temp_max": res.temp_max,
+            "temp_min": res.temp_min,
+            "hum_max": res.hum_max,
+            "hum_min": res.hum_min
+        })
+
+    return jsonify(datos)
 

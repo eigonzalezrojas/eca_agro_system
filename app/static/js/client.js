@@ -6,14 +6,42 @@ document.addEventListener("DOMContentLoaded", function () {
     sidebarToggle.addEventListener("click", function () {
         sidebar.classList.toggle("hidden");
     });
-    // Actualizar cada 5 segundos
-    setInterval(actualizarDatos, 5000);
-    // Cargar datos al inicio
-    actualizarDatos();
+    // Actualizar cada 5 minutos
+    setInterval(actualizarDatos, 50000);
+
+
+    // Manejar cambios en el selector de dispositivos
+    document.getElementById("dispositivoSelect").addEventListener("change", function () {
+        actualizarDatos();
+    });
+
+    //Resumen de datos
+    const periodoSelect = document.getElementById("periodo");
+    const fechaContainer = document.getElementById("contenedor-fecha");
+    const mesContainer = document.getElementById("contenedor-mes");
+    const añoContainer = document.getElementById("contenedor-año");
+
+    function actualizarVisibilidad() {
+        const periodo = periodoSelect.value;
+
+        fechaContainer.classList.toggle("hidden", periodo !== "day");
+        mesContainer.classList.toggle("hidden", periodo !== "month");
+        añoContainer.classList.toggle("hidden", periodo !== "month" && periodo !== "year");
+    }
+
+    periodoSelect.addEventListener("change", actualizarVisibilidad);
+    actualizarVisibilidad();
 });
 
 function actualizarDatos() {
-    fetch('/client/datos')
+    const chipid = document.getElementById("dispositivoSelect").value;
+
+    if (!chipid) {
+        console.warn("No hay dispositivo seleccionado");
+        return;
+    }
+
+    fetch(`/client/datos?chipid=${chipid}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -29,3 +57,26 @@ function actualizarDatos() {
         })
         .catch(error => console.error("Error al obtener los datos:", error));
 }
+
+
+document.getElementById("filtrar").addEventListener("click", function () {
+    const chipid = "1543087";  // Debe obtenerse dinámicamente
+    const periodo = document.getElementById("periodo").value;
+    const fecha = document.getElementById("fecha").value;
+    const mes = document.getElementById("mes").value;
+    const año = document.getElementById("año").value;
+
+    let url = `/client/resumen?chipid=${chipid}&periodo=${periodo}`;
+    if (periodo === "day") url += `&fecha=${fecha}`;
+    if (periodo === "month") url += `&mes=${mes}&año=${año}`;
+    if (periodo === "year") url += `&año=${año}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const tabla = document.getElementById("tabla-resumen");
+            tabla.innerHTML = data.map(d =>
+                `<tr><td>${d.periodo}</td><td>${d.temp_max}°C</td><td>${d.temp_min}°C</td>
+                <td>${d.hum_max}%</td><td>${d.hum_min}%</td></tr>`).join("");
+        });
+});
