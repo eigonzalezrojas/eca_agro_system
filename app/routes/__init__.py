@@ -8,6 +8,7 @@ from app.routes.auth import auth
 from app.routes.dashboard import dashboard
 from app.routes.registro import registro
 from app.routes.main import main
+from app.routes.client import client
 import os
 
 
@@ -23,10 +24,11 @@ def create_app():
 def register_blueprints(app):
     app.register_blueprint(main)
     app.register_blueprint(auth)
+    app.register_blueprint(dashboard)
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(user, url_prefix='/admin/usuario')
     app.register_blueprint(parcela, url_prefix='/admin/parcela')
     app.register_blueprint(cultivo, url_prefix='/admin/cultivo')
     app.register_blueprint(dispositivo, url_prefix='/admin/dispositivo')
-    app.register_blueprint(dashboard, url_prefix='/admin/dashboard')
     app.register_blueprint(registro, url_prefix='/admin/registro')
+    app.register_blueprint(client, url_prefix='/client')

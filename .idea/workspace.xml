@@ -8,8 +8,16 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/parcelas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/parcelas.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/alertas.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/client.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/client.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/humedad.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/inicio.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/cliente/inicio.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/cliente/inicio.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/temperatura.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/viento.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,6 +161,8 @@
       <workItem from="1738757778919" duration="10918000" />
       <workItem from="1738886387615" duration="4704000" />
       <workItem from="1738929971942" duration="9393000" />
+      <workItem from="1738954961916" duration="15630000" />
+      <workItem from="1739015507829" duration="21875000" />
     </task>
     <servers />
   </component>
@@ -171,6 +181,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1738936764844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739056333397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

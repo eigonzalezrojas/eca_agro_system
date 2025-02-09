@@ -1,16 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, session
+from flask import Blueprint, render_template
 from app.models import Usuario, Parcela, Cultivo, Dispositivo
 
 admin = Blueprint('admin', __name__)
-
-@admin.route('/')
-def admin_dashboard():
-    # Verificar si el usuario tiene el rol de administrador
-    if session.get('user_role') != 1:
-        flash('Acceso denegado', 'danger')
-        return redirect(url_for('auth.login'))
-
-    return redirect(url_for('admin.inicio'))
 
 @admin.route('/inicio')
 def inicio():

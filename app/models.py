@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
-from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
+import bcrypt
 
 
 class SensorData(db.Model):
@@ -35,10 +35,12 @@ class Usuario(db.Model):
     parcelas = db.relationship('Parcela', back_populates='usuario', cascade='all, delete-orphan')
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        """Hash de la contraseña usando bcrypt."""
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        """Verifica la contraseña usando bcrypt."""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
 
 class Parcela(db.Model):
@@ -85,3 +87,28 @@ class Registro(db.Model):
 
     def __repr__(self):
         return f'<Registro {self.id}>'
+
+
+class DataP0(db.Model):
+    __tablename__ = 'dataP0'
+    id = db.Column(db.Integer, primary_key=True)
+    chipid = db.Column(db.String(50), unique=True, nullable=False)
+    fecha = db.Column(db.Date, nullable=True)
+    temperatura = db.Column(db.Float, nullable=True)
+    humedad = db.Column(db.Float, nullable=True)
+    nombre = db.Column(db.String(50), nullable=True)
+
+
+class HistorialClima(db.Model):
+    __tablename__ = 'historialClima'
+    id = db.Column(db.Integer, primary_key=True)
+    rut = db.Column(db.String(15), nullable=False)
+    chipid = db.Column(db.Integer, nullable=False)
+    fecha = db.Column(db.Date, nullable=False, unique=True)
+    temp_max = db.Column(db.Float, nullable=False)
+    temp_min = db.Column(db.Float, nullable=False)
+    horas_frio = db.Column(db.Float, nullable=False)
+    gda = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"<HistorialClima {self.fecha} - ChipID {self.chipid}>"
