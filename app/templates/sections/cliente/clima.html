@@ -6,6 +6,14 @@
 <div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-6 mt-6">
     <h1 class="mb-6 text-2xl font-bold text-center">Clima Actual y Pronóstico</h1>
 
+    <!-- Filtro de Parcelas -->
+    <div class="text-center mb-4">
+        <label for="parcelas" class="font-semibold">Selecciona una parcela:</label>
+        <select id="parcelas" class="p-2 border rounded">
+            <option value="" selected disabled>Selecciona una parcela...</option>
+        </select>
+    </div>
+
     <!-- Clima Actual -->
     <div class="text-center">
         <h2 class="text-2xl font-bold" id="ubicacion"></h2>
@@ -25,7 +33,7 @@
     </div>
 </div>
 
-<!-- Scripts cargados después del contenido -->
-<script defer src="https://unpkg.com/lucide@latest"></script>
 <script defer src="{{ url_for('static', filename='js/client/clima.js') }}"></script>
+<script defer src="https://unpkg.com/lucide@latest"></script>
+
 {% endblock %}
