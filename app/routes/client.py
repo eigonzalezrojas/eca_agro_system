@@ -126,7 +126,7 @@ def obtener_resumen():
     periodo = request.args.get('periodo')
     fecha = request.args.get('fecha')
     mes = request.args.get('mes')
-    año = request.args.get('año')
+    anio = request.args.get('anio')  # Cambiamos año por anio
 
     if not chipid:
         return jsonify({"error": "Debe seleccionar un dispositivo"}), 400
@@ -149,7 +149,7 @@ def obtener_resumen():
             func.max(DataP0.humedad).label('hum_max'),
             func.min(DataP0.humedad).label('hum_min')
         ).filter(
-            func.year(DataP0.fecha) == año,
+            func.year(DataP0.fecha) == anio,
             func.month(DataP0.fecha) == mes
         ).group_by(func.week(DataP0.fecha))
 
@@ -160,7 +160,7 @@ def obtener_resumen():
             func.min(DataP0.temperatura).label('temp_min'),
             func.max(DataP0.humedad).label('hum_max'),
             func.min(DataP0.humedad).label('hum_min')
-        ).filter(func.year(DataP0.fecha) == año).group_by(func.month(DataP0.fecha))
+        ).filter(func.year(DataP0.fecha) == anio).group_by(func.month(DataP0.fecha))
 
     resultados = query.all()
 
@@ -179,11 +179,12 @@ def obtener_resumen():
 
         datos.append({
             "periodo": label,
-            "temp_max": res.temp_max,
-            "temp_min": res.temp_min,
-            "hum_max": res.hum_max,
-            "hum_min": res.hum_min
+            "temp_max": getattr(res, "temp_max", "--"),
+            "temp_min": getattr(res, "temp_min", "--"),
+            "hum_max": getattr(res, "hum_max", "--"),
+            "hum_min": getattr(res, "hum_min", "--")
         })
 
     return jsonify(datos)
+
 

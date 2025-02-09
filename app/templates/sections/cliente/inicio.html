@@ -77,13 +77,14 @@
     </div>
 
     <!-- Resumen de datos -->
-    <div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-6">
+    <div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-4">
+        <h2 class="text-md font-semibold text-center py-3 bg-gray-200">Resumen de Datos</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
             <!-- Selector de Periodo -->
             <div>
-                <label for="periodo" class="block font-medium">Seleccionar Periodo:</label>
-                <select id="periodo" class="w-full p-2 border rounded">
+                <label for="periodo" class="block text-sm font-medium">Seleccionar Periodo:</label>
+                <select id="periodo" class="w-full p-1 border rounded text-sm">
                     <option value="day">Día</option>
                     <option value="month">Mes</option>
                     <option value="year">Año</option>
@@ -92,14 +93,14 @@
 
             <!-- Selector de Fecha (Día) -->
             <div id="contenedor-fecha" class="hidden">
-                <label for="fecha" class="block font-medium">Seleccionar Fecha:</label>
-                <input type="date" id="fecha" class="w-full p-2 border rounded">
+                <label for="fecha" class="block text-sm font-medium">Seleccionar Fecha:</label>
+                <input type="date" id="fecha" class="w-full p-1 border rounded text-sm">
             </div>
 
             <!-- Selector de Mes -->
             <div id="contenedor-mes" class="hidden">
-                <label for="mes" class="block font-medium">Seleccionar Mes:</label>
-                <select id="mes" class="w-full p-2 border rounded">
+                <label for="mes" class="block text-sm font-medium">Seleccionar Mes:</label>
+                <select id="mes" class="w-full p-1 border rounded text-sm">
                     <option value="1">Enero</option>
                     <option value="2">Febrero</option>
                     <option value="3">Marzo</option>
@@ -116,37 +117,57 @@
             </div>
 
             <!-- Selector de Año -->
-            <div id="contenedor-año" class="hidden">
-                <label for="año" class="block font-medium">Seleccionar Año:</label>
-                <input type="number" id="año" class="w-full p-2 border rounded" placeholder="Ejemplo: 2024" min="2000">
+            <div id="contenedor-anio" class="hidden">
+                <label for="anio" class="block text-sm font-medium">Seleccionar Año:</label>
+                <input type="number" id="anio" class="w-full p-1 border rounded text-sm" placeholder="Ejemplo: 2024" min="2000">
             </div>
+        </div>
 
-            <!-- Botón para filtrar -->
-            <div class="flex items-end">
-                <button id="filtrar" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-2 rounded w-full transition-all">Filtrar</button>
-            </div>
+        <!-- Botón de Filtrar -->
+        <div class="flex justify-center mt-3">
+            <button id="filtrar" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded transition-all">
+                Filtrar
+            </button>
         </div>
 
         <!-- Tabla de Resumen -->
         <div class="mt-6 bg-white shadow-lg rounded-lg overflow-hidden">
-            <h2 class="text-lg font-semibold text-center py-4 bg-gray-200">Resumen de Datos</h2>
 
-            <table class="w-full border border-gray-300 text-center">
+            <table class="w-full border border-gray-300 text-center text-sm">
                 <thead class="bg-gray-300">
-                    <tr class="text-gray-700 uppercase text-sm">
-                        <th class="border p-3">Periodo</th>
-                        <th class="border p-3">T° Máx</th>
-                        <th class="border p-3">T° Mín</th>
-                        <th class="border p-3">Humedad Máx</th>
-                        <th class="border p-3">Humedad Mín</th>
+                    <tr class="text-gray-700 uppercase">
+                        <th class="border p-2">Periodo</th>
+                        <th class="border p-2">T° Máx</th>
+                        <th class="border p-2">T° Mín</th>
+                        <th class="border p-2">Humedad Máx</th>
+                        <th class="border p-2">Humedad Mín</th>
                     </tr>
                 </thead>
-                <tbody id="tabla-resumen" class="text-gray-600 text-lg">
+                <tbody id="tabla-resumen" class="text-gray-600 text-sm">
                     <!-- Los datos se llenarán con JS -->
                 </tbody>
             </table>
         </div>
+
+        <!-- Gráficos de Temperatura y Humedad -->
+        <div class="mt-6 bg-white shadow-lg rounded-lg p-4">
+            <h2 class="text-md font-semibold text-center mb-4">Gráficos de Temperatura y Humedad</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Gráfico de Temperatura -->
+                <div class="bg-gray-100 p-3 rounded-lg shadow-md">
+                    <canvas id="grafico-temperatura"></canvas>
+                </div>
+
+                <!-- Gráfico de Humedad -->
+                <div class="bg-gray-100 p-3 rounded-lg shadow-md">
+                    <canvas id="grafico-humedad"></canvas>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 
 
 {% endblock %}
