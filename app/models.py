@@ -56,9 +56,11 @@ class Parcela(db.Model):
 
 class Cultivo(db.Model):
     __tablename__ = 'cultivo'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
     variedad = db.Column(db.String(50), nullable=False)
+    fase = db.Column(db.String(100), nullable=False)
     detalle = db.Column(db.String(200), nullable=True)
 
 
@@ -112,3 +114,11 @@ class HistorialClima(db.Model):
 
     def __repr__(self):
         return f"<HistorialClima {self.fecha} - ChipID {self.chipid}>"
+
+
+class Alerta(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    info = db.Column(db.String(255))
+    fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'))
+
+    dispositivo = db.relationship('Dispositivo', backref=db.backref('alertas', lazy=True))

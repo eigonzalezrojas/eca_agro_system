@@ -24,6 +24,7 @@ function openEditCultivoModal(id) {
             document.getElementById('idCultivo').value = data.id;
             document.getElementById('editNombre').value = data.nombre;
             document.getElementById('editVariedad').value = data.variedad;
+            document.getElementById('editFase').value = data.fase;
             document.getElementById('editDetalle').value = data.detalle;
             document.getElementById('editCultivoForm').action = `/admin/cultivo/editar/${id}`;
             document.getElementById('editCultivoModal').classList.remove('hidden');

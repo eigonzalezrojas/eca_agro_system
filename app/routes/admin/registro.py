@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from app.models import Registro, Dispositivo, Cultivo, Parcela, Usuario
 from app.extensions import db
 
@@ -6,11 +6,21 @@ registro = Blueprint('registro', __name__)
 
 @registro.route('/registros')
 def registros():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    # Obtener el usuario
+    usuario = Usuario.query.filter_by(rut=user_id).first()
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
     registros = Registro.query.join(Dispositivo).join(Cultivo).join(Parcela).join(Usuario).all()
     usuarios = Usuario.query.all()
     dispositivos = Dispositivo.query.all()
     cultivos = Cultivo.query.all()
     return render_template('sections/admin/registros.html',
+                           usuario=usuario,
                            registros=registros,
                            usuarios=usuarios,
                            dispositivos=dispositivos,

@@ -48,3 +48,42 @@ def enviar_correo_bienvenida(destinatario, nombre, apellido, rut, password_provi
     except smtplib.SMTPException as e:
         print(f"Error al enviar el correo: {e}")
         return False
+
+
+def enviar_correo_alerta(destinatario, titulo, descripcion, instruccion):
+    remitente = os.getenv('EMAIL_USER')
+    contraseña = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+
+    asunto = f"⚠️ Alerta Climática: {titulo}"
+    mensaje = f"""
+    Se ha detectado una alerta climática en tu zona:
+
+    🔴 Evento: {titulo}
+    📌 Descripción: {descripcion}
+    🛑 Instrucciones: {instruccion}
+
+    Por favor, toma las precauciones necesarias.
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, contraseña)
+        servidor.send_message(msg)
+        servidor.quit()
+        print(f"📩 Alerta enviada a {destinatario}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"Error al enviar la alerta: {e}")
+        return False

@@ -1,5 +1,5 @@
 from itertools import cycle
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from app.models import Usuario, Rol
 from app.extensions import db
 import random, string
@@ -10,9 +10,18 @@ user = Blueprint('user', __name__)
 
 @user.route('/mostrar')
 def usuarios():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    # Obtener el usuario
+    usuario = Usuario.query.filter_by(rut=user_id).first()
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
     usuarios = Usuario.query.all()
     roles = Rol.query.all()
-    return render_template('sections/admin/usuarios.html', usuarios=usuarios, roles=roles)
+    return render_template('sections/admin/usuarios.html', usuario=usuario, usuarios=usuarios, roles=roles)
 
 
 def validar_rut(rut):

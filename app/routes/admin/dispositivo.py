@@ -1,13 +1,22 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-from app.models import Dispositivo
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
+from app.models import Dispositivo, Usuario
 from app.extensions import db
 
 dispositivo = Blueprint('dispositivo', __name__)
 
 @dispositivo.route('/dispositivos')
 def dispositivos():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    # Obtener el usuario
+    usuario = Usuario.query.filter_by(rut=user_id).first()
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
     dispositivos = Dispositivo.query.all()
-    return render_template('sections/admin/dispositivos.html', dispositivos=dispositivos)
+    return render_template('sections/admin/dispositivos.html', dispositivos=dispositivos, usuario=usuario)
 
 
 @dispositivo.route('/crear', methods=['POST'])

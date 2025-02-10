@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from app.models import Parcela, Usuario
 from app.extensions import db
 
@@ -7,9 +7,19 @@ parcela = Blueprint('parcela', __name__)
 
 @parcela.route('/mostrar')
 def parcelas():
-    parcelas = Parcela.query.all()
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Usuario no autenticado"}), 401
+
+    # Obtener el usuario
+    usuario = Usuario.query.filter_by(rut=user_id).first()
+    if not usuario:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
     usuarios = Usuario.query.all()
-    return render_template('sections/admin/parcelas.html', parcelas=parcelas, usuarios=usuarios)
+    parcelas = Parcela.query.all()
+
+    return render_template('sections/admin/parcelas.html', parcelas=parcelas, usuario=usuario, usuarios=usuarios)
 
 
 @parcela.route('/crear', methods=['POST'])
