@@ -41,7 +41,7 @@ def traducir_texto(texto):
 def verificar_alertas_clima():
     """Consulta la API del clima para obtener alertas y enviarlas a los clientes"""
 
-    with app.app_context():  # Establecer el contexto de la aplicación Flask
+    with app.app_context():
         usuarios = db.session.query(Usuario).all()
 
         for usuario in usuarios:

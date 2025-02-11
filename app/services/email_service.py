@@ -108,9 +108,12 @@ def alerta_temperatura_eca(destinatario, cultivo, fase, temperatura, mensaje_ale
     Equipo de ECA Innovation
     """
 
+    # Lista de destinatarios
+    destinatarios = [destinatario, "ecainnovation@gmail.com"]
+
     msg = MIMEMultipart()
     msg['From'] = remitente
-    msg['To'] = destinatario
+    msg['To'] = ", ".join(destinatarios)
     msg['Subject'] = asunto
     msg.attach(MIMEText(mensaje, 'plain'))
 
@@ -120,7 +123,7 @@ def alerta_temperatura_eca(destinatario, cultivo, fase, temperatura, mensaje_ale
         servidor.login(remitente, password)
         servidor.send_message(msg)
         servidor.quit()
-        print(f"📩 Alerta de temperatura enviada a {destinatario}")
+        print(f"📩 Alerta de temperatura enviada a {', '.join(destinatarios)}")
         return True
     except smtplib.SMTPException as e:
         print(f"Error al enviar la alerta de temperatura: {e}")

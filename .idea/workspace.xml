@@ -6,12 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/client/datos.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/client/datos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/client/inicio.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/client/inicio.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/client.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/client.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/sections/cliente/inicio.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/cliente/inicio.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verificar_alertas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/scripts/verificar_alertas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verificar_alertas_clima.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/scripts/verificar_alertas_clima.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/client/cultivoCliente.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/client/cultivoCliente.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/scripts/verificar_alertas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/scripts/verificar_alertas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/scripts/verificar_alertas_clima.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/scripts/verificar_alertas_clima.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/email_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/email_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +110,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -163,7 +161,8 @@
       <workItem from="1739015507829" duration="25934000" />
       <workItem from="1739102157504" duration="33624000" />
       <workItem from="1739188186499" duration="34741000" />
-      <workItem from="1739236405526" duration="9612000" />
+      <workItem from="1739236405526" duration="11260000" />
+      <workItem from="1739275885924" duration="606000" />
     </task>
     <servers />
   </component>

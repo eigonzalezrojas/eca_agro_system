@@ -83,10 +83,10 @@ def cambiar_fase_cultivo():
     """
 
     enviar_correo_cambio_fase(
-        "eithelgonzalezrojas@gmail.com",
+        "ecainnovation@gmail.com",
         f"Cambio de Fase en {registro.cultivo.nombre}",
-        mensaje_alerta
-        #"eithelgonzalezrojas@gmail.com"
+        mensaje_alerta,
+        "eithelgonzalezrojas@gmail.com"
     )
 
     return jsonify({"mensaje": "Fase actualizada correctamente."})

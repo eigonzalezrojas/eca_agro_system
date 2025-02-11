@@ -26,17 +26,17 @@ def create_app():
     app = Flask(__name__)
 
     # Cargar configuración desde config.py
-    env_name = os.getenv('FLASK_ENV', 'development')  # Por defecto, usa 'development'
-    app.config.from_object(config_by_name[env_name])  # Accede directamente al diccionario de config
+    env_name = os.getenv('FLASK_ENV', 'development')
+    app.config.from_object(config_by_name[env_name])
 
-    db.init_app(app)  # ✅ Enlazar SQLAlchemy con la app
+    db.init_app(app)
 
     return app
 
 
-app = create_app()  # Crear la app antes de usar db
+app = create_app()
 
-with app.app_context():  # ✅ Envolver en contexto de aplicación
+with app.app_context():
     inspector = inspect(db.engine)
     tablas_disponibles = inspector.get_table_names()
     print("📌 Tablas disponibles en la base de datos:", tablas_disponibles)
@@ -52,7 +52,7 @@ def verificar_alertas_temperatura():
     now = datetime.now()
     hace_15_min = now - timedelta(minutes=15)
 
-    with app.app_context():  # ✅ Envolver TODA la ejecución en app_context()
+    with app.app_context():
         with db.session() as session:
             registros = session.query(Registro).all()
 
