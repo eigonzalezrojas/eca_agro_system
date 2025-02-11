@@ -41,8 +41,6 @@ function cargarClima(parcelaId) {
                 return;
             }
 
-            console.log("Datos del clima recibidos:", data); // ✅ Verificar estructura
-
             // Clima actual
             document.getElementById("ubicacion").innerText = data.clima_actual.ubicacion;
             document.getElementById("descripcion").innerText = data.clima_actual.descripcion;
