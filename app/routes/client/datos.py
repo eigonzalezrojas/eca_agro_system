@@ -94,7 +94,7 @@ def obtener_datos():
 def obtener_resumen():
     user_id = session.get('user_id')
     if not user_id:
-        return jsonify({"error": "Usuario no autenticado"}), 401
+        return jsonify([]), 401
 
     chipid = request.args.get('chipid')
     periodo = request.args.get('periodo')
@@ -103,7 +103,7 @@ def obtener_resumen():
     anio = request.args.get('anio')
 
     if not chipid:
-        return jsonify({"error": "Debe seleccionar un dispositivo"}), 400
+        return jsonify([]), 400
 
     query = db.session.query(
         func.max(DataP0.temperatura).label('temp_max'),
@@ -117,7 +117,7 @@ def obtener_resumen():
 
     elif periodo == "month":
         query = db.session.query(
-            func.week(DataP0.fecha).label('semana'),
+            func.day(DataP0.fecha).label('dia'),
             func.max(DataP0.temperatura).label('temp_max'),
             func.min(DataP0.temperatura).label('temp_min'),
             func.max(DataP0.humedad).label('hum_max'),
@@ -125,31 +125,26 @@ def obtener_resumen():
         ).filter(
             func.year(DataP0.fecha) == anio,
             func.month(DataP0.fecha) == mes
-        ).group_by(func.week(DataP0.fecha))
+        ).group_by(func.day(DataP0.fecha))
 
     elif periodo == "year":
         query = db.session.query(
-            func.month(DataP0.fecha).label('mes'),
+            func.week(DataP0.fecha).label('semana'),
             func.max(DataP0.temperatura).label('temp_max'),
             func.min(DataP0.temperatura).label('temp_min'),
             func.max(DataP0.humedad).label('hum_max'),
             func.min(DataP0.humedad).label('hum_min')
-        ).filter(func.year(DataP0.fecha) == anio).group_by(func.month(DataP0.fecha))
+        ).filter(func.year(DataP0.fecha) == anio).group_by(func.week(DataP0.fecha))
 
     resultados = query.all()
 
     datos = []
     for res in resultados:
+        label = str(fecha)
         if periodo == "month":
-            label = f"Semana {res.semana}"
+            label = f"Día {res.dia}"
         elif periodo == "year":
-            meses = [
-                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-            ]
-            label = meses[res.mes - 1]
-        else:
-            label = str(fecha)
+            label = f"Semana {res.semana}"
 
         datos.append({
             "periodo": label,
