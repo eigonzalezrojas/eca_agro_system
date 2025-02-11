@@ -113,7 +113,7 @@ def obtener_clima_parcela():
 
     ubicacion = f"{parcela.comuna}, Chile"
 
-    # Incluimos alertas en la consulta
+    # Consultar API del clima
     url = f"http://api.weatherapi.com/v1/forecast.json?key={api_key}&q={ubicacion}&days=5&alerts=yes"
     response = requests.get(url)
     if response.status_code != 200:
@@ -140,7 +140,16 @@ def obtener_clima_parcela():
         for dia in data["forecast"]["forecastday"]
     ]
 
-    # Extraer alertas si existen
+    # Obtener el cultivo y fase asociados a la parcela y usuario
+    registro = Registro.query.filter_by(fk_usuario=user_id, fk_parcela=parcela_id).first()
+    if not registro:
+        return jsonify({"error": "No se encontró un cultivo asociado a la parcela"}), 404
+
+    # Extraer cultivo y fase
+    fk_cultivo = registro.fk_cultivo
+    fk_cultivo_fase = registro.fk_cultivo_fase
+
+    # Extraer alertas del clima y guardarlas en la base de datos
     alertas = []
     if "alerts" in data and "alert" in data["alerts"]:
         for alerta in data["alerts"]["alert"]:
@@ -153,18 +162,25 @@ def obtener_clima_parcela():
                 "gravedad": alerta["severity"]
             })
 
-            # Guardamos la alerta en la base de datos
-            nueva_alerta = Alerta(info=alerta["headline"], fk_dispositivo=parcela_id)
+            # Guardamos la alerta en la base de datos con el cultivo correcto
+            nueva_alerta = Alerta(
+                mensaje=alerta["headline"],
+                fk_dispositivo=registro.fk_dispositivo,
+                fk_cultivo=fk_cultivo,
+                fk_cultivo_fase=fk_cultivo_fase,
+                nivel_alerta=alerta["severity"]
+            )
             db.session.add(nueva_alerta)
             db.session.commit()
 
             # Enviar alerta por correo
-            enviar_correo_alerta(usuario.email, alerta["headline"], alerta["desc"], alerta["instruction"])
+            enviar_correo_alerta(usuario.correo, alerta["headline"], alerta["desc"], alerta["instruction"])
 
     return jsonify({
         "clima_actual": clima_actual,
         "pronostico": pronostico,
         "alertas": alertas
     })
+
 
 
