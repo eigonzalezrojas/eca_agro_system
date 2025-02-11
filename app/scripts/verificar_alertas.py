@@ -1,14 +1,17 @@
 import os
 import logging
+import sys
 from datetime import datetime, timedelta
-
 from flask import Flask
 from sqlalchemy import text, inspect
 from dotenv import load_dotenv
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from app.extensions import db
 from app.models import Registro, Dispositivo, Alerta
 from app.services.email_service import alerta_temperatura_eca
 from app.config import config_by_name
+
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

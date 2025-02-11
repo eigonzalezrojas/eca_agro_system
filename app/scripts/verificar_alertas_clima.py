@@ -1,7 +1,10 @@
 import os
+import sys
 import requests
 import logging
 from dotenv import load_dotenv
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from app import create_app
 from app.extensions import db
 from app.models import Usuario, Parcela
