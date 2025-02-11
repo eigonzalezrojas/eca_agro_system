@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import logging
+from datetime import datetime, timedelta
 from sqlalchemy import text, inspect
 from dotenv import load_dotenv
 from app.extensions import db
@@ -33,7 +34,10 @@ def tabla_existe(session, nombre_tabla):
     return nombre_tabla in inspector.get_table_names()
 
 def verificar_alertas_temperatura():
-    """Verifica la temperatura de los dispositivos y almacena alertas en la base de datos."""
+    """Verifica la temperatura de los dispositivos en los últimos 15 minutos y almacena alertas en la base de datos."""
+    now = datetime.now()
+    hace_15_min = now - timedelta(minutes=15)
+
     with db.session() as session:
         registros = session.query(Registro).all()
 
@@ -50,26 +54,26 @@ def verificar_alertas_temperatura():
                 logger.warning(f"⚠️ La tabla {fuente_datos} no existe en la base de datos.")
                 continue
 
-            # Consulta optimizada para buscar la última temperatura del día actual
+            # Consulta optimizada para buscar datos en los últimos 15 minutos
             query = text(f"""
                 SELECT chipid, temperatura, fecha FROM {fuente_datos}
                 WHERE chipid = :chipid
-                AND fecha >= CURDATE() AND fecha <= NOW()
+                AND fecha BETWEEN :hace_15_min AND :now
                 ORDER BY fecha DESC LIMIT 1
             """)
 
             try:
-                resultado = session.execute(query, {"chipid": dispositivo.chipid}).fetchone()
+                resultado = session.execute(query, {"chipid": dispositivo.chipid, "hace_15_min": hace_15_min, "now": now}).fetchone()
             except Exception as e:
                 logger.error(f"❌ Error al ejecutar la consulta: {e}")
                 continue
 
             if not resultado:
-                logger.warning(f"No hay registros de hoy para chipid {dispositivo.chipid} en {fuente_datos}.")
+                logger.warning(f"No hay registros en los últimos 15 minutos para chipid {dispositivo.chipid} en {fuente_datos}.")
                 continue
 
             chipid, temperatura, fecha = resultado
-            parametros = obtener_parametros_alerta(registro.fk_cultivo, registro.fk_cultivo_fase)
+            parametros = obtener_parametros_alerta(registro.cultivo.nombre, registro.fk_cultivo_fase)
 
             if not parametros:
                 logger.warning(f"❌ No se encontraron parámetros de alerta para {registro.fk_cultivo} en fase {registro.fk_cultivo_fase}.")
@@ -81,14 +85,26 @@ def verificar_alertas_temperatura():
                 logger.warning(f"⚠️ No hay un valor crítico de temperatura para {registro.fk_cultivo} en fase {registro.fk_cultivo_fase}.")
                 continue
 
+            # Verificar si la alerta ya fue generada recientemente
+            alerta_existente = session.query(Alerta).filter(
+                Alerta.fk_dispositivo == registro.fk_dispositivo,
+                Alerta.fk_cultivo == registro.fk_cultivo,
+                Alerta.fk_cultivo_fase == registro.fk_cultivo_fase,
+                Alerta.fecha_alerta >= hace_15_min
+            ).first()
+
+            if alerta_existente:
+                logger.info(f"✅ Alerta ya registrada recientemente para {registro.cultivo.nombre}. No se duplicará.")
+                continue
+
             if temperatura > temp_max_critica:
                 mensaje_alerta = (
                     f"🔥 ALERTA: La temperatura actual ({temperatura}°C) ha superado el límite crítico "
-                    f"({temp_max_critica}°C) para el cultivo {registro.fk_cultivo} en fase {registro.fk_cultivo_fase}."
+                    f"({temp_max_critica}°C) para el cultivo {registro.cultivo.nombre} en fase {registro.fk_cultivo_fase}."
                 )
 
                 # Enviar alerta por correo
-                alerta_temperatura_eca(registro.usuario.email, registro.fk_cultivo, registro.fk_cultivo_fase, temperatura, mensaje_alerta)
+                alerta_temperatura_eca(registro.usuario.email, registro.cultivo.nombre, registro.fk_cultivo_fase, temperatura, mensaje_alerta)
 
                 # Guardar alerta en la base de datos
                 nueva_alerta = Alerta(
