@@ -26,8 +26,10 @@
             <tr>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Dispositivo</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Parcela</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Cliente</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Fuente</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Fecha</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Opciones</th>
             </tr>
@@ -37,8 +39,10 @@
             <tr>
                 <td class="border px-4 py-2 text-center">{{ registro.dispositivo.chipid }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.cultivo.nombre }}</td>
+                <td class="border px-4 py-2 text-center">{{ registro.cultivo.fase }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.parcela.nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.usuario.nombre }} {{ registro.usuario.apellido }}</td>
+                <td class="border px-4 py-2 text-center">{{ registro.fuente }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.fecha_registro.strftime('%Y-%m-%d %H:%M') }}</td>
                 <td class="border px-4 py-2">
                     <div class="flex justify-center space-x-2">
@@ -91,12 +95,30 @@
                     </select>
                 </div>
                 <div class="mb-4">
+                    <label for="fase" class="block text-gray-700">Fase cultivo</label>
+                    <select name="fase" id="fase" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">Seleccione un Cultivo</option>
+                        {% for cultivo in cultivos %}
+                            <option value="{{ cultivo.fase }}">{{ cultivo.fase }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
                     <label for="dispositivo" class="block text-gray-700">Dispositivo</label>
                     <select name="dispositivo" id="dispositivo" class="w-full px-3 py-2 border rounded-lg" required>
                         <option value="">Seleccione un Dispositivo</option>
                             {% for dispositivo in dispositivos %}
                                 <option value="{{ dispositivo.id }}">{{ dispositivo.chipid }} - {{ dispositivo.modelo }}</option>
                             {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="fuente" class="block text-gray-700">Fuente de Datos</label>
+                    <select id="fuente" name="fuente" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">Seleccione una fuente de datos</option>
+                        {% for fuente in fuente %}
+                            <option value="{{ fuente }}">{{ fuente }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="flex justify-end">
@@ -143,6 +165,22 @@
                     <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required>
                         {% for cultivo in cultivos %}
                             <option value="{{ cultivo.id }}">{{ cultivo.nombre }} - {{ cultivo.variedad }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="editFase" class="block text-sm font-medium">Fase Cultivo</label>
+                    <select id="editFase" name="editFase" class="w-full border rounded px-3 py-2" required>
+                        {% for cultivo in cultivos %}
+                            <option value="{{ cultivo.fase }}">{{ cultivo.fase }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="editFuente" class="block text-sm font-medium">Fuente de Datos</label>
+                    <select id="editFuente" name="editFuente" class="w-full border rounded px-3 py-2" required>
+                        {% for fuente in fuente %}
+                            <option value="{{ fuente }}">{{ fuente }}</option>
                         {% endfor %}
                     </select>
                 </div>

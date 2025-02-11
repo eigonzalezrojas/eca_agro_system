@@ -11,6 +11,8 @@ from app.routes.main import main
 from app.routes.client.client import client
 from app.routes.client.datos import datos
 from app.routes.client.clima import clima
+from app.routes.client.cultivoCliente import cultivoCliente
+
 import os
 
 
@@ -36,3 +38,4 @@ def register_blueprints(app):
     app.register_blueprint(client, url_prefix='/client')
     app.register_blueprint(datos, url_prefix='/client/datos')
     app.register_blueprint(clima, url_prefix='/client/clima')
+    app.register_blueprint(cultivoCliente, url_prefix='/client/cultivoCliente')

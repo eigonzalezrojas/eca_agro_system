@@ -35,6 +35,7 @@ function openEditRegistroModal(id) {
             document.getElementById('editUsuario').value = data.fk_usuario;
             document.getElementById('editDispositivo').value = data.fk_dispositivo;
             document.getElementById('editCultivo').value = data.fk_cultivo;
+            document.getElementById('editFase').value = data.fk_cultivo_fase;
 
             let parcelaSelect = document.getElementById("editParcela");
 

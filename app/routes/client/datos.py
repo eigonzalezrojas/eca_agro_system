@@ -23,6 +23,8 @@ def obtener_datos():
         return jsonify({"error": "No se encontró el dispositivo asociado"}), 404
 
     chipid = dispositivo.chipid
+
+
     ultima_medicion = DataP0.query.filter_by(chipid=chipid).order_by(DataP0.fecha.desc()).first()
 
     if not ultima_medicion:
