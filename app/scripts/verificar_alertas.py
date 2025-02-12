@@ -1,17 +1,18 @@
 import os
 import logging
 import sys
+import pandas as pd
 from datetime import datetime, timedelta
 from flask import Flask
-from sqlalchemy import text, inspect
+from sqlalchemy import text, inspect, func
 from dotenv import load_dotenv
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from app.extensions import db
-from app.models import Registro, Dispositivo, Alerta
+from app.models import Registro, Dispositivo, Alerta, DataP0, Usuario, Cultivo
 from app.services.email_service import alerta_temperatura_eca
 from app.config import config_by_name
-
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -20,35 +21,31 @@ logger = logging.getLogger(__name__)
 # Cargar variables de entorno desde .env
 load_dotenv()
 
+# Cargar datos desde el archivo Excel
+ruta_excel = os.path.join(os.path.dirname(__file__), "../data/tabla_alertas.xlsx")
+if not os.path.exists(ruta_excel):
+    logger.error(f"El archivo {ruta_excel} no existe.")
+    sys.exit(1)
+
+alertas_df = pd.read_excel(ruta_excel)
+logger.info(f"Columnas del archivo Excel: {alertas_df.columns.tolist()}")
+logger.info(f"Primeros registros del Excel: \n{alertas_df.head()}")
+
 
 def create_app():
     """Crea y configura la aplicación Flask"""
     app = Flask(__name__)
-
-    # Cargar configuración desde config.py
     env_name = os.getenv('FLASK_ENV', 'development')
     app.config.from_object(config_by_name[env_name])
-
     db.init_app(app)
-
     return app
 
 
 app = create_app()
 
-with app.app_context():
-    inspector = inspect(db.engine)
-    tablas_disponibles = inspector.get_table_names()
-    print("📌 Tablas disponibles en la base de datos:", tablas_disponibles)
-
-    if "dataP0" in tablas_disponibles:
-        print("✅ La tabla 'dataP0' EXISTE en la base de datos.")
-    else:
-        print("❌ La tabla 'dataP0' NO se encuentra en la base de datos.")
-
 
 def verificar_alertas_temperatura():
-    """Verifica la temperatura de los dispositivos en los últimos 15 minutos y almacena alertas en la base de datos."""
+    """Verifica las alertas de temperatura en los últimos 15 minutos"""
     now = datetime.now()
     hace_15_min = now - timedelta(minutes=15)
 
@@ -62,105 +59,82 @@ def verificar_alertas_temperatura():
                     logger.warning(f"Dispositivo {registro.fk_dispositivo} no encontrado.")
                     continue
 
-                fuente_datos = registro.fuente
-                if not fuente_datos:
-                    logger.warning(f"⚠️ No se encontró fuente de datos para el dispositivo {dispositivo.chipid}.")
+                logger.info(
+                    f"Verificando dispositivo: {dispositivo.chipid} para cultivo {registro.fk_cultivo} en fase {registro.fk_cultivo_fase}")
+
+                # Obtener datos de temperatura del dispositivo en los últimos 15 minutos
+                temp_max = session.query(func.max(DataP0.temperatura)).filter(
+                    DataP0.chipid == dispositivo.chipid,
+                    DataP0.fecha.between(hace_15_min, now)
+                ).scalar()
+                temp_min = session.query(func.min(DataP0.temperatura)).filter(
+                    DataP0.chipid == dispositivo.chipid,
+                    DataP0.fecha.between(hace_15_min, now)
+                ).scalar()
+
+                logger.info(f"Temperaturas registradas - Min: {temp_min}°C / Max: {temp_max}°C")
+
+                if temp_max is None or temp_min is None:
+                    logger.warning(f"No hay registros recientes para chipid {dispositivo.chipid}.")
                     continue
 
-                # Validar existencia de la tabla antes de consultar
-                try:
-                    inspector = inspect(db.engine)
-                    if fuente_datos not in inspector.get_table_names():
-                        logger.warning(f"⚠️ La tabla {fuente_datos} no existe en la base de datos.")
-                        continue
-                except Exception as e:
-                    logger.error(f"❌ Error al inspeccionar la base de datos: {e}")
-                    continue
+                # Buscar el cultivo y fase en la tabla de alertas
+                cultivo = session.get(Cultivo, registro.fk_cultivo)
+                alertas_cultivo = alertas_df[
+                    (alertas_df['Cultivo'].str.strip().str.lower() == cultivo.nombre.strip().lower()) &
+                    (alertas_df['Fase'].str.strip().str.lower() == registro.fk_cultivo_fase.strip().lower())]
 
-                # Consulta optimizada para buscar datos en los últimos 15 minutos
-                query = text(f"""
-                    SELECT chipid, temperatura, fecha FROM {fuente_datos}
-                    WHERE chipid = :chipid
-                    AND fecha BETWEEN :hace_15_min AND :now
-                    ORDER BY fecha DESC LIMIT 1
-                """)
-
-                try:
-                    resultado = session.execute(query, {"chipid": dispositivo.chipid, "hace_15_min": hace_15_min,
-                                                        "now": now}).fetchone()
-                except Exception as e:
-                    logger.error(f"❌ Error al ejecutar la consulta en {fuente_datos}: {e}")
-                    continue
-
-                if not resultado:
+                if alertas_cultivo.empty:
                     logger.warning(
-                        f"No hay registros en los últimos 15 minutos para chipid {dispositivo.chipid} en {fuente_datos}.")
+                        f"No se encontraron parámetros de alerta para {cultivo.nombre} en fase {registro.fk_cultivo_fase}.")
                     continue
 
-                chipid, temperatura, fecha = resultado
-                if not registro.cultivo:
-                    logger.warning(f"⚠️ No se encontró cultivo asociado al registro {registro.id}.")
+                logger.info(f"Parámetros de alerta encontrados: {alertas_cultivo}")
+
+                alertas_generadas = []
+
+                # Evaluar alertas según la tabla de parámetros
+                if temp_min < alertas_cultivo['Temperatura crítica mínima'].values[0]:
+                    alertas_generadas.append("Temperatura crítica mínima")
+                if temp_min < alertas_cultivo['Temperatura mínima de crecimiento'].values[0]:
+                    alertas_generadas.append("T° mínima de crecimiento")
+                if temp_min < alertas_cultivo['Rango Temperatura Mínimo Óptimo'].values[0]:
+                    alertas_generadas.append("Rango T° Mínimo Óptimo")
+                if temp_max > alertas_cultivo['Rango Temperatura Máximo Óptimo'].values[0]:
+                    alertas_generadas.append("Rango T° Máximo Óptimo")
+                if temp_max > alertas_cultivo['Temperatura máxima de crecimiento'].values[0]:
+                    alertas_generadas.append("T° máxima de crecimiento")
+
+                if not alertas_generadas:
                     continue
 
-                parametros = session.query(Alerta).filter(
-                    Alerta.fk_cultivo == registro.fk_cultivo,
-                    Alerta.fk_cultivo_fase == registro.fk_cultivo_fase
-                ).first()
+                # Generar mensaje de alerta
+                mensaje_alerta = f"🚨 ALERTA: {', '.join(alertas_generadas)}. Temperaturas registradas: Min {temp_min}°C / Max {temp_max}°C."
+                logger.info(f"Generando alerta: {mensaje_alerta}")
 
-                if not parametros:
-                    logger.warning(
-                        f"❌ No se encontraron parámetros de alerta para {registro.cultivo.nombre} en fase {registro.fk_cultivo_fase}.")
-                    continue
+                # Enviar alerta por correo
+                usuario = session.get(Usuario, registro.fk_usuario)
+                if usuario and usuario.correo:
+                    alerta_temperatura_eca(usuario.correo, cultivo.nombre, registro.fk_cultivo_fase, temp_max,
+                                           mensaje_alerta)
+                    logger.info(f"Correo enviado a: {usuario.correo}")
+                else:
+                    logger.warning("No se pudo enviar el correo, usuario sin dirección de correo.")
 
-                temp_max_critica = parametros.get("T° máxima de crecimiento")
+                # Guardar alerta en la base de datos
+                nueva_alerta = Alerta(
+                    mensaje=mensaje_alerta,
+                    fk_dispositivo=registro.fk_dispositivo,
+                    fk_cultivo=registro.fk_cultivo,
+                    fk_cultivo_fase=registro.fk_cultivo_fase,
+                    nivel_alerta="Crítica"
+                )
+                session.add(nueva_alerta)
+                session.commit()
+                logger.info(f"✅ Alerta guardada en la base de datos: {mensaje_alerta}")
 
-                if temp_max_critica is None:
-                    logger.warning(
-                        f"⚠️ No hay un valor crítico de temperatura para {registro.cultivo.nombre} en fase {registro.fk_cultivo_fase}.")
-                    continue
-
-                # Verificar si la alerta ya fue generada recientemente
-                alerta_existente = session.query(Alerta).filter(
-                    Alerta.fk_dispositivo == registro.fk_dispositivo,
-                    Alerta.fk_cultivo == registro.fk_cultivo,
-                    Alerta.fk_cultivo_fase == registro.fk_cultivo_fase,
-                    Alerta.fecha_alerta >= hace_15_min
-                ).first()
-
-                if alerta_existente:
-                    logger.info(
-                        f"✅ Alerta ya registrada recientemente para {registro.cultivo.nombre}. No se duplicará.")
-                    continue
-
-                if temperatura > temp_max_critica:
-                    mensaje_alerta = (
-                        f"🔥 ALERTA: La temperatura actual ({temperatura}°C) ha superado el límite crítico "
-                        f"({temp_max_critica}°C) para el cultivo {registro.cultivo.nombre} en fase {registro.fk_cultivo_fase}."
-                    )
-
-                    # Enviar alerta por correo
-                    if registro.usuario and hasattr(registro.usuario, "email"):
-                        alerta_temperatura_eca(registro.usuario.email, registro.cultivo.nombre,
-                                               registro.fk_cultivo_fase, temperatura, mensaje_alerta)
-                    else:
-                        logger.warning(
-                            f"⚠️ No se pudo enviar la alerta porque el usuario no tiene un correo registrado.")
-
-                    # Guardar alerta en la base de datos
-                    nueva_alerta = Alerta(
-                        mensaje=mensaje_alerta,
-                        fk_dispositivo=registro.fk_dispositivo,
-                        fk_cultivo=registro.fk_cultivo,
-                        fk_cultivo_fase=registro.fk_cultivo_fase,
-                        nivel_alerta="Crítica"
-                    )
-                    session.add(nueva_alerta)
-                    session.commit()
-                    logger.info(f"✅ Alerta guardada en la base de datos: {mensaje_alerta}")
-
-        logger.info("✅ Revisión de alertas completada.")
+    logger.info("✅ Revisión de alertas completada.")
 
 
-# Ejecutar la verificación cada vez que el script corra
 if __name__ == "__main__":
     verificar_alertas_temperatura()
