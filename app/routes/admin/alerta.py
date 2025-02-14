@@ -1,8 +1,13 @@
-from flask import Blueprint, session, jsonify, render_template, request, flash, redirect, url_for
+from flask import Blueprint, session, jsonify, render_template, request, flash, redirect, url_for, send_file
+from werkzeug.utils import secure_filename
 from app.models import Alerta, Usuario, Registro, Cultivo
 from app.extensions import db
+import os
 
 alertasAdmin = Blueprint('alertasAdmin', __name__)
+
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data"))
+ARCHIVO_ALERTAS = os.path.join(UPLOAD_FOLDER, "tabla_alertas.xlsx")
 
 @alertasAdmin.route('/')
 def mostrar_alertas():
@@ -82,4 +87,36 @@ def eliminar(id):
     db.session.delete(alerta)
     db.session.commit()
     flash('Alerta eliminada exitosamente', 'success')
+    return redirect(url_for('alertasAdmin.mostrar_alertas'))
+
+
+@alertasAdmin.route('/descargar', methods=['GET'])
+def descargar_archivo():
+    """Descargar el archivo de parámetros de alertas"""
+    if os.path.exists(ARCHIVO_ALERTAS):
+        return send_file(ARCHIVO_ALERTAS, as_attachment=True)
+    flash("El archivo de alertas no existe.", "error")
+    return redirect(url_for('alertasAdmin.mostrar_alertas'))
+
+
+@alertasAdmin.route('/subir', methods=['POST'])
+def subir_archivo():
+    """Subir el archivo Excel con parámetros de alertas"""
+    if 'archivo' not in request.files:
+        flash("No se seleccionó ningún archivo.", "error")
+        return redirect(url_for('alertasAdmin.mostrar_alertas'))
+
+    archivo = request.files['archivo']
+    if archivo.filename == '':
+        flash("No se seleccionó ningún archivo.", "error")
+        return redirect(url_for('alertasAdmin.mostrar_alertas'))
+
+    if archivo and archivo.filename.endswith('.xlsx'):
+        # Guardar el archivo con un nombre seguro
+        nombre_archivo = secure_filename("tabla_alertas.xlsx")
+        archivo.save(os.path.join(UPLOAD_FOLDER, nombre_archivo))
+        flash("Archivo de alertas subido con éxito.", "success")
+    else:
+        flash("Formato de archivo no permitido. Solo se aceptan archivos .xlsx", "error")
+
     return redirect(url_for('alertasAdmin.mostrar_alertas'))
