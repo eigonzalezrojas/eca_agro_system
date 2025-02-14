@@ -1,0 +1,93 @@
+{% extends "dashboard/admin.html" %}
+
+{% block title %}Alertas - Admin Dashboard{% endblock %}
+
+{% block content %}
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Cultivos</h1>
+    </div>
+
+    <!-- Mensajes alertas -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Tabla de alertas -->
+    <table class="min-w-full bg-white border border-gray-200">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Cliente</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Mensaje</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Fecha</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alerta in alertas %}
+            <tr>
+                <td class="border px-4 py-2 text-center">{{ alerta.cultivo }}</td>
+                <td class="border px-4 py-2 text-center">{{ alerta.fase }}</td>
+                <td class="border px-4 py-2 text-center">{{ alerta.usuario }}</td>
+                <td class="border px-4 py-2 text-center">{{ alerta.mensaje }}</td>
+                <td class="border px-4 py-2 text-center">{{ alerta.fecha }}</td>
+                <td class="border px-4 py-2">
+                    <div class="flex justify-center space-x-2">
+                        <button class="btn-edit bg-blue-500 text-white p-2 rounded" onclick="openEditAlertaModal('{{ alerta.id }}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M17.414 2.586a2 2 0 00-2.828 0L13 4.172 15.828 7l1.586-1.586a2 2 0 000-2.828zM12 5l3 3-9 9H3v-3l9-9z"/>
+                            </svg>
+                        </button>
+                        <button class="btn-delete bg-red-500 text-white p-2 rounded" onclick="openDeleteAlertaModal('{{ alerta.id }}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a1 1 0 011-1h2a1 1 0 011 1v1h5a1 1 0 110 2h-1v9a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 110-2h5V4zm1 3a1 1 0 00-1 1v7a1 1 0 102 0V8a1 1 0 00-1-1zm4 1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Modal editar Alerta -->
+    <div id="editAlertaModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 class="text-xl font-bold mb-4">Editar Alerta</h2>
+            <form id="editAlertaForm" method="POST">
+                <input type="hidden" name="idAlerta" id="idAlerta">
+                <div class="mb-4">
+                    <label for="editMensaje" class="block text-sm font-medium">Mensaje</label>
+                    <input type="text" id="editMensaje" name="editMensaje" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeEditAlertaModal()">Cancelar</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal eliminar Alerta -->
+    <div id="deleteAlertaModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 class="text-xl font-bold mb-4">Eliminar Alerta</h2>
+            <p>¿Estás seguro de que deseas eliminar la alerta?</p>
+            <form id="deleteAlertaForm" method="POST">
+                <div class="flex justify-end mt-4">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeDeleteAlertaModal()">Cancelar</button>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin/admin_alerta.js') }}"></script>
+{% endblock %}
