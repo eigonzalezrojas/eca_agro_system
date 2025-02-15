@@ -132,6 +132,7 @@ class Alerta(db.Model):
     fk_cultivo_fase = db.Column(db.String(100), nullable=False)
     fecha_alerta = db.Column(db.DateTime, default=db.func.current_timestamp())
     nivel_alerta = db.Column(db.String(50), nullable=True)
+    leida = db.Column(db.Boolean, default=False)
 
     dispositivo = db.relationship('Dispositivo', backref=db.backref('alertas', lazy=True))
     cultivo = db.relationship('Cultivo', backref=db.backref('alertas', lazy=True))

@@ -23,14 +23,28 @@
         <div class="flex items-center space-x-4">
             <!-- Campana de notificaciones -->
             <div class="relative">
-                <button class="relative text-gray-600 focus:outline-none">
+                <button id="notificacionesButton" class="relative text-gray-600 focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10" viewBox="0 0 24 24" fill="currentColor">
                         <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clip-rule="evenodd" />
                     </svg>
-                    <!-- Indicador de notificaciones -->
-                    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">3</span>
+                    <!-- Indicador de notificaciones dinámico -->
+                    <span id="notificacionesBadge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full hidden">0</span>
                 </button>
+
+                <!-- Menú desplegable de notificaciones -->
+                <div id="notificacionesMenu" class="absolute right-0 mt-2 w-72 bg-white shadow-md rounded-lg overflow-hidden hidden">
+                    <div class="p-4 border-b">
+                        <h3 class="text-lg font-semibold">Notificaciones</h3>
+                    </div>
+                    <ul id="notificacionesLista" class="divide-y divide-gray-200">
+                        <li class="p-3 text-center text-gray-500">No hay nuevas notificaciones</li>
+                    </ul>
+                    <div class="p-3 text-center border-t">
+                        <a href="{{ url_for('alertasCliente.listar_alertas') }}" class="text-blue-500 hover:underline">Ver todas las alertas</a>
+                    </div>
+                </div>
             </div>
+
             <!-- Menú de usuario -->
             <div class="relative">
                 <button id="userMenuButton" class="text-gray-600 focus:outline-none">
