@@ -3,7 +3,9 @@ from app.routes.admin.admin import admin
 from app.routes.admin.user import user
 from app.routes.admin.parcela import parcela
 from app.routes.admin.cultivo import cultivo
+from app.routes.admin.fase import fase
 from app.routes.admin.dispositivo import dispositivo
+from app.routes.admin.alerta import alertasAdmin
 from app.routes.auth import auth
 from app.routes.dashboard import dashboard
 from app.routes.admin.registro import registro
@@ -13,7 +15,6 @@ from app.routes.client.datos import datos
 from app.routes.client.clima import clima
 from app.routes.client.cultivoCliente import cultivoCliente
 from app.routes.client.alertas import alertasCliente
-from app.routes.admin.alerta import alertasAdmin
 
 import os
 
@@ -38,6 +39,7 @@ def register_blueprints(app):
     app.register_blueprint(dispositivo, url_prefix='/admin/dispositivo')
     app.register_blueprint(registro, url_prefix='/admin/registro')
     app.register_blueprint(alertasAdmin, url_prefix='/admin/alertasAdmin')
+    app.register_blueprint(fase, url_prefix='/admin/fase')
     app.register_blueprint(client, url_prefix='/client')
     app.register_blueprint(datos, url_prefix='/client/datos')
     app.register_blueprint(clima, url_prefix='/client/clima')

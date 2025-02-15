@@ -60,8 +60,14 @@ class Cultivo(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
     variedad = db.Column(db.String(50), nullable=False)
-    fase = db.Column(db.String(100), nullable=False)
     detalle = db.Column(db.String(200), nullable=True)
+
+
+class Fase(db.Model):
+    __tablename__ = 'fase'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nombre = db.Column(db.String(50), nullable=False)
+    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
 
 
 class Dispositivo(db.Model):
@@ -78,21 +84,19 @@ class Registro(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
-    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
-    fk_cultivo_fase = db.Column(db.String(100), nullable=False)
+    fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
     fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
     fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
     fuente = db.Column(db.String(50), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     dispositivo = db.relationship('Dispositivo', backref='registros')
-    cultivo = db.relationship('Cultivo', backref='registros')
+    fase = db.relationship('Fase', backref='registros')
     parcela = db.relationship('Parcela', backref='registros')
     usuario = db.relationship('Usuario', backref='registros')
 
     def __repr__(self):
         return f'<Registro {self.id}>'
-
 
 
 class DataP0(db.Model):
@@ -120,22 +124,20 @@ class HistorialClima(db.Model):
         return f"<HistorialClima {self.fecha} - ChipID {self.chipid}>"
 
 
-from app.extensions import db
-
 class Alerta(db.Model):
     __tablename__ = 'alerta'
 
     id = db.Column(db.Integer, primary_key=True)
     mensaje = db.Column(db.String(255), nullable=False)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
-    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
-    fk_cultivo_fase = db.Column(db.String(100), nullable=False)
+    fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
     fecha_alerta = db.Column(db.DateTime, default=db.func.current_timestamp())
     nivel_alerta = db.Column(db.String(50), nullable=True)
     leida = db.Column(db.Boolean, default=False)
 
     dispositivo = db.relationship('Dispositivo', backref=db.backref('alertas', lazy=True))
-    cultivo = db.relationship('Cultivo', backref=db.backref('alertas', lazy=True))
+    fase_cultivo = db.relationship('Fase', backref=db.backref('alertas', lazy=True))
 
     def __repr__(self):
-        return f'<Alerta {self.id}, Cultivo {self.fk_cultivo}, Fase {self.fk_cultivo_fase}>'
+        return f'<Alerta {self.id}, FaseCultivo {self.fk_fase_cultivo}>'
+

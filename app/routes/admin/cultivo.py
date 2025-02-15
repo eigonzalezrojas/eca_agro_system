@@ -23,7 +23,6 @@ def cultivos():
 def crear_cultivo():
     nombre = request.form['nombre']
     variedad = request.form['variedad']
-    fase = request.form['fase']
     detalle = request.form['detalle']
 
     errores = []
@@ -46,7 +45,6 @@ def crear_cultivo():
     nuevo_cultivo = Cultivo(
         nombre=nombre,
         variedad=variedad,
-        fase=fase,
         detalle=detalle
     )
 
@@ -71,7 +69,6 @@ def editar_cultivo(id):
     # Actualizar los datos del cultivo
     cultivo.nombre = request.form.get('editNombre', cultivo.nombre)
     cultivo.variedad = request.form.get('editVariedad', cultivo.variedad)
-    cultivo.fase = request.form.get('editFase', cultivo.fase)
     cultivo.detalle = request.form.get('editDetalle', cultivo.detalle)
 
     db.session.commit()
@@ -102,6 +99,5 @@ def obtener_cultivo(id):
         "id": cultivo.id,
         "nombre": cultivo.nombre,
         "variedad": cultivo.variedad,
-        "fase": cultivo.fase,
         "detalle": cultivo.detalle
     }

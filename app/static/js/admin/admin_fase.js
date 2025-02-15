@@ -1,19 +1,19 @@
-const openModal = document.getElementById("openCultivoModal");
-const closeModal = document.getElementById("closeCultivoModal");
+const openModal = document.getElementById("openFaseModal");
+const closeModal = document.getElementById("closeFaseModal");
 
 if (openModal && closeModal) {
     openModal.addEventListener("click", () => {
-        cultivoModal.classList.remove("hidden");
+        faseModal.classList.remove("hidden");
     });
 
     closeModal.addEventListener("click", () => {
-        cultivoModal.classList.add("hidden");
+        faseModal.classList.add("hidden");
     });
 }
 
 // Función para abrir el modal de edición cultivo
 function openEditCultivoModal(id) {
-    fetch(`/admin/cultivo/buscar/${id}`)
+    fetch(`/admin/fase/buscar/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al obtener los datos de cultivo");
@@ -50,7 +50,7 @@ function closeDeleteCultivoModal() {
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        CultivoModal.classList.add("hidden");
+        faseModal.classList.add("hidden");
         editCultivoModal.classList.add("hidden");
         deleteCultivoModal.classList.add("hidden")
     }
