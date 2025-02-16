@@ -6,12 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/admin/cultivo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/cultivo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/js/admin/admin_cultivo.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_cultivo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/dashboard/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/dashboard/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/cultivos.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/cultivos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin/fase.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/fase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/fases.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/fases.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +164,8 @@
       <workItem from="1739356306949" duration="13470000" />
       <workItem from="1739449387559" duration="7890000" />
       <workItem from="1739536609326" duration="12101000" />
-      <workItem from="1739622618576" duration="8374000" />
+      <workItem from="1739622618576" duration="8522000" />
+      <workItem from="1739669558414" duration="645000" />
     </task>
     <servers />
   </component>
@@ -187,6 +184,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739629881958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739670397692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

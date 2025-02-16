@@ -9,12 +9,11 @@ def fases():
     if not user_id:
         return jsonify({"error": "Usuario no autenticado"}), 401
 
-    # Obtener el usuario
     usuario = Usuario.query.filter_by(rut=user_id).first()
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    fases = Fase.query.join(Cultivo).all()
+    fases = db.session.query(Fase, Cultivo).join(Cultivo, Fase.fk_cultivo == Cultivo.id).all()
     cultivos = Cultivo.query.all()
 
     data_fases = []
@@ -34,39 +33,39 @@ def fases():
 @fase.route('/crear', methods=['POST'])
 def crear():
     nombre = request.form['nombre']
-    cultivo = request.form['cultivo']
+    cultivo_id = request.form['cultivo']
 
     errores = []
 
-    # Validar nombre
     if not nombre:
         errores.append("El nombre de fase es obligatorio.")
 
-    # Validar variedad
-    if not cultivo:
+    if not cultivo_id:
         errores.append("El cultivo es obligatorio.")
 
     if errores:
-        # Si hay errores, mostramos los mensajes y redirigimos
         for error in errores:
             flash(error, 'danger')
         return redirect(url_for('fase.fases'))
 
-    # Crear Fase
-    nueva_fase = Fase(
-        nombre=nombre,
-        cultivo=cultivo
-    )
-
     try:
+        cultivo = Cultivo.query.get(int(cultivo_id))
+        if not cultivo:
+            flash("El cultivo seleccionado no existe.", "danger")
+            return redirect(url_for('fase.fases'))
+
+        nueva_fase = Fase(
+            nombre=nombre,
+            fk_cultivo=cultivo.id
+        )
+
         db.session.add(nueva_fase)
         db.session.commit()
         flash('Fase creada exitosamente.', 'success')
-        return redirect(url_for('fase.fases'))
     except Exception as e:
         db.session.rollback()
         flash(f'Error al crear la fase: {str(e)}', 'danger')
-        return redirect(url_for('fase.fases'))
     finally:
         db.session.close()
-        return redirect(url_for('fase.fases'))
+
+    return redirect(url_for('fase.fases'))
