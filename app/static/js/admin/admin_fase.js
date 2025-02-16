@@ -11,47 +11,46 @@ if (openModal && closeModal) {
     });
 }
 
-// Función para abrir el modal de edición cultivo
-function openEditCultivoModal(id) {
+// Función para abrir el modal de edición fase
+function openEditFaseModal(id) {
     fetch(`/admin/fase/buscar/${id}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error("Error al obtener los datos de cultivo");
+                throw new Error("Error al obtener los datos de fase");
             }
+            console.log(response)
             return response.json();
         })
         .then(data => {
-            document.getElementById('idCultivo').value = data.id;
-            document.getElementById('editNombre').value = data.nombre;
-            document.getElementById('editVariedad').value = data.variedad;
-            document.getElementById('editDetalle').value = data.detalle;
-            document.getElementById('editCultivoForm').action = `/admin/cultivo/editar/${id}`;
-            document.getElementById('editCultivoModal').classList.remove('hidden');
+            document.getElementById('idFase').value = data.id;
+            document.getElementById('editFase').value = data.nombre;
+            document.getElementById('editFaseForm').action = `/admin/fase/editar/${id}`;
+            document.getElementById('editFaseModal').classList.remove('hidden');
         })
-        .catch(error => console.error('Error al obtener los datos de Cultivo:', error));
+        .catch(error => console.error('Error al obtener los datos de la Fase:', error));
 }
 
 // Función para cerrar el modal
-function closeEditCultivoModal() {
-    document.getElementById('editCultivoModal').classList.add('hidden');
+function closeEditFaseModal() {
+    document.getElementById('editFaseModal').classList.add('hidden');
 }
 
 
 // Función para abrir el modal de eliminación
-function openDeleteCultivoModal(id) {
-    document.getElementById('deleteCultivoForm').action = `/admin/cultivo/eliminar/${id}`;
-    document.getElementById('deleteCultivoModal').classList.remove('hidden');
+function openDeleteFaseModal(id) {
+    document.getElementById('deleteFaseForm').action = `/admin/fase/eliminar/${id}`;
+    document.getElementById('deleteFaseModal').classList.remove('hidden');
 }
 
 // Función para cerrar el modal de eliminación
-function closeDeleteCultivoModal() {
-    document.getElementById('deleteCultivoModal').classList.add('hidden');
+function closeDeleteFaseModal() {
+    document.getElementById('deleteFaseModal').classList.add('hidden');
 }
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
         faseModal.classList.add("hidden");
-        editCultivoModal.classList.add("hidden");
-        deleteCultivoModal.classList.add("hidden")
+        editFaseModal.classList.add("hidden");
+        deleteFaseModal.classList.add("hidden")
     }
 });

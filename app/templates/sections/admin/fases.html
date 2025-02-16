@@ -77,6 +77,47 @@
         </div>
     </div>
 
+    <!-- Modal editar fase -->
+    <div id="editFaseModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 class="text-xl font-bold mb-4">Editar Fase</h2>
+            <form id="editFaseForm" method="POST">
+                <input type="hidden" name="idFase" id="idFase">
+                <div class="mb-4">
+                    <label for="editCultivo" class="block text-sm font-medium">Cultivo</label>
+                    <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required onchange="cargarFaseEdit()">
+                        {% for cultivo in cultivos %}
+                            <option value="{{ cultivo.id }}">{{ cultivo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="editFase" class="block text-sm font-medium">Fase</label>
+                    <input type="text" id="editFase" name="editFase" class="w-full border rounded px-3 py-2">
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeEditFaseModal()">Cancelar</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Modal eliminar Fase -->
+    <div id="deleteFaseModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 class="text-xl font-bold mb-4">Eliminar fase</h2>
+            <p>¿Estás seguro de que deseas eliminar la fase?</p>
+            <form id="deleteFaseForm" method="POST">
+                <div class="flex justify-end mt-4">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeDeleteFaseModal()">Cancelar</button>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 
     <script src="{{ url_for('static', filename='js/admin/admin_fase.js') }}"></script>

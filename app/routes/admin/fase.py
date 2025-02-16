@@ -69,3 +69,37 @@ def crear():
         db.session.close()
 
     return redirect(url_for('fase.fases'))
+
+
+@fase.route('/editar/<int:id>', methods=['POST'])
+def editar(id):
+    fase = Fase.query.get_or_404(id)
+
+    fase.id = request.form.get('idFase', fase.id)
+    fase.nombre = request.form.get('editFase', fase.nombre)
+    fase.fk_cultivo = request.form.get('editCultivo', fase.fk_cultivo)
+
+    db.session.commit()
+    flash('Fase editada exitosamente.', 'success')
+    return redirect(url_for('fase.fases'))
+
+
+@fase.route('/eliminar/<int:id>', methods=['POST'])
+def eliminar(id):
+    fase = Fase.query.get_or_404(id)
+    db.session.delete(fase)
+    db.session.commit()
+    flash('Fase eliminada exitosamente.', 'success')
+    return redirect(url_for('fase.fases'))
+
+
+@fase.route('/buscar/<int:id>', methods=['GET'])
+def buscar(id):
+    fase = Fase.query.get(id)
+    if not fase:
+        return jsonify({"error": "Fase no encontrado"}), 404
+    return jsonify({
+        "id": fase.id,
+        "nombre": fase.nombre,
+        "fk_cultivo": fase.fk_cultivo
+    })

@@ -85,7 +85,7 @@ def crear_parcela():
 def editar_parcela(id):
     parcela = Parcela.query.get_or_404(id)
 
-    # Actualizar los datos del parcela
+    # Actualizar los datos de la parcela
     parcela.nombre = request.form.get('editNombre', parcela.nombre)
     parcela.region = request.form.get('editRegiones', parcela.region)
     parcela.comuna = request.form.get('editComunas', parcela.comuna)
