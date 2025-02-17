@@ -1,5 +1,6 @@
-window.openEditCultivoModal = function(cultivoId, cultivoNombre) {
+window.openEditCultivoModal = function(cultivoId, cultivoNombre, cultivoVariedad) {
     document.getElementById("cultivo-id").value = cultivoId;
+
     fetch(`/client/cultivoCliente/fases?nombre=${encodeURIComponent(cultivoNombre)}`)
     .then(response => response.json())
     .then(data => {
@@ -18,11 +19,11 @@ window.openEditCultivoModal = function(cultivoId, cultivoNombre) {
 
 window.closeEditCultivoModal = function() {
     const modal = document.getElementById("editCultivoModal");
-    modal.classList.add("fade-out"); // Agregar animación de salida
+    modal.classList.add("fade-out");
     setTimeout(() => {
         modal.classList.add("hidden");
-        modal.classList.remove("fade-out"); // Resetear la animación
-    }, 300); // Tiempo de animación
+        modal.classList.remove("fade-out");
+    }, 300);
 };
 
 window.guardarCambioFase = function() {
@@ -51,8 +52,6 @@ window.guardarCambioFase = function() {
         } else {
             document.getElementById(`fase-${cultivoId}`).textContent = nuevaFase;
             mostrarFlashMessage("✅ Fase actualizada correctamente.", "success");
-
-            // Cerrar el modal inmediatamente
             closeEditCultivoModal();
         }
     })
@@ -60,7 +59,6 @@ window.guardarCambioFase = function() {
         mostrarFlashMessage("❌ Ocurrió un error. Inténtalo de nuevo.", "error");
     })
     .finally(() => {
-        // Habilitar botón después de la respuesta
         guardarBtn.disabled = false;
         guardarBtn.innerHTML = "Guardar";
     });

@@ -15,7 +15,7 @@
                 <th class="py-2 px-4 bg-gray-200 border text-center">Nombre</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Variedad</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Detalle</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Parcela</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Opciones</th>
             </tr>
         </thead>
@@ -25,10 +25,10 @@
                 <td class="border px-4 py-2 text-center">{{ cultivo.nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ cultivo.variedad }}</td>
                 <td class="border px-4 py-2 text-center" id="fase-{{ cultivo.id }}">{{ cultivo.fase }}</td>
-                <td class="border px-4 py-2 text-center">{{ cultivo.detalle }}</td>
+                <td class="border px-4 py-2 text-center">{{ cultivo.parcela }}</td>
                 <td class="border px-4 py-2 text-center">
                     <button class="btn-edit bg-blue-500 text-white p-2 rounded"
-                        onclick="openEditCultivoModal('{{ cultivo.id }}', '{{ cultivo.nombre }}')">
+                        onclick="openEditCultivoModal('{{ cultivo.id }}', '{{ cultivo.nombre }}', '{{ cultivo.variedad }}')">
                         ✏️
                     </button>
                 </td>

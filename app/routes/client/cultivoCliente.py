@@ -20,18 +20,17 @@ def listar_cultivos():
     registros = Registro.query.filter_by(fk_usuario=user_id).all()
     cultivos_data = []
     for registro in registros:
-        fase = Fase.query.get(registro.fk_fase)
-        dispositivo = Dispositivo.query.get(registro.fk_dispositivo) if registro.fk_dispositivo else None
+        dispositivo = registro.dispositivo.chipid if registro.dispositivo else "No asignado"
+        parcela = Parcela.query.filter_by(id=registro.fk_parcela).first()
 
-        if fase:
-            cultivos_data.append({
-                "id": registro.id,
-                "nombre": fase.cultivo,
-                "fase": fase.nombre,
-                "detalle": "Información adicional",
-                "parcela": registro.fk_parcela,
-                "dispositivo": dispositivo.chipid if dispositivo else "No asignado"
-            })
+        cultivos_data.append({
+            "id": registro.id,
+            "nombre": registro.cultivo_nombre,
+            "variedad": registro.cultivo_variedad,
+            "fase": registro.fase_nombre,
+            "parcela": parcela.nombre,
+            "dispositivo": dispositivo
+        })
 
     return render_template('sections/cliente/cultivoCliente.html', usuario=usuario, cultivos=cultivos_data)
 
