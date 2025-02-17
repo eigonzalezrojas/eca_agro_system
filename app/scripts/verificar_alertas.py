@@ -4,13 +4,13 @@ import sys
 import pandas as pd
 from datetime import datetime, timedelta
 from flask import Flask
-from sqlalchemy import text, inspect, func
+from sqlalchemy import func
 from dotenv import load_dotenv
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from app.extensions import db
-from app.models import Registro, Dispositivo, Alerta, DataP0, Usuario, Cultivo
+from app.models import Registro, Dispositivo, Alerta, DataP0, Usuario, Fase
 from app.services.email_service import alerta_temperatura_eca
 from app.config import config_by_name
 
@@ -59,8 +59,13 @@ def verificar_alertas_temperatura():
                     logger.warning(f"Dispositivo {registro.fk_dispositivo} no encontrado.")
                     continue
 
-                logger.info(
-                    f"Verificando dispositivo: {dispositivo.chipid} para cultivo {registro.fk_cultivo} en fase {registro.fk_cultivo_fase}")
+                # Obtener la fase real desde la tabla Fase
+                fase = session.query(Fase).filter(Fase.id == registro.fk_fase).first()
+                if not fase:
+                    logger.warning(f"No se encontró la fase ID {registro.fk_fase} para el registro {registro.id}.")
+                    continue
+
+                logger.info(f"Verificando dispositivo: {dispositivo.chipid} para cultivo {fase.cultivo} en fase {fase.nombre}")
 
                 # Obtener datos de temperatura del dispositivo en los últimos 15 minutos
                 temp_max = session.query(func.max(DataP0.temperatura)).filter(
@@ -78,15 +83,14 @@ def verificar_alertas_temperatura():
                     logger.warning(f"No hay registros recientes para chipid {dispositivo.chipid}.")
                     continue
 
-                # Buscar el cultivo y fase en la tabla de alertas
-                cultivo = session.get(Cultivo, registro.fk_cultivo)
+                # Buscar parámetros de alerta en el Excel
                 alertas_cultivo = alertas_df[
-                    (alertas_df['Cultivo'].str.strip().str.lower() == cultivo.nombre.strip().lower()) &
-                    (alertas_df['Fase'].str.strip().str.lower() == registro.fk_cultivo_fase.strip().lower())]
+                    (alertas_df['Cultivo'].str.strip().str.lower() == fase.cultivo.strip().lower()) &
+                    (alertas_df['Fase'].str.strip().str.lower() == fase.nombre.strip().lower())
+                ]
 
                 if alertas_cultivo.empty:
-                    logger.warning(
-                        f"No se encontraron parámetros de alerta para {cultivo.nombre} en fase {registro.fk_cultivo_fase}.")
+                    logger.warning(f"No se encontraron parámetros de alerta para {fase.cultivo} en fase {fase.nombre}.")
                     continue
 
                 logger.info(f"Parámetros de alerta encontrados: {alertas_cultivo}")
@@ -115,8 +119,7 @@ def verificar_alertas_temperatura():
                 # Enviar alerta por correo
                 usuario = session.get(Usuario, registro.fk_usuario)
                 if usuario and usuario.correo:
-                    alerta_temperatura_eca(usuario.correo, cultivo.nombre, registro.fk_cultivo_fase, temp_max,
-                                           mensaje_alerta)
+                    alerta_temperatura_eca(usuario.correo, fase.cultivo, fase.nombre, temp_max, mensaje_alerta)
                     logger.info(f"Correo enviado a: {usuario.correo}")
                 else:
                     logger.warning("No se pudo enviar el correo, usuario sin dirección de correo.")
@@ -125,8 +128,8 @@ def verificar_alertas_temperatura():
                 nueva_alerta = Alerta(
                     mensaje=mensaje_alerta,
                     fk_dispositivo=registro.fk_dispositivo,
-                    fk_cultivo=registro.fk_cultivo,
-                    fk_cultivo_fase=registro.fk_cultivo_fase,
+                    fk_fase=fase.id,
+                    cultivo_nombre=fase.cultivo,
                     nivel_alerta="Crítica"
                 )
                 session.add(nueva_alerta)

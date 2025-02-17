@@ -129,17 +129,19 @@ class HistorialClima(db.Model):
 class Alerta(db.Model):
     __tablename__ = 'alerta'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     mensaje = db.Column(db.String(255), nullable=False)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
+    cultivo_nombre = db.Column(db.String(50), nullable=False)  # 🔹 Nuevo campo para almacenar el cultivo
     fecha_alerta = db.Column(db.DateTime, default=db.func.current_timestamp())
     nivel_alerta = db.Column(db.String(50), nullable=True)
     leida = db.Column(db.Boolean, default=False)
 
     dispositivo = db.relationship('Dispositivo', backref=db.backref('alertas', lazy=True))
-    fase_cultivo = db.relationship('Fase', backref=db.backref('alertas', lazy=True))
+    fase = db.relationship('Fase', backref=db.backref('alertas', lazy=True))
 
     def __repr__(self):
-        return f'<Alerta {self.id}, FaseCultivo {self.fk_fase_cultivo}>'
+        return f'<Alerta {self.id}, Fase {self.fk_fase}, Cultivo {self.cultivo_nombre}>'
+
 

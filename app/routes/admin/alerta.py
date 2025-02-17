@@ -1,6 +1,6 @@
 from flask import Blueprint, session, jsonify, render_template, request, flash, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
-from app.models import Alerta, Usuario, Registro, Cultivo
+from app.models import Alerta, Usuario, Registro, Fase
 from app.extensions import db
 import os
 
@@ -15,25 +15,24 @@ def mostrar_alertas():
     if not user_id:
         return jsonify({"error": "Usuario no autenticado"}), 401
 
-    # Verificar si el usuario existe
     usuario = Usuario.query.filter_by(rut=user_id).first()
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    # Obtener todas las alerta con información relevante
+    # Obtener todas las alertas con información relevante
     alerta = (
         Alerta.query
         .join(Registro, Alerta.fk_dispositivo == Registro.fk_dispositivo)
         .join(Usuario, Registro.fk_usuario == Usuario.rut)
-        .join(Cultivo, Alerta.fk_cultivo == Cultivo.id)
+        .join(Fase, Alerta.fk_fase == Fase.id)
         .order_by(Alerta.fecha_alerta.desc())
         .add_columns(
             Alerta.id,
             Alerta.mensaje,
             Alerta.fecha_alerta,
             Alerta.nivel_alerta,
-            Cultivo.nombre.label("cultivo"),
-            Alerta.fk_cultivo_fase.label("fase"),
+            Fase.cultivo.label("cultivo"),
+            Fase.nombre.label("fase"),
             Usuario.rut.label("usuario_rut")
         )
         .all()
@@ -57,9 +56,18 @@ def mostrar_alertas():
                            usuario=usuario)
 
 
+
 @alertasAdmin.route('/editar/<int:id>', methods=['POST'])
 def editar(id):
     alerta = Alerta.query.get_or_404(id)
+
+    # Obtener nueva fase
+    nueva_fase_id = request.form.get('editFase', alerta.fk_fase)
+    fase = Fase.query.get(nueva_fase_id)
+
+    if fase:
+        alerta.fk_fase = fase.id
+        alerta.cultivo_nombre = fase.cultivo
 
     alerta.mensaje = request.form.get('editMensaje', alerta.mensaje)
 
@@ -68,22 +76,31 @@ def editar(id):
     return redirect(url_for('alertasAdmin.mostrar_alertas'))
 
 
+
 @alertasAdmin.route('/buscar/<id>', methods=['GET'])
 def buscar(id):
+    alerta = (
+        Alerta.query
+        .join(Fase, Alerta.fk_fase == Fase.id)
+        .filter(Alerta.id == id)
+        .add_columns(Alerta.id, Alerta.mensaje, Fase.cultivo.label("cultivo"), Fase.nombre.label("fase"))
+        .first()
+    )
 
-    alerta = Alerta.query.filter_by(id=id).first()
     if not alerta:
         return jsonify({"error": "Alerta no encontrada"}), 404
-    return {
+
+    return jsonify({
         "id": alerta.id,
-        "mensaje": alerta.mensaje
-    }
+        "mensaje": alerta.mensaje,
+        "cultivo": alerta.cultivo,
+        "fase": alerta.fase
+    })
+
 
 @alertasAdmin.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar(id):
-    alerta = Alerta.query.filter_by(id=id).first()
-    if not alerta:
-        return jsonify({"error": "Alerta no encontrada"}), 404
+    alerta = Alerta.query.get_or_404(id)
     db.session.delete(alerta)
     db.session.commit()
     flash('Alerta eliminada exitosamente', 'success')

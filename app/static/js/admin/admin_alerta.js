@@ -10,6 +10,11 @@ function openEditAlertaModal(id) {
         .then(data => {
             document.getElementById('idAlerta').value = data.id;
             document.getElementById('editMensaje').value = data.mensaje;
+
+            // Mostrar cultivo y fase en el modal (si necesitas editarlos en el futuro)
+            document.getElementById('editCultivo').textContent = data.cultivo;
+            document.getElementById('editFase').textContent = data.fase;
+
             document.getElementById('editAlertaForm').action = `/admin/alertasAdmin/editar/${id}`;
             document.getElementById('editAlertaModal').classList.remove('hidden');
         })
