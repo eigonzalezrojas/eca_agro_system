@@ -162,3 +162,71 @@ def enviar_correo_cambio_fase(destinatario=None, asunto=None, mensaje=None, cc_d
     except smtplib.SMTPException as e:
         print(f"Error al enviar la notificación de cambio de fase: {e}")
         return False
+
+
+def enviar_alerta_data(chipid, parcela, cliente, cultivo, ultima_fecha):
+    """
+    Envía una alerta cuando un dispositivo deja de enviar datos.
+    """
+
+    # Obtener configuración del correo desde variables de entorno
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+
+    # Destinatarios
+    #destinatario_principal = "ecainnovation@gmail.com"
+    destinatario_principal = "eithelgonzalezrojas@gmail.com"
+    #destinatario_cc = "eithelgonzalezrojas@gmail.com"
+
+    # Asunto del correo
+    asunto = f"⚠️ Alerta de Dispositivo {chipid} sin datos recientes"
+
+    # Mensaje del correo
+    mensaje = f"""
+    Estimado equipo de ECA Innovation,
+
+    🚨 Se ha detectado que el dispositivo con chip ID {chipid} ha dejado de enviar datos.
+
+    📌 Información relevante:
+    - 📍 Parcela: {parcela}
+    - 👤 Cliente: {cliente}
+    - 🌱 Cultivo: {cultivo}
+    - ⏳ Última transmisión registrada: {ultima_fecha.strftime("%Y-%m-%d %H:%M:%S")}
+
+    🛑 Se recomienda realizar una inspección en terreno para verificar posibles causas:
+    - Verificar batería del dispositivo
+    - Revisar la conexión a la red
+    - Evaluar posibles problemas ambientales que afecten la señal
+
+    🚀 Acción sugerida: Coordinar visita de revisión técnica para diagnóstico.
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    # Configurar el mensaje de correo
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario_principal
+    #msg['Cc'] = destinatario_cc
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    # Lista de destinatarios
+    #destinatarios = [destinatario_principal, destinatario_cc]
+    destinatarios = [destinatario_principal]
+    try:
+        # Conectar al servidor SMTP
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatarios, msg.as_string())
+        servidor.quit()
+
+        print(f"📩 Alerta de dispositivo sin datos enviada a {', '.join(destinatarios)}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"❌ Error al enviar la alerta de dispositivo sin datos: {e}")
+        return False

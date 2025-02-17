@@ -1,16 +1,5 @@
-from datetime import datetime, timezone
 from app.extensions import db
 import bcrypt
-
-
-class SensorData(db.Model):
-    __tablename__ = 'sensorData'
-    id = db.Column(db.Integer, primary_key=True)
-    chipid = db.Column(db.Integer, nullable=False)
-    fecha = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    temperatura = db.Column(db.Float, nullable=False)
-    humedad = db.Column(db.Float, nullable=False)
-    bateria = db.Column(db.Float, nullable=True)
 
 
 class Rol(db.Model):
