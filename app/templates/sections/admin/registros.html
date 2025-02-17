@@ -38,8 +38,8 @@
             {% for registro in registros %}
             <tr>
                 <td class="border px-4 py-2 text-center">{{ registro.dispositivo.chipid }}</td>
-                <td class="border px-4 py-2 text-center">{{ registro.cultivo.nombre }}</td>
-                <td class="border px-4 py-2 text-center">{{ registro.cultivo.fase }}</td>
+                <td class="border px-4 py-2 text-center">{{ registro.cultivo_nombre }}</td>
+                <td class="border px-4 py-2 text-center">{{ registro.fase_nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.parcela.nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.usuario.nombre }} {{ registro.usuario.apellido }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.fuente }}</td>
@@ -63,6 +63,7 @@
         </tbody>
     </table>
 
+
     <!-- Modal para crear Registro -->
     <div id="registroModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
@@ -73,36 +74,38 @@
                     <select name="usuario" id="usuario" class="w-full px-3 py-2 border rounded-lg" required onchange="cargarParcelas()">
                         <option value="">Seleccione un Cliente</option>
                         {% for usuario in usuarios %}
-                            {% if usuario.fk_rol == 2%}
-                            	<option value="{{ usuario.rut }}">{{ usuario.rut }} - {{ usuario.nombre }} {{ usuario.apellido }}</option>
+                            {% if usuario.fk_rol == 2 %}
+                                <option value="{{ usuario.rut }}">{{ usuario.rut }} - {{ usuario.nombre }} {{ usuario.apellido }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
                 </div>
+
                 <div class="mb-4">
                     <label for="parcela" class="block text-gray-700">Parcela</label>
                     <select name="parcela" id="parcela" class="w-full px-3 py-2 border rounded-lg" required>
                         <option value="">Seleccione una Parcela</option>
                     </select>
                 </div>
+
                 <div class="mb-4">
                     <label for="cultivo" class="block text-gray-700">Cultivo</label>
-                    <select name="cultivo" id="cultivo" class="w-full px-3 py-2 border rounded-lg" required>
+                    <select name="cultivo" id="cultivo" class="w-full px-3 py-2 border rounded-lg" required onchange="cargarFases()">
                         <option value="">Seleccione un Cultivo</option>
                         {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.id }}">{{ cultivo.nombre }} - {{ cultivo.variedad }}</option>
+                            <option value="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
+
+
                 <div class="mb-4">
-                    <label for="fase" class="block text-gray-700">Fase cultivo</label>
+                    <label for="fase" class="block text-gray-700">Fase del Cultivo</label>
                     <select name="fase" id="fase" class="w-full px-3 py-2 border rounded-lg" required>
-                        <option value="">Seleccione un Cultivo</option>
-                        {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.fase }}">{{ cultivo.fase }}</option>
-                        {% endfor %}
+                        <option value="">Seleccione una Fase</option>
                     </select>
                 </div>
+
                 <div class="mb-4">
                     <label for="dispositivo" class="block text-gray-700">Dispositivo</label>
                     <select name="dispositivo" id="dispositivo" class="w-full px-3 py-2 border rounded-lg" required>
@@ -112,6 +115,7 @@
                             {% endfor %}
                     </select>
                 </div>
+
                 <div class="mb-4">
                     <label for="fuente" class="block text-gray-700">Fuente de Datos</label>
                     <select id="fuente" name="fuente" class="w-full px-3 py-2 border rounded-lg" required>
@@ -121,6 +125,7 @@
                         {% endfor %}
                     </select>
                 </div>
+
                 <div class="flex justify-end">
                     <button type="button" id="closeRegistroModal" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">Cancelar</button>
                     <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg">Crear</button>
@@ -138,19 +143,11 @@
                 <input type="hidden" name="idRegistro" id="idRegistro">
                 <div class="mb-4">
                     <label for="editUsuario" class="block text-sm font-medium">Cliente</label>
-                    <select id="editUsuario" name="editUsuario" class="w-full border rounded px-3 py-2" required onchange="cargarParcelasEdit()">
+                    <select id="editUsuario" name="editUsuario" class="w-full border rounded px-3 py-2" required onchange="cargarParcelas()">
                         {% for usuario in usuarios %}
                             {% if usuario.fk_rol == 2 %}
                                 <option value="{{ usuario.rut }}">{{ usuario.rut }} - {{ usuario.nombre }} {{ usuario.apellido }}</option>
                             {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="editDispositivo" class="block text-sm font-medium">Dispositivo</label>
-                    <select id="editDispositivo" name="editDispositivo" class="w-full border rounded px-3 py-2" required>
-                        {% for dispositivo in dispositivos %}
-                            <option value="{{ dispositivo.id }}">{{ dispositivo.chipid }} - {{ dispositivo.modelo }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -160,19 +157,24 @@
                         <option value="">Seleccione una Parcela</option>
                     </select>
                 </div>
+                <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required onchange="cargarFasesEdit(this.options[this.selectedIndex].getAttribute('data-nombre'))">
+                    <option value="">Seleccione un Cultivo</option>
+                    {% for cultivo in cultivos %}
+                        <option value="{{ cultivo.nombre }}" data-nombre="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
+                    {% endfor %}
+                </select>
+
                 <div class="mb-4">
-                    <label for="editCultivo" class="block text-sm font-medium">Cultivo</label>
-                    <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required>
-                        {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.id }}">{{ cultivo.nombre }} - {{ cultivo.variedad }}</option>
-                        {% endfor %}
+                    <label for="editFase" class="block text-gray-700">Fase del Cultivo</label>
+                    <select name="editFase" id="editFase" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">Seleccione una Fase</option>
                     </select>
                 </div>
                 <div class="mb-4">
-                    <label for="editFase" class="block text-sm font-medium">Fase Cultivo</label>
-                    <select id="editFase" name="editFase" class="w-full border rounded px-3 py-2" required>
-                        {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.fase }}">{{ cultivo.fase }}</option>
+                    <label for="editDispositivo" class="block text-sm font-medium">Dispositivo</label>
+                    <select id="editDispositivo" name="editDispositivo" class="w-full border rounded px-3 py-2" required>
+                        {% for dispositivo in dispositivos %}
+                            <option value="{{ dispositivo.id }}">{{ dispositivo.chipid }} - {{ dispositivo.modelo }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -199,6 +201,7 @@
             <h2 class="text-xl font-bold mb-4">Eliminar Registro</h2>
             <p>¿Estás seguro de que deseas eliminar el Registro?</p>
             <form id="deleteRegistroForm" method="POST">
+                <input type="hidden" id="registroIdToDelete" name="registroIdToDelete">
                 <div class="flex justify-end mt-4">
                     <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" onclick="closeDeleteRegistroModal()">Cancelar</button>
                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>

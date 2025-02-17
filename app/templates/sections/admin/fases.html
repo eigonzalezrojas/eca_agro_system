@@ -61,7 +61,7 @@
                     <label for="cultivo" class="block text-sm font-medium">Cultivo</label>
                     <select id="cultivo" name="cultivo" class="w-full border rounded px-3 py-2" required>
                         {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.id }}">{{ cultivo.nombre }}</option>
+                            <option value="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -87,7 +87,7 @@
                     <label for="editCultivo" class="block text-sm font-medium">Cultivo</label>
                     <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required onchange="cargarFaseEdit()">
                         {% for cultivo in cultivos %}
-                            <option value="{{ cultivo.id }}">{{ cultivo.nombre }}</option>
+                            <option value="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>

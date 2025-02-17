@@ -24,6 +24,14 @@ function openEditFaseModal(id) {
         .then(data => {
             document.getElementById('idFase').value = data.id;
             document.getElementById('editFase').value = data.nombre;
+            document.getElementById('editCultivo').value = data.cultivo;
+            let select = document.getElementById('editCultivo');
+            for (let option of select.options) {
+                if (option.value === data.cultivo) {
+                    option.selected = true;
+                    break;
+                }
+            }
             document.getElementById('editFaseForm').action = `/admin/fase/editar/${id}`;
             document.getElementById('editFaseModal').classList.remove('hidden');
         })

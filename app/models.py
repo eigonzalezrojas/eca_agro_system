@@ -67,7 +67,7 @@ class Fase(db.Model):
     __tablename__ = 'fase'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(50), nullable=False)
-    fk_cultivo = db.Column(db.Integer, db.ForeignKey('cultivo.id'), nullable=False)
+    cultivo = db.Column(db.String(50), nullable=False)
 
 
 class Dispositivo(db.Model):
@@ -83,10 +83,12 @@ class Registro(db.Model):
     __tablename__ = 'registro'
 
     id = db.Column(db.Integer, primary_key=True)
-    fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
-    fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
-    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
     fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
+    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
+    fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
+    fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
+    cultivo_nombre = db.Column(db.String(50), nullable=False)
+    fase_nombre = db.Column(db.String(50), nullable=False)
     fuente = db.Column(db.String(50), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp())
 
