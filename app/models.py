@@ -88,6 +88,7 @@ class Registro(db.Model):
     fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     cultivo_nombre = db.Column(db.String(50), nullable=False)
+    cultivo_variedad = db.Column(db.String(50), nullable=False)
     fase_nombre = db.Column(db.String(50), nullable=False)
     fuente = db.Column(db.String(50), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -99,6 +100,7 @@ class Registro(db.Model):
 
     def __repr__(self):
         return f'<Registro {self.id}>'
+
 
 
 class DataP0(db.Model):

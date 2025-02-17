@@ -27,6 +27,7 @@ def registros():
     usuarios = Usuario.query.all()
     dispositivos = Dispositivo.query.all()
     cultivos = db.session.query(Cultivo.nombre).distinct().all()
+    variedades = Cultivo.query.all()
     fases = Fase.query.all()
 
     query = text("""
@@ -45,16 +46,16 @@ def registros():
                            usuarios=usuarios,
                            dispositivos=dispositivos,
                            cultivos=cultivos,
+                           variedades=variedades,
                            fases=fases,
                            fuente=fuente)
-
-
 
 
 @registro.route('/crear', methods=['POST'])
 def crear_registro():
     fk_usuario = request.form.get('usuario')
     fk_parcela = request.form.get('parcela')
+    variedad = request.form.get('variedad')
     fk_fase = request.form.get('fase')
     fk_dispositivo = request.form.get('dispositivo')
     fuente = request.form.get('fuente')
@@ -64,9 +65,13 @@ def crear_registro():
         flash("La fase seleccionada no existe.", "danger")
         return redirect(url_for('registro.registros'))
 
-    # Tomar el nombre del cultivo desde la fase seleccionada
-    cultivo_nombre = fase.cultivo
-    fase_nombre = fase.nombre
+    cultivo = Cultivo.query.filter_by(nombre=fase.cultivo).first()
+    if not cultivo:
+        flash("No se encontró el cultivo asociado a la fase.", "danger")
+        return redirect(url_for('registro.registros'))
+
+    cultivo_nombre = cultivo.nombre
+    cultivo_variedad = variedad if variedad else cultivo.variedad
 
     if not all([fk_usuario, fk_parcela, fk_fase, fk_dispositivo, fuente]):
         flash('Todos los campos son obligatorios', 'error')
@@ -78,7 +83,8 @@ def crear_registro():
         fk_fase=fk_fase,
         fk_dispositivo=fk_dispositivo,
         cultivo_nombre=cultivo_nombre,
-        fase_nombre=fase_nombre,
+        cultivo_variedad=cultivo_variedad,
+        fase_nombre=fase.nombre,
         fuente=fuente
     )
 
@@ -89,16 +95,15 @@ def crear_registro():
     return redirect(url_for('registro.registros'))
 
 
-
 @registro.route('/editar/<int:id>', methods=['POST'])
 def editar_registro(id):
     registro = Registro.query.get_or_404(id)
 
     fk_usuario = request.form.get('editUsuario')
     fk_parcela = request.form.get('editParcela')
-    fk_cultivo = request.form.get('editCultivo')
-    fk_fase = request.form.get('fase')
+    fk_fase = request.form.get('editFase')
     fk_dispositivo = request.form.get('editDispositivo')
+    cultivo_variedad = request.form.get('editVariedad')
     fuente = request.form.get('editFuente')
 
     fase = Fase.query.get(int(fk_fase))
@@ -106,12 +111,18 @@ def editar_registro(id):
         flash("La fase seleccionada no existe.", "danger")
         return redirect(url_for('registro.registros'))
 
-    # Actualizar valores desde la fase seleccionada
+    cultivo = Cultivo.query.filter_by(nombre=fase.cultivo).first()
+    if not cultivo:
+        flash("No se encontró el cultivo asociado a la fase.", "danger")
+        return redirect(url_for('registro.registros'))
+
+    # Actualizar valores correctamente
     registro.fk_usuario = fk_usuario
     registro.fk_parcela = fk_parcela
     registro.fk_fase = fk_fase
     registro.fk_dispositivo = fk_dispositivo
-    registro.cultivo_nombre = fase.cultivo
+    registro.cultivo_nombre = cultivo.nombre
+    registro.cultivo_variedad = cultivo_variedad
     registro.fase_nombre = fase.nombre
     registro.fuente = fuente
 
@@ -131,10 +142,10 @@ def obtener_registro(id):
         "fk_fase": registro.fk_fase,
         "fk_dispositivo": registro.fk_dispositivo,
         "cultivo_nombre": registro.cultivo_nombre,
+        "cultivo_variedad": registro.cultivo_variedad,
         "fase_nombre": registro.fase_nombre,
         "fuente": registro.fuente
     })
-
 
 
 @registro.route('/fase/por_cultivo', methods=['GET'])
@@ -144,11 +155,9 @@ def obtener_fases_por_cultivo():
     if not cultivo_nombre:
         return jsonify({"error": "Debe proporcionar un nombre de cultivo"}), 400
 
-    # Buscar todas las fases asociadas al nombre del cultivo
     fases = Fase.query.filter_by(cultivo=cultivo_nombre).all()
 
     return jsonify([{"id": fase.id, "nombre": fase.nombre} for fase in fases])
-
 
 
 @registro.route('/eliminar/<int:id>', methods=['POST'])
@@ -162,5 +171,3 @@ def eliminar_registro(id):
         db.session.rollback()
         flash(f'Error al eliminar el registro: {str(e)}', 'danger')
     return redirect(url_for('registro.registros'))
-
-

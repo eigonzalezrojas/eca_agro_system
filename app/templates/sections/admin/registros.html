@@ -26,6 +26,7 @@
             <tr>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Dispositivo</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
+                <th class="py-2 px-4 bg-gray-200 border text-center">Variedad</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Parcela</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Cliente</th>
@@ -39,6 +40,7 @@
             <tr>
                 <td class="border px-4 py-2 text-center">{{ registro.dispositivo.chipid }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.cultivo_nombre }}</td>
+                <td class="border px-4 py-2 text-center">{{ registro.cultivo_variedad }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.fase_nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.parcela.nombre }}</td>
                 <td class="border px-4 py-2 text-center">{{ registro.usuario.nombre }} {{ registro.usuario.apellido }}</td>
@@ -94,6 +96,16 @@
                         <option value="">Seleccione un Cultivo</option>
                         {% for cultivo in cultivos %}
                             <option value="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="variedad" class="block text-gray-700">Cultivo</label>
+                    <select name="variedad" id="variedad" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">Seleccione un Cultivo</option>
+                        {% for variedad in variedades %}
+                            <option value="{{ variedad.variedad }}">{{ variedad.variedad }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -157,15 +169,26 @@
                         <option value="">Seleccione una Parcela</option>
                     </select>
                 </div>
-                <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required onchange="cargarFasesEdit(this.options[this.selectedIndex].getAttribute('data-nombre'))">
-                    <option value="">Seleccione un Cultivo</option>
-                    {% for cultivo in cultivos %}
-                        <option value="{{ cultivo.nombre }}" data-nombre="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
-                    {% endfor %}
-                </select>
-
                 <div class="mb-4">
-                    <label for="editFase" class="block text-gray-700">Fase del Cultivo</label>
+                    <label for="editCultivo" class="block text-sm font-medium">Cultivo</label>
+                    <select id="editCultivo" name="editCultivo" class="w-full border rounded px-3 py-2" required onchange="cargarFasesEdit(this.options[this.selectedIndex].getAttribute('data-nombre'))">
+                        <option value="">Seleccione un Cultivo</option>
+                        {% for cultivo in cultivos %}
+                            <option value="{{ cultivo.nombre }}" data-nombre="{{ cultivo.nombre }}">{{ cultivo.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="editVariedad" class="block text-sm font-medium">Variedad</label>
+                    <select id="editVariedad" name="editVariedad" class="w-full border rounded px-3 py-2" required>
+                        <option value="">Seleccione un Variedad</option>
+                        {% for variedad in variedades %}
+                            <option value="{{ variedad.variedad }}">{{ variedad.variedad }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="editFase" class="block text-sm font-medium">Fase del cultivo</label>
                     <select name="editFase" id="editFase" class="w-full px-3 py-2 border rounded-lg" required>
                         <option value="">Seleccione una Fase</option>
                     </select>

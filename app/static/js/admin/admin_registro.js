@@ -29,6 +29,7 @@ function openEditRegistroModal(id) {
             document.getElementById('idRegistro').value = data.id;
             document.getElementById('editUsuario').value = data.fk_usuario;
             document.getElementById('editParcela').value = data.fk_parcela;
+            document.getElementById('editVariedad').value = data.cultivo_variedad;
             document.getElementById('editDispositivo').value = data.fk_dispositivo;
             document.getElementById('editFuente').value = data.fuente;
 

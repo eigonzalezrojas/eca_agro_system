@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, session, request, jsonify
-from app.models import Registro, Cultivo, Usuario, Dispositivo, Parcela
+from app.models import Registro, Fase, Usuario, Dispositivo, Parcela
 from app.extensions import db
 from app.services.email_service import enviar_correo_cambio_fase
 
 cultivoCliente = Blueprint('cultivoCliente', __name__)
+
 
 @cultivoCliente.route('/listar', methods=['GET'])
 def listar_cultivos():
@@ -19,15 +20,15 @@ def listar_cultivos():
     registros = Registro.query.filter_by(fk_usuario=user_id).all()
     cultivos_data = []
     for registro in registros:
-        cultivo = Cultivo.query.get(registro.fk_cultivo)
+        fase = Fase.query.get(registro.fk_fase)
         dispositivo = Dispositivo.query.get(registro.fk_dispositivo) if registro.fk_dispositivo else None
-        if cultivo:
+
+        if fase:
             cultivos_data.append({
-                "id": cultivo.id,
-                "nombre": cultivo.nombre,
-                "variedad": cultivo.variedad,
-                "fase": cultivo.fase,
-                "detalle": cultivo.detalle,
+                "id": registro.id,
+                "nombre": fase.cultivo,
+                "fase": fase.nombre,
+                "detalle": "Información adicional",
                 "parcela": registro.fk_parcela,
                 "dispositivo": dispositivo.chipid if dispositivo else "No asignado"
             })
@@ -43,48 +44,53 @@ def cambiar_fase_cultivo():
         return jsonify({"error": "Usuario no autenticado"}), 401
 
     data = request.get_json()
-    cultivo_id = data.get("cultivo_id")
-    nueva_fase = data.get("nueva_fase")
+    registro_id = data.get("cultivo_id")
+    nueva_fase_nombre = data.get("nueva_fase")
 
-    if not cultivo_id or not nueva_fase:
+    if not registro_id or not nueva_fase_nombre:
         return jsonify({"error": "Datos incompletos"}), 400
 
-    # Buscar el registro asociado al usuario y cultivo
-    registro = Registro.query.filter_by(fk_usuario=user_id, fk_cultivo=cultivo_id).first()
+    # Buscar el registro
+    registro = Registro.query.filter_by(id=registro_id, fk_usuario=user_id).first()
     if not registro:
         return jsonify({"error": "No tienes permisos para modificar este cultivo"}), 403
+
+    # Buscar la fase correspondiente a la nueva fase
+    nueva_fase = Fase.query.filter_by(nombre=nueva_fase_nombre, cultivo=registro.fase.cultivo).first()
+    if not nueva_fase:
+        return jsonify({"error": "Fase no encontrada"}), 404
+
+    # Actualizar la fase en la tabla REGISTRO
+    registro.fk_fase = nueva_fase.id
+    db.session.commit()
 
     # Obtener usuario y parcela
     usuario = Usuario.query.filter_by(rut=user_id).first()
     parcela = Parcela.query.get(registro.fk_parcela)
 
-    # Actualizar la fase en la tabla REGISTRO
-    registro.fk_cultivo_fase = nueva_fase
-    db.session.commit()
-
     # Enviar correo con la información corregida
     mensaje_alerta = f"""
     Estimado(a) Administrador(a):
-    
+
     🔄 Cambio de Fase en Cultivo
 
     Cliente: {usuario.nombre} {usuario.apellido} (RUT: {usuario.rut})
-    Cultivo: {registro.cultivo.nombre} - {registro.cultivo.variedad}
-    Nueva Fase: {nueva_fase}
+    Cultivo: {nueva_fase.cultivo} 
+    Nueva Fase: {nueva_fase_nombre}
 
     📍 Ubicación de la Parcela:
     - Dirección: {parcela.direccion if parcela else 'No disponible'}
     - Comuna: {parcela.comuna if parcela else 'No disponible'}
 
     ✅ Se ha registrado correctamente este cambio en el sistema.
-    
+
     Saludos,
     Equipo de ECA Innovation
     """
 
     enviar_correo_cambio_fase(
         "ecainnovation@gmail.com",
-        f"Cambio de Fase en {registro.cultivo.nombre}",
+        f"Cambio de Fase en {nueva_fase.cultivo}",
         mensaje_alerta,
         "eithelgonzalezrojas@gmail.com"
     )
@@ -96,11 +102,11 @@ def cambiar_fase_cultivo():
 def obtener_fases_cultivo():
     """Obtiene las fases disponibles para un tipo de cultivo."""
     nombre_cultivo = request.args.get("nombre")
-    print(nombre_cultivo)
     if not nombre_cultivo:
         return jsonify({"error": "Debe proporcionar el nombre del cultivo"}), 400
 
-    fases = Cultivo.query.with_entities(Cultivo.fase).filter_by(nombre=nombre_cultivo).distinct().all()
-    fases = [fase[0] for fase in fases]
+    # Buscar las fases de un cultivo desde la tabla Fase
+    fases = Fase.query.filter_by(cultivo=nombre_cultivo).all()
+    fases = [fase.nombre for fase in fases]
 
     return jsonify({"fases": fases})
