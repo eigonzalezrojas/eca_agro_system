@@ -90,24 +90,35 @@ function actualizarResumen(tempChart, humChart) {
     const mes = document.getElementById("mes").value;
     const anio = document.getElementById("anio").value;
 
+    //Validación
+    if (!chipid) {
+        console.warn("⚠️ No se ha seleccionado un dispositivo.");
+        return;
+    }
+
     let url = `/client/datos/resumen?chipid=${chipid}&periodo=${periodo}`;
-    if (periodo === "day") url += `&fecha=${fecha}`;
-    if (periodo === "month") url += `&mes=${mes}&anio=${anio}`;
-    if (periodo === "year") url += `&anio=${anio}`;
+
+    if (periodo === "day" && fecha) url += `&fecha=${fecha}`;
+    if (periodo === "month" && mes && anio) url += `&mes=${mes}&anio=${anio}`;
+    if (periodo === "year" && anio) url += `&anio=${anio}`;
+
 
     fetch(url)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Error al obtener datos.");
+            return response.json();
+        })
         .then(data => {
-            console.log("Datos recibidos:", data); // 🔍 Verificar la estructura en la consola
-            if (!Array.isArray(data)) {
-                console.error("Error: la respuesta del servidor no es un array.", data);
+            if (!Array.isArray(data) || data.length === 0) {
+                console.warn("⚠️ No hay datos para graficar.");
                 return;
             }
             actualizarTabla(data);
             actualizarGraficos(tempChart, humChart, data, periodo);
         })
-        .catch(error => console.error('Error al obtener datos:', error));
+        .catch(error => console.error('❌ Error en la solicitud:', error));
 }
+
 
 function actualizarTabla(data) {
     const tbody = document.getElementById("tabla-resumen");
@@ -137,8 +148,6 @@ function actualizarGraficos(tempChart, humChart, data, periodo) {
         console.warn("⚠️ No hay datos para graficar.");
         return;
     }
-
-    console.log("📊 Datos para el gráfico:", data);
 
     // Obtener los datos de temperatura y humedad
     let labels = data.map(d => d.periodo);

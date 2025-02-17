@@ -17,7 +17,7 @@ function cargarAlertas() {
         const tbody = document.getElementById("alertas-table-body");
         tbody.innerHTML = "";
 
-        data.alertas.forEach(alerta => {
+        data.forEach(alerta => {
             const row = document.createElement("tr");
 
             row.innerHTML = `

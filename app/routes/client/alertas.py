@@ -15,22 +15,32 @@ def listar_alertas():
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    # Obtener registros del usuario autenticado
+    # Obtener todos los dispositivos del usuario desde `Registro`
     registros = Registro.query.filter_by(fk_usuario=user_id).all()
-    alertas_data = []
+    dispositivos_usuario = [registro.fk_dispositivo for registro in registros]
 
-    for registro in registros:
-        alertas = Alerta.query.filter_by(fk_dispositivo=registro.fk_dispositivo).order_by(Alerta.fecha_alerta.desc()).all()
-        for alerta in alertas:
-            cultivo = Cultivo.query.get(alerta.fk_cultivo)
-            alertas_data.append({
-                "id": alerta.id,
-                "cultivo": cultivo.nombre if cultivo else "Desconocido",
-                "fase": alerta.fk_cultivo_fase,
-                "fecha": alerta.fecha_alerta.strftime("%d-%m-%Y %H:%M"),
-                "mensaje": alerta.mensaje,
-                "nivel": alerta.nivel_alerta
-            })
+    if not dispositivos_usuario:
+        return render_template('sections/cliente/alertas.html', usuario=usuario, alertas=[])
+
+    # Obtener alertas asociadas a los dispositivos del usuario
+    alertas = (
+        Alerta.query
+        .filter(Alerta.fk_dispositivo.in_(dispositivos_usuario))
+        .order_by(Alerta.fecha_alerta.desc())
+        .all()
+    )
+
+    alertas_data = [
+        {
+            "id": alerta.id,
+            "cultivo": alerta.cultivo_nombre,
+            "fase": alerta.fase.nombre if alerta.fase else "Desconocida",
+            "fecha": alerta.fecha_alerta.strftime("%d-%m-%Y %H:%M"),
+            "mensaje": alerta.mensaje,
+            "nivel": alerta.nivel_alerta
+        }
+        for alerta in alertas
+    ]
 
     return render_template('sections/cliente/alertas.html', usuario=usuario, alertas=alertas_data)
 
