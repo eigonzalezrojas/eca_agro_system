@@ -176,9 +176,8 @@ def enviar_alerta_data(chipid, parcela, cliente, cultivo, ultima_fecha):
     port = int(os.getenv('EMAIL_PORT'))
 
     # Destinatarios
-    #destinatario_principal = "ecainnovation@gmail.com"
-    destinatario_principal = "eithelgonzalezrojas@gmail.com"
-    #destinatario_cc = "eithelgonzalezrojas@gmail.com"
+    destinatario_principal = "correo1@gmail.com"
+    destinatario_cc = "correo2@gmail.com"
 
     # Asunto del correo
     asunto = f"⚠️ Alerta de Dispositivo {chipid} sin datos recientes"
@@ -210,13 +209,13 @@ def enviar_alerta_data(chipid, parcela, cliente, cultivo, ultima_fecha):
     msg = MIMEMultipart()
     msg['From'] = remitente
     msg['To'] = destinatario_principal
-    #msg['Cc'] = destinatario_cc
+    msg['Cc'] = destinatario_cc
     msg['Subject'] = asunto
     msg.attach(MIMEText(mensaje, 'plain'))
 
     # Lista de destinatarios
-    #destinatarios = [destinatario_principal, destinatario_cc]
-    destinatarios = [destinatario_principal]
+    destinatarios = [destinatario_principal, destinatario_cc]
+
     try:
         # Conectar al servidor SMTP
         servidor = smtplib.SMTP(host, port)

@@ -43,6 +43,12 @@ def login():
 @auth.route('/logout')
 def logout():
     """ Cierra la sesión del usuario """
-    session.clear()
+    session.pop('user_id', None)
+    session.pop('user_role', None)
+
+    # Eliminar cookie de sesión
+    response = redirect("https://ecainnovation.cl/sistema")
+    response.set_cookie('session', '', expires=0)
+
     flash("Has cerrado sesión exitosamente.", "success")
-    return redirect(url_for('auth.login'))
+    return response
