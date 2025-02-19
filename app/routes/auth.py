@@ -1,6 +1,10 @@
 from flask import Blueprint, request, flash, redirect, url_for, session, render_template, jsonify
+from app.services.email_service import enviar_recuperar_clave
 from app.models import Usuario
+from app.extensions import db
 import bcrypt
+import random
+import string
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -84,3 +88,49 @@ def change_password():
     session.pop('user_role', None)
 
     return jsonify({"success": True})
+
+
+@auth.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    """Página para solicitar recuperación de contraseña"""
+    if request.method == 'GET':
+        return render_template('auth/forgot_password.html')
+
+    # Obtener el RUT desde el formulario
+    rut = request.form.get('rut')
+    if not rut:
+        flash('⚠️ El campo RUT es obligatorio.', 'danger')
+        return redirect(url_for('auth.forgot_password'))
+
+    # Buscar usuario por RUT
+    usuario = Usuario.query.filter_by(rut=rut).first()
+    if not usuario:
+        flash('❗ No existe un usuario registrado con ese RUT.', 'danger')
+        return redirect(url_for('auth.forgot_password'))
+
+    # Generar contraseña temporal
+    password_temporal = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    usuario.set_password(password_temporal)  # Actualizar la contraseña con bcrypt
+
+    db.session.commit()
+
+    # Enviar el correo con la contraseña temporal
+    correo = usuario.correo
+    asunto = "🔑 Recuperación de Contraseña - ECA Innovation"
+    mensaje = f"""
+    Estimado(a) {usuario.nombre} {usuario.apellido},
+
+    Se ha solicitado la recuperación de contraseña para su cuenta asociada al RUT {usuario.rut}.
+
+    🔒 Su nueva contraseña temporal es: {password_temporal}
+
+    Por motivos de seguridad, le recomendamos cambiar esta contraseña temporal una vez haya iniciado sesión.
+
+    Saludos cordiales,  
+    Equipo de ECA Innovation
+    """
+    enviar_recuperar_clave(correo, asunto, mensaje)
+
+    flash('✅ Se ha enviado una contraseña temporal al correo registrado.', 'success')
+    return redirect(url_for('auth.login'))
+

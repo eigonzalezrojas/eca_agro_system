@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from app.extensions import db
 import bcrypt
 
@@ -30,6 +31,7 @@ class Usuario(db.Model):
     def check_password(self, password):
         """Verifica la contraseña usando bcrypt."""
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+
 
 
 class Parcela(db.Model):

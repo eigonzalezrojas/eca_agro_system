@@ -229,3 +229,29 @@ def enviar_alerta_data(chipid, parcela, cliente, cultivo, ultima_fecha):
     except smtplib.SMTPException as e:
         print(f"❌ Error al enviar la alerta de dispositivo sin datos: {e}")
         return False
+
+
+def enviar_recuperar_clave(destinatario, asunto, mensaje):
+    """Envía un correo utilizando SMTP y variables de entorno."""
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatario, msg.as_string())
+        servidor.quit()
+        print(f"✅ Correo enviado a {destinatario}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"❌ Error al enviar el correo: {e}")
+        return False
