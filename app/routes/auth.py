@@ -1,4 +1,4 @@
-from flask import Blueprint, request, flash, redirect, url_for, session, render_template
+from flask import Blueprint, request, flash, redirect, url_for, session, render_template, jsonify
 from app.models import Usuario
 import bcrypt
 
@@ -48,3 +48,35 @@ def logout():
 
     flash("Has cerrado sesión exitosamente.", "success")
     return redirect(url_for('auth.login'))
+
+
+@auth.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    """Página para cambiar la contraseña"""
+    if request.method == 'GET':
+        return render_template('auth/change_password.html')
+
+    # Procesar el formulario
+    data = request.get_json()
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
+
+    usuario = Usuario.query.filter_by(rut=user_id).first()
+
+    if not usuario or not bcrypt.checkpw(old_password.encode('utf-8'), usuario.password_hash.encode('utf-8')):
+        return jsonify({"success": False, "error": "Contraseña actual incorrecta"})
+
+    # Actualizar la contraseña
+    usuario.set_password(new_password)
+    from app.extensions import db
+    db.session.commit()
+
+    # Cerrar la sesión después del cambio
+    session.pop('user_id', None)
+    session.pop('user_role', None)
+
+    return jsonify({"success": True})
