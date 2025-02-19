@@ -42,12 +42,16 @@ def login():
 
 @auth.route('/logout')
 def logout():
-    """ Cierra la sesión del usuario """
     session.pop('user_id', None)
     session.pop('user_role', None)
 
-    flash("Has cerrado sesión exitosamente.", "success")
-    return redirect(url_for('auth.login'))
+    # Elimina la cookie de sesión
+    response = redirect(url_for('auth.login'))
+    response.set_cookie('session', '', expires=0)
+
+    flash('¡Has cerrado sesión exitosamente!', 'success')
+
+    return response
 
 
 @auth.route('/change_password', methods=['GET', 'POST'])
