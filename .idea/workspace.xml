@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="" />
+    <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/admin/admin_alerta.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_alerta.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/js/admin/admin_usuario.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/admin/admin_usuario.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -167,7 +173,8 @@
       <workItem from="1739746826547" duration="6573000" />
       <workItem from="1739788108859" duration="13368000" />
       <workItem from="1739806511721" duration="53000" />
-      <workItem from="1739809491029" duration="25842000" />
+      <workItem from="1739809491029" duration="25995000" />
+      <workItem from="1739893296132" duration="2039000" />
     </task>
     <servers />
   </component>
@@ -186,6 +193,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739836940437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1739894287100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

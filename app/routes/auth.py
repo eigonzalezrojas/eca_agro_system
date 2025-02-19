@@ -46,9 +46,5 @@ def logout():
     session.pop('user_id', None)
     session.pop('user_role', None)
 
-    # Eliminar cookie de sesión
-    response = redirect("https://ecainnovation.cl/sistema")
-    response.set_cookie('session', '', expires=0)
-
     flash("Has cerrado sesión exitosamente.", "success")
-    return response
+    return redirect(url_for('auth.login'))

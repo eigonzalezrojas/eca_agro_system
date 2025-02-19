@@ -22,13 +22,14 @@ function openEditModal(rut) {
             return response.json();
         })
         .then(data => {
+            console.log(data)
             document.getElementById('editRut').value = data.rut;
             document.getElementById('editNombre').value = data.nombre;
             document.getElementById('editApellido').value = data.apellido;
             document.getElementById('editFono').value = data.fono;
             document.getElementById('editCorreo').value = data.correo;
             document.getElementById('editRol').value = data.fk_rol;
-            document.getElementById('editUserForm').action = `/admin/usuarios/editar/${rut}`;
+            document.getElementById('editUserForm').action = `/admin/usuario/editar/${rut}`;
             document.getElementById('editUsuarioModal').classList.remove('hidden');
         })
         .catch(error => console.error('Error al obtener los datos del usuario:', error));

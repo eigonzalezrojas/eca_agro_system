@@ -8,18 +8,30 @@ function openEditAlertaModal(id) {
             return response.json();
         })
         .then(data => {
-            document.getElementById('idAlerta').value = data.id;
-            document.getElementById('editMensaje').value = data.mensaje;
+            const idAlerta = document.getElementById('idAlerta');
+            const editMensaje = document.getElementById('editMensaje');
+            const editCultivo = document.getElementById('editCultivo');
+            const editFase = document.getElementById('editFase');
+            const editAlertaForm = document.getElementById('editAlertaForm');
+            const editAlertaModal = document.getElementById('editAlertaModal');
 
-            // Mostrar cultivo y fase en el modal (si necesitas editarlos en el futuro)
-            document.getElementById('editCultivo').textContent = data.cultivo;
-            document.getElementById('editFase').textContent = data.fase;
+            if (!idAlerta || !editMensaje || !editAlertaForm || !editAlertaModal) {
+                console.error("Uno o más elementos del modal no se encontraron en el DOM.");
+                return;
+            }
 
-            document.getElementById('editAlertaForm').action = `/admin/alertasAdmin/editar/${id}`;
-            document.getElementById('editAlertaModal').classList.remove('hidden');
+            idAlerta.value = data.id;
+            editMensaje.value = data.mensaje;
+
+            if (editCultivo) editCultivo.textContent = data.cultivo;
+            if (editFase) editFase.textContent = data.fase;
+
+            editAlertaForm.action = `/admin/alertasAdmin/editar/${id}`;
+            editAlertaModal.classList.remove('hidden');
         })
         .catch(error => console.error('Error al obtener los datos de alerta:', error));
 }
+
 
 // Función para cerrar el modal
 function closeEditAlertaModal() {
