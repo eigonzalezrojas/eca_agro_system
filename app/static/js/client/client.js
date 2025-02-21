@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-    // ✅ Menú lateral
+    // Menú lateral
     const sidebarToggle = document.getElementById("sidebarToggle");
     const sidebar = document.getElementById("sidebar");
 
@@ -10,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Menú de usuario
+    // Menú de usuario
     const userMenuButton = document.getElementById("userMenuButton");
     const userMenu = document.getElementById("userMenu");
 
@@ -20,82 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
             userMenu.classList.toggle("hidden");
         });
 
-        // Cerrar el menú si se hace clic fuera
         document.addEventListener("click", function (event) {
-            if (!userMenu.contains(event.target) && event.target !== userMenuButton) {
+            if (!userMenu.contains(event.target) && !userMenuButton.contains(event.target)) {
                 userMenu.classList.add("hidden");
             }
         });
     }
-
-    // ✅ Modal Cambiar Contraseña
-    const changePasswordModal = document.getElementById("changePasswordModal");
-    const openChangePasswordModalButton = document.getElementById("openChangePasswordModal");
-    const closeChangePasswordModalButton = document.getElementById("closeChangePasswordModal");
-    const changePasswordForm = document.getElementById("changePasswordForm");
-
-    // Solo abre el modal cuando se hace clic en el botón
-    if (openChangePasswordModalButton && changePasswordModal) {
-        openChangePasswordModalButton.addEventListener("click", function (event) {
-            event.preventDefault(); // Evita que el enlace recargue la página
-            changePasswordModal.classList.remove("hidden");
-            if (userMenu) userMenu.classList.add("hidden"); // Oculta el menú de usuario
-        });
-    }
-
-    // Cierra el modal cuando se hace clic en el botón de cerrar
-    if (closeChangePasswordModalButton && changePasswordModal) {
-        closeChangePasswordModalButton.addEventListener("click", function () {
-            changePasswordModal.classList.add("hidden");
-        });
-
-        // Cierra el modal si se hace clic fuera del contenido
-        changePasswordModal.addEventListener("click", function (event) {
-            if (event.target === changePasswordModal) {
-                changePasswordModal.classList.add("hidden");
-            }
-        });
-    }
-
-    // Evita que el modal se abra automáticamente al cargar la página
-    if (changePasswordModal && !openChangePasswordModalButton) {
-        changePasswordModal.classList.add("hidden");
-    }
-
-    // ✅ Envío del formulario para cambiar la contraseña
-    if (changePasswordForm) {
-        changePasswordForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const oldPassword = document.getElementById("old_password").value.trim();
-            const newPassword = document.getElementById("new_password").value.trim();
-            const confirmPassword = document.getElementById("confirm_password").value.trim();
-
-            if (newPassword !== confirmPassword) {
-                alert("❗ Las contraseñas no coinciden");
-                return;
-            }
-
-            fetch("/auth/change_password", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("✅ Contraseña cambiada con éxito. Redirigiendo al login...");
-                    window.location.href = "/auth/logout";
-                } else {
-                    alert(data.error || "⚠️ Ocurrió un error");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
-        });
-    }
-
 
     // Notificaciones
     const notificacionesButton = document.getElementById("notificacionesButton");
@@ -103,7 +32,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const notificacionesLista = document.getElementById("notificacionesLista");
     const notificacionesBadge = document.getElementById("notificacionesBadge");
 
-    function cargarNotificaciones() {
+    // Cargar notificaciones al iniciar
+    cargarNotificaciones();
+    setInterval(cargarNotificaciones, 30000);
+
+    if (notificacionesButton) {
+        notificacionesButton.addEventListener("click", function () {
+            notificacionesMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!notificacionesButton.contains(event.target) && !notificacionesMenu.contains(event.target)) {
+                notificacionesMenu.classList.add("hidden");
+            }
+        });
+    }
+});
+
+function cargarNotificaciones() {
         fetch("/client/alertasCliente/notificaciones")
             .then(response => response.json())
             .then(data => {
@@ -155,20 +101,18 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error al cargar notificaciones:", error));
     }
 
-    // Cargar notificaciones al iniciar
-    cargarNotificaciones();
-    setInterval(cargarNotificaciones, 30000);
-
-    if (notificacionesButton) {
-        notificacionesButton.addEventListener("click", function () {
-            notificacionesMenu.classList.toggle("hidden");
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!notificacionesButton.contains(event.target) && !notificacionesMenu.contains(event.target)) {
-                notificacionesMenu.classList.add("hidden");
+    function marcarTodasComoLeidas() {
+    fetch("/client/alertasCliente/marcar_todas_leidas", { method: "POST" })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Actualizar el contador de notificaciones
+                const notificacionesBadge = document.getElementById("notificacionesBadge");
+                if (notificacionesBadge) {
+                    notificacionesBadge.classList.add("hidden");
+                    notificacionesBadge.textContent = "0";
+                }
             }
-        });
+        })
+        .catch(error => console.error("Error al marcar todas como leídas:", error));
     }
-
-});

@@ -23,8 +23,6 @@ def obtener_datos():
         return jsonify({"error": "No se encontró el dispositivo asociado"}), 404
 
     chipid = dispositivo.chipid
-
-
     ultima_medicion = DataP0.query.filter_by(chipid=chipid).order_by(DataP0.fecha.desc()).first()
 
     if not ultima_medicion:
@@ -35,6 +33,10 @@ def obtener_datos():
 
     # Buscar si ya hay un registro en HistorialClima
     historial = HistorialClima.query.filter_by(rut=user_id, chipid=chipid, fecha=fecha_ayer).first()
+
+    # btener el GDA acumulado del día anterior
+    historial_anterior = HistorialClima.query.filter_by(rut=user_id, chipid=chipid, fecha=fecha_ayer - timedelta(days=1)).first()
+    gda_acumulado_anterior = historial_anterior.gda if historial_anterior else 0
 
     if not historial:
         # Calcular Temp Max y Temp Min del día anterior
@@ -59,8 +61,9 @@ def obtener_datos():
             DataP0.temperatura <= 7.2
         ).count()
 
-        # Calcular GDA si Temp Max y Temp Min existen
-        gda = max(((temp_max + temp_min) / 2) - 10, 0) if temp_max and temp_min else 0
+        #Calcular GDA: sumar el GDA diario al acumulado del día anterior
+        gda_diario = max(((temp_max + temp_min) / 2) - 10, 0) if temp_max and temp_min else 0
+        gda = gda_acumulado_anterior + gda_diario  # Suma al acumulado
 
         # Guardar en HistorialClima
         if temp_max and temp_min:
@@ -88,6 +91,7 @@ def obtener_datos():
         "horas_frio": horas_frio if horas_frio is not None else "--",
         "gda": round(gda, 2) if isinstance(gda, (int, float)) else "--"
     })
+
 
 
 @datos.route('/resumen', methods=['GET'])

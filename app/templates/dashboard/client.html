@@ -39,8 +39,8 @@
                     <ul id="notificacionesLista" class="divide-y divide-gray-200">
                         <li class="p-3 text-center text-gray-500">No hay nuevas notificaciones</li>
                     </ul>
-                    <div class="p-3 text-center border-t">
-                        <a href="{{ url_for('alertasCliente.listar_alertas') }}" class="text-blue-500 hover:underline">Ver todas las alertas</a>
+                    <div class="p-3 text-center border-t flex justify-between items-center">
+                        <a href="{{ url_for('alertasCliente.listar_alertas') }}" class="text-blue-500 hover:underline" onclick="marcarTodasComoLeidas()">Ver todas las alertas</a>
                     </div>
                 </div>
             </div>

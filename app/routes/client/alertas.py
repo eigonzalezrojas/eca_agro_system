@@ -6,7 +6,7 @@ alertasCliente = Blueprint('alertasCliente', __name__)
 
 @alertasCliente.route('/listar', methods=['GET'])
 def listar_alertas():
-    """Obtiene las alertas asociadas al usuario autenticado."""
+    """Obtiene las alertas asociadas al usuario autenticado y las marca como leídas."""
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({"error": "Usuario no autenticado"}), 401
@@ -30,6 +30,12 @@ def listar_alertas():
         .all()
     )
 
+    # Marcar todas las alertas como leídas
+    from app.extensions import db
+    for alerta in alertas:
+        alerta.leida = True
+    db.session.commit()
+
     alertas_data = [
         {
             "id": alerta.id,
@@ -43,6 +49,7 @@ def listar_alertas():
     ]
 
     return render_template('sections/cliente/alertas.html', usuario=usuario, alertas=alertas_data)
+
 
 
 @alertasCliente.route('/notificaciones', methods=['GET'])
@@ -83,6 +90,28 @@ def obtener_notificaciones():
     return jsonify(alertas_notificaciones)
 
 
+@alertasCliente.route('/marcar_todas_leidas', methods=['POST'])
+def marcar_todas_leidas():
+    """Marca todas las alertas como leídas para el usuario autenticado."""
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "Usuario no autenticado"}), 401
+
+    try:
+        from app.extensions import db
+        registros = Registro.query.filter_by(fk_usuario=user_id).all()
+        dispositivos_usuario = [registro.fk_dispositivo for registro in registros]
+
+        # Marcar como leídas
+        Alerta.query.filter(Alerta.fk_dispositivo.in_(dispositivos_usuario)).update({"leida": True})
+        db.session.commit()
+
+        return jsonify({"success": True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @alertasCliente.route('/marcar_leida/<int:id>', methods=['POST'])
 def marcar_alerta_leida(id):
     """Marca una alerta como leída para que no aparezca en notificaciones."""
@@ -101,4 +130,3 @@ def marcar_alerta_leida(id):
     db.session.commit()
 
     return jsonify({"success": True, "message": "Alerta marcada como leída"})
-
