@@ -159,4 +159,3 @@ def obtener_resumen():
         })
 
     return jsonify(datos)
-
