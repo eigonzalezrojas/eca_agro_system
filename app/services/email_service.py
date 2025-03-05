@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+
 def enviar_correo_bienvenida(destinatario, nombre, apellido, rut, password_provisoria):
     # Obtener configuración desde las variables de entorno
     remitente = os.getenv('EMAIL_USER')
@@ -21,7 +22,11 @@ def enviar_correo_bienvenida(destinatario, nombre, apellido, rut, password_provi
     - Usuario: {rut}
     - Contraseña provisoria: {password_provisoria}
 
-    Por favor, inicia sesión en el sistema y cambia tu contraseña en la opción "Perfil" para mayor seguridad.
+    Por favor, inicia sesión en el sistema mediante la url
+
+    https://ecainnovation.cl/sistema/
+
+    Cambia tu contraseña en la opción "Perfil" para mayor seguridad.
 
     Si tienes alguna duda o consulta, no dudes en escribirnos a: ecainnovation@gmail.com.
 
@@ -177,47 +182,6 @@ def alerta_temperatura_admin(chipid, temperatura, mensaje_alerta):
         return False
 
 
-def alerta_temperatura_eca(destinatario, cultivo, fase, temperatura, mensaje_alerta):
-    remitente = os.getenv('EMAIL_USER')
-    password = os.getenv('EMAIL_PASSWORD')
-    host = os.getenv('EMAIL_HOST')
-    port = int(os.getenv('EMAIL_PORT'))
-
-    asunto = f"🌡️ Alerta de Temperatura - {cultivo} ({fase})"
-    mensaje = f"""
-    ⚠️ Se ha detectado una anomalía en la temperatura para el cultivo {cultivo} en la fase {fase}.
-
-    📌 Temperatura actual: {temperatura}°C
-    🚨 {mensaje_alerta}
-
-    Por favor, revisa las condiciones del cultivo y toma medidas si es necesario.
-
-    Saludos,
-    Equipo de ECA Innovation
-    """
-
-    # Lista de destinatarios
-    destinatarios = [destinatario, "ecainnovation@gmail.com"]
-
-    msg = MIMEMultipart()
-    msg['From'] = remitente
-    msg['To'] = ", ".join(destinatarios)
-    msg['Subject'] = asunto
-    msg.attach(MIMEText(mensaje, 'plain'))
-
-    try:
-        servidor = smtplib.SMTP(host, port)
-        servidor.starttls()
-        servidor.login(remitente, password)
-        servidor.send_message(msg)
-        servidor.quit()
-        print(f"📩 Alerta de temperatura enviada a {', '.join(destinatarios)}")
-        return True
-    except smtplib.SMTPException as e:
-        print(f"Error al enviar la alerta de temperatura: {e}")
-        return False
-
-
 def alerta_humedad_cliente(destinatario, cultivo, fase, humedad_min, humedad_max, mensaje_alerta):
     """
     Envía una alerta de humedad al cliente asociado a un cultivo y fase.
@@ -257,52 +221,6 @@ def alerta_humedad_cliente(destinatario, cultivo, fase, humedad_min, humedad_max
         return True
     except smtplib.SMTPException as e:
         print(f"❌ Error al enviar la alerta de humedad al cliente: {e}")
-        return False
-
-
-def alerta_humedad_admin(chipid, humedad_min, humedad_max, mensaje_alerta):
-    """
-    Envía una única alerta de humedad al administrador por dispositivo (chipid).
-    """
-    remitente = os.getenv('EMAIL_USER')
-    password = os.getenv('EMAIL_PASSWORD')
-    host = os.getenv('EMAIL_HOST')
-    port = int(os.getenv('EMAIL_PORT'))
-    email_admin = os.getenv('EMAIL_ADMIN')
-
-    if not email_admin:
-        print("❌ ERROR: No se ha definido el EMAIL_ADMIN en el archivo .env")
-        return False
-
-    asunto = f"💧 Alerta de Humedad - Dispositivo {chipid}"
-    mensaje = f"""
-    🚨 Se ha detectado una anomalía de humedad en el dispositivo {chipid}.
-
-    📌 Humedades registradas: Min {humedad_min}% / Max {humedad_max}%
-    🛑 {mensaje_alerta}
-
-    🔍 Se recomienda revisar las condiciones del equipo y la zona de monitoreo.
-
-    Saludos,
-    Equipo de ECA Innovation
-    """
-
-    msg = MIMEMultipart()
-    msg['From'] = remitente
-    msg['To'] = email_admin
-    msg['Subject'] = asunto
-    msg.attach(MIMEText(mensaje, 'plain'))
-
-    try:
-        servidor = smtplib.SMTP(host, port)
-        servidor.starttls()
-        servidor.login(remitente, password)
-        servidor.sendmail(remitente, email_admin, msg.as_string())
-        servidor.quit()
-        print(f"📩 Alerta de humedad enviada a {email_admin} para el dispositivo {chipid}")
-        return True
-    except smtplib.SMTPException as e:
-        print(f"❌ Error al enviar la alerta de humedad al administrador: {e}")
         return False
 
 
