@@ -71,11 +71,11 @@ def calcular_hf_gda():
                     DataP0.temperatura <= 7.2
                 ).count()
 
-                # Obtener GDA acumulado del día anterior
+                # Obtener el último GDA acumulado registrado para este chipid
                 historial_anterior = session.query(HistorialClima).filter(
-                    HistorialClima.chipid == chipid,
-                    HistorialClima.fecha == fecha_ayer - timedelta(days=1)
-                ).first()
+                    HistorialClima.chipid == chipid
+                ).order_by(HistorialClima.fecha.desc()).first()
+
                 gda_acumulado_anterior = historial_anterior.gda if historial_anterior else 0
 
                 # Calcular GDA diario

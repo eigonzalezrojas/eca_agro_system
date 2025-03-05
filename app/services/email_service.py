@@ -325,6 +325,104 @@ def enviar_alerta_data(chipid, parcela, cliente, cultivo, ultima_fecha):
         return False
 
 
+def enviar_alerta_cliente(destinatario, chipid, parcela, cultivo, ultima_fecha):
+    """
+    Envía una alerta a un cliente cuando un dispositivo deja de enviar datos.
+    """
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+
+    asunto = f"⚠️ Alerta: Dispositivo {chipid} sin datos recientes"
+    mensaje = f"""
+    Estimado usuario,
+
+    🚨 El dispositivo con Chip ID **{chipid}** ha dejado de enviar datos.
+
+    📌 Información:
+    - 📍 Parcela: {parcela}
+    - 🌱 Cultivo: {cultivo}
+    - ⏳ Última transmisión registrada: {ultima_fecha.strftime("%Y-%m-%d %H:%M:%S")}
+
+    🛑 Se recomienda verificar:
+    - Batería del dispositivo
+    - Conexión de red
+    - Posibles interferencias
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatario, msg.as_string())
+        servidor.quit()
+        print(f"📩 Alerta enviada a {destinatario} sobre el dispositivo {chipid}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"❌ Error al enviar la alerta al cliente: {e}")
+        return False
+
+
+def enviar_alerta_dispositivo_admin(chipid, ultima_fecha):
+    """
+    Envía una única alerta de dispositivo al administrador cuando un dispositivo deja de enviar datos.
+    """
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+    email_admin = os.getenv('EMAIL_ADMIN')  # Obtener correo del administrador
+
+    if not email_admin:
+        print("❌ ERROR: No se ha definido EMAIL_ADMIN en el archivo .env")
+        return False
+
+    asunto = f"🚨 Alerta: Dispositivo {chipid} sin datos recientes"
+    mensaje = f"""
+    Estimado equipo de ECA Innovation,
+
+    🚨 El dispositivo con Chip ID **{chipid}** ha dejado de enviar datos.
+
+    📌 Última transmisión registrada: {ultima_fecha.strftime("%Y-%m-%d %H:%M:%S")}
+
+    🛑 Se recomienda realizar una inspección en terreno para verificar:
+    - Batería del dispositivo
+    - Conexión a la red
+    - Posibles problemas ambientales que afecten la señal
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = email_admin
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, email_admin, msg.as_string())
+        servidor.quit()
+        print(f"📩 Alerta enviada a {email_admin} sobre el dispositivo {chipid}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"❌ Error al enviar la alerta al administrador: {e}")
+        return False
+
+
 def enviar_recuperar_clave(destinatario, asunto, mensaje):
     """Envía un correo utilizando SMTP y variables de entorno."""
     remitente = os.getenv('EMAIL_USER')
