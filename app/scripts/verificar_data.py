@@ -3,7 +3,7 @@ import sys
 import logging
 from datetime import datetime, timedelta
 from flask import Flask
-from sqlalchemy import func, text
+from sqlalchemy import text
 from dotenv import load_dotenv
 
 # Agregar la ruta correcta para importar desde la app Flask
@@ -85,12 +85,18 @@ def revisar_dispositivos():
                 cultivo = fase.cultivo if fase else "Desconocido"
                 nombre_parcela = parcela.nombre if parcela else f"ID {registro.fk_parcela}"
 
-                # Enviar alerta por correo
+                # Enviar alerta por correo al cliente
                 enviado = enviar_alerta_data(
                     chipid=chipid,
                     parcela=nombre_parcela,
                     cliente=cliente,
                     cultivo=cultivo,
+                    ultima_fecha=ultima_fecha
+                )
+
+                # Enviar alerta por correo al administrador sobre el dispositivo
+                enviar_alerta_data(
+                    chipid=chipid,
                     ultima_fecha=ultima_fecha
                 )
 

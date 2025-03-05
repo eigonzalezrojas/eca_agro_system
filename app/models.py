@@ -106,7 +106,6 @@ class DataP0(db.Model):
 class HistorialClima(db.Model):
     __tablename__ = 'historialClima'
     id = db.Column(db.Integer, primary_key=True)
-    rut = db.Column(db.String(15), nullable=False)
     chipid = db.Column(db.Integer, nullable=False)
     fecha = db.Column(db.Date, nullable=False, unique=True)
     temp_max = db.Column(db.Float, nullable=False)
