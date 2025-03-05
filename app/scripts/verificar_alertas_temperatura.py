@@ -134,9 +134,9 @@ def verificar_alertas_temperatura():
                 )
                 session.add(nueva_alerta)
                 session.commit()
-                logger.info(f"✅ Alerta guardada en la base de datos: {mensaje_alerta}")
+                logger.info(f"Alerta guardada en la base de datos: {mensaje_alerta}")
 
-    logger.info("✅ Revisión de alertas completada.")
+    logger.info("Revisión de alertas completada.")
 
 
 if __name__ == "__main__":

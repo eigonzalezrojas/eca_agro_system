@@ -124,7 +124,7 @@ class Alerta(db.Model):
     mensaje = db.Column(db.String(255), nullable=False)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
-    cultivo_nombre = db.Column(db.String(50), nullable=False)  # 🔹 Nuevo campo para almacenar el cultivo
+    cultivo_nombre = db.Column(db.String(50), nullable=False)
     fecha_alerta = db.Column(db.DateTime, default=db.func.current_timestamp())
     nivel_alerta = db.Column(db.String(50), nullable=True)
     leida = db.Column(db.Boolean, default=False)

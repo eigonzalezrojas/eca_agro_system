@@ -144,7 +144,7 @@ def alerta_temperatura_admin(chipid, temperatura, mensaje_alerta):
     password = os.getenv('EMAIL_PASSWORD')
     host = os.getenv('EMAIL_HOST')
     port = int(os.getenv('EMAIL_PORT'))
-    email_admin = os.getenv('EMAIL_ADMIN')  # Correo del administrador desde .env
+    email_admin = os.getenv('EMAIL_ADMIN')
 
     if not email_admin:
         print("❌ ERROR: No se ha definido el EMAIL_ADMIN en el archivo .env")
