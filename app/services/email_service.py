@@ -447,3 +447,52 @@ def enviar_recuperar_clave(destinatario, asunto, mensaje):
     except smtplib.SMTPException as e:
         print(f"❌ Error al enviar el correo: {e}")
         return False
+
+
+def enviar_reporte_diario(destinatario, cultivo, fase, reporte):
+    """
+    Envía un reporte diario al cliente asociado a un cultivo y fase,
+    incluyendo el porcentaje de tiempo en condiciones óptimas, sobre temperatura máxima,
+    bajo temperatura mínima, sobre humedad máxima y bajo humedad mínima.
+    """
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = int(os.getenv('EMAIL_PORT'))
+
+    asunto = f"📊 Reporte Diario - {cultivo} ({fase})"
+    mensaje = f"""
+    🌱 Resumen del día para el cultivo {cultivo} en la fase {fase}:
+
+    📆 Fecha: {reporte['Fecha']}
+    🌡️ Temperatura Máxima: {reporte['Temperatura Máxima']}°C
+    ❄️ Temperatura Mínima: {reporte['Temperatura Mínima']}°C
+    💧 Óptimo del cultivo durante el día: {reporte['Porcentaje Óptimo']}%
+    🔥 Porcentaje sobre temperatura máxima: {reporte['Porcentaje Sobre Máxima']}%
+    ❄️ Porcentaje bajo temperatura mínima: {reporte['Porcentaje Bajo Mínima']}%
+    💦 Porcentaje sobre humedad máxima: {reporte['Porcentaje Sobre Humedad Máxima']}%
+    💧 Porcentaje bajo humedad mínima: {reporte['Porcentaje Bajo Humedad Mínima']}%
+    ⏳ Horas Frío: {reporte['Horas Frío']}
+    📈 GDA: {reporte['GDA']}
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatario, msg.as_string())
+        servidor.quit()
+        print(f"📩 Reporte diario enviado a {destinatario}")
+        return True
+    except smtplib.SMTPException as e:
+        print(f"❌ Error al enviar el reporte diario al cliente: {e}")
+        return False
