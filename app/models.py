@@ -42,6 +42,7 @@ class Parcela(db.Model):
     direccion = db.Column(db.String(200), nullable=True)
     fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
     usuario = db.relationship('Usuario', back_populates='parcelas')
+    mis_registros = db.relationship('Registro', back_populates='parcela', cascade="all, delete-orphan")
 
 
 class Cultivo(db.Model):
@@ -74,7 +75,7 @@ class Registro(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     fk_usuario = db.Column(db.String(50), db.ForeignKey('usuario.rut'), nullable=False)
-    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id'), nullable=False)
+    fk_parcela = db.Column(db.Integer, db.ForeignKey('parcela.id', ondelete="CASCADE"), nullable=False)
     fk_fase = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
     fk_dispositivo = db.Column(db.Integer, db.ForeignKey('dispositivo.id'), nullable=False)
     cultivo_nombre = db.Column(db.String(50), nullable=False)
@@ -85,7 +86,7 @@ class Registro(db.Model):
 
     dispositivo = db.relationship('Dispositivo', backref='registros')
     fase = db.relationship('Fase', backref='registros')
-    parcela = db.relationship('Parcela', backref='registros')
+    parcela = db.relationship('Parcela', back_populates='mis_registros')
     usuario = db.relationship('Usuario', backref='registros')
 
     def __repr__(self):

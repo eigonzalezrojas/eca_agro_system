@@ -113,16 +113,24 @@ def obtener_parcela(id):
         "fk_usuario": parcela.fk_usuario
     }
 
+
 @parcela.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar_parcela(id):
-    parcela = Parcela.query.get_or_404(id)
-    if not parcela:
-        return {"error": f"Parcela con id {id} no encontrado"}, 404
+    try:
+        parcela = Parcela.query.get(id)
+        if not parcela:
+            return jsonify({"error": f"Parcela con id {id} no encontrada"}), 404
 
-    db.session.delete(parcela)
-    db.session.commit()
-    flash('parcela eliminada exitosamente', 'success')
-    return redirect(url_for('parcela.parcelas'))
+        db.session.delete(parcela)
+        db.session.commit()
+
+        flash('Parcela eliminada exitosamente', 'success')
+        return redirect(url_for('parcela.parcelas'))
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error eliminando parcela: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 
 @parcela.route('/buscar_por_usuario/<rut_usuario>', methods=['GET'])
