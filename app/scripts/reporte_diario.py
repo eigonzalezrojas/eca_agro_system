@@ -139,8 +139,22 @@ if __name__ == "__main__":
             usuario = session.query(Usuario).filter_by(nombre=reporte['Cliente']).first()
             if usuario and usuario.correo:
                 try:
+                    # Enviar correo
                     enviar_reporte_diario(usuario.correo, reporte['Parcela'], reporte['Cliente'], reporte)
-                    logger.info(f"Correo enviado a: {usuario.correo}")
+
+                    # Enviar WhatsApp si hay número
+                    if usuario.fono:
+                        from app.services.whatssap_service import enviar_whatsapp
+                        mensaje = f"""📊 Reporte Diario - {reporte['Parcela']}
+                        Cliente: {reporte['Cliente']}
+                        🌡️ Temp. Máx: {reporte['Temperatura Máxima']}°C
+                        ❄️ Temp. Mín: {reporte['Temperatura Mínima']}°C
+                        ✅ Óptimo: {reporte['Porcentaje Óptimo']}%"""
+
+                        enviar_whatsapp(usuario.fono, mensaje)
+
+                    logger.info(f"Correo (y WhatsApp) enviado a: {usuario.correo}")
                 except Exception as e:
-                    logger.error(f"Error enviando correo a {usuario.correo}: {e}")
+                    logger.error(f"Error enviando notificaciones a {usuario.correo}: {e}")
         session.close()
+

@@ -104,6 +104,23 @@ class DataP0(db.Model):
     nombre = db.Column(db.String(50), nullable=True)
 
 
+class DataNodoAmbiente(db.Model):
+    __tablename__ = 'dataNodoAmbiente'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    chipid = db.Column(db.String(16), nullable=False)
+    temperatura = db.Column(db.Float, nullable=False)
+    humedad = db.Column(db.Float, nullable=False)
+    presion = db.Column(db.Float, nullable=False)
+    altitud = db.Column(db.Float, nullable=False)
+    bateria = db.Column(db.Float, nullable=False)
+    nombre = db.Column(db.String(30), nullable=False)
+    fecha = db.Column(db.TIMESTAMP, nullable=False)
+
+    def __repr__(self):
+        return f'<DataNodoAmbiente {self.chipid} - {self.fecha}>'
+
+
 class HistorialClima(db.Model):
     __tablename__ = 'historialClima'
     id = db.Column(db.Integer, primary_key=True)
