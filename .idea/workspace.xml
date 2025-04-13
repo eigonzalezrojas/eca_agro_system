@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/data/tabla_alertas.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/email_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/email_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/usuarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/usuarios.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +108,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -201,7 +201,7 @@
       <workItem from="1744029183642" duration="1981000" />
       <workItem from="1744254215785" duration="1597000" />
       <workItem from="1744312972151" duration="1313000" />
-      <workItem from="1744555835883" duration="1736000" />
+      <workItem from="1744555835883" duration="3157000" />
     </task>
     <servers />
   </component>

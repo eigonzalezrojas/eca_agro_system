@@ -79,7 +79,7 @@ def crear_usuario():
 
     # Validar teléfono
     if not fono or not validar_telefono(fono):
-        errores.append("El teléfono debe tener 9 dígitos y ser válido.")
+        errores.append("Ingrese un número válido con código de país")
 
     # Validar correo
     if not correo or not validar_correo(correo):
