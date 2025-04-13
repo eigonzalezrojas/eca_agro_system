@@ -1,5 +1,6 @@
 import os
 import smtplib
+import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -458,22 +459,172 @@ def enviar_reporte_diario(destinatario, cultivo, fase, reporte):
     remitente = os.getenv('EMAIL_USER')
     password = os.getenv('EMAIL_PASSWORD')
     host = os.getenv('EMAIL_HOST')
-    port = int(os.getenv('EMAIL_PORT'))
+    port = os.getenv('EMAIL_PORT')
+
+    # Validación de credenciales SMTP
+    if not all([remitente, password, host, port]):
+        logging.error("❌ Configuración SMTP incompleta. Verifique las variables de entorno.")
+        return False
+
+    try:
+        port = int(port)
+    except ValueError:
+        logging.error("❌ El puerto SMTP no es un número válido.")
+        return False
+
+    # Validación de destinatario
+    if not destinatario:
+        logging.error("❌ El destinatario del correo no está definido.")
+        return False
 
     asunto = f"📊 Reporte Diario - {cultivo} ({fase})"
     mensaje = f"""
     🌱 Resumen del día para el cultivo {cultivo} en la fase {fase}:
 
-    📆 Fecha: {reporte['Fecha']}
-    🌡️ Temperatura Máxima: {reporte['Temperatura Máxima']}°C
-    ❄️ Temperatura Mínima: {reporte['Temperatura Mínima']}°C
-    💧 Óptimo del cultivo durante el día: {reporte['Porcentaje Óptimo']}%
-    🔥 Porcentaje sobre temperatura máxima: {reporte['Porcentaje Sobre Máxima']}%
-    ❄️ Porcentaje bajo temperatura mínima: {reporte['Porcentaje Bajo Mínima']}%
-    💦 Porcentaje sobre humedad máxima: {reporte['Porcentaje Sobre Humedad Máxima']}%
-    💧 Porcentaje bajo humedad mínima: {reporte['Porcentaje Bajo Humedad Mínima']}%
-    ⏳ Horas Frío: {reporte['Horas Frío']}
-    📈 GDA: {reporte['GDA']}
+    📆 Fecha: {reporte.get('Fecha', 'No disponible')}
+    📍 Parcela: {reporte.get('Parcela', 'No asignada')}
+    👤 Cliente: {reporte.get('Cliente', 'No registrado')}
+    🔢 ChipID del dispositivo: {reporte.get('ChipID', 'Desconocido')}
+
+    🌡️ Temperatura Máxima: {reporte.get('Temperatura Máxima', 'N/A')}°C (registrada a las {reporte.get('Hora Temp Máx', 'N/A')})
+    ❄️ Temperatura Mínima: {reporte.get('Temperatura Mínima', 'N/A')}°C (registrada a las {reporte.get('Hora Temp Mín', 'N/A')})
+    💦 Humedad Máxima registrada a las {reporte.get('Hora Hum Máx', 'N/A')}
+    💧 Humedad Mínima registrada a las {reporte.get('Hora Hum Mín', 'N/A')}
+
+
+    🌿 Óptimo del cultivo durante el día: {reporte.get('Porcentaje Óptimo', 'N/A')}%
+
+
+    🔥 Porcentaje sobre temperatura máxima crítica: {reporte.get('Porcentaje Sobre Máxima', 'N/A')}%
+    ❄️ Porcentaje bajo temperatura mínima crítica: {reporte.get('Porcentaje Bajo Mínima', 'N/A')}%
+    💦 Porcentaje sobre humedad máxima crítica: {reporte.get('Porcentaje Sobre Humedad Máxima', 'N/A')}%
+    💧 Porcentaje bajo humedad mínima crítica: {reporte.get('Porcentaje Bajo Humedad Mínima', 'N/A')}%
+
+    ⏳ Horas Frío: {reporte.get('Horas Frío', 'N/A')}
+    📈 GDA: {reporte.get('GDA', 'N/A')}
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        logging.info(f"📤 Enviando correo a {destinatario}...")
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatario, msg.as_string())
+        servidor.quit()
+        logging.info(f"📩 Reporte diario enviado a {destinatario}")
+        return True
+    except smtplib.SMTPException as e:
+        logging.error(f"❌ Error al enviar el reporte diario: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"❌ Error inesperado en el envío del correo: {e}")
+        return False
+
+
+def enviar_reporte_semanal(destinatario, cultivo, fase, reporte):
+    """
+    Envía un reporte semanal al cliente asociado a un cultivo y fase,
+    incluyendo los valores extremos de temperatura y humedad de la semana
+    y el porcentaje de tiempo en condiciones óptimas.
+    """
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = os.getenv('EMAIL_PORT')
+
+    if not all([remitente, password, host, port]):
+        logging.error("❌ Configuración SMTP incompleta. Verifique las variables de entorno.")
+        return False
+
+    try:
+        port = int(port)
+    except ValueError:
+        logging.error("❌ El puerto SMTP no es un número válido.")
+        return False
+
+    if not destinatario:
+        logging.error("❌ El destinatario del correo no está definido.")
+        return False
+
+    asunto = f"📊 Reporte Semanal - {cultivo} ({fase})"
+
+    mensaje = f"""
+    🌱 Resumen semanal para el cultivo {cultivo} en la fase {fase}:
+
+    📆 Semana: {reporte.get('Semana', 'No disponible')}
+    📍 Parcela: {reporte.get('Parcela', 'No asignada')}
+    👤 Cliente: {reporte.get('Cliente', 'No registrado')}
+    🔢 ChipID del dispositivo: {reporte.get('ChipID', 'Desconocido')}
+
+    🌡️ Temperatura Máxima Semana: {reporte.get('Temp Max Semana', 'N/A')}°C
+    ❄️ Temperatura Mínima Semana: {reporte.get('Temp Min Semana', 'N/A')}°C
+    💦 Humedad Máxima Semana: {reporte.get('Hum Max Semana', 'N/A')}%
+    💧 Humedad Mínima Semana: {reporte.get('Hum Min Semana', 'N/A')}%
+
+    🌿 Óptimo del cultivo en la semana: {reporte.get('Porcentaje Óptimo', 'N/A')}%
+
+    Saludos,
+    Equipo de ECA Innovation
+    """
+
+    msg = MIMEMultipart()
+    msg['From'] = remitente
+    msg['To'] = destinatario
+    msg['Subject'] = asunto
+    msg.attach(MIMEText(mensaje, 'plain'))
+
+    try:
+        logging.info(f"📤 Enviando reporte semanal a {destinatario}...")
+        servidor = smtplib.SMTP(host, port)
+        servidor.starttls()
+        servidor.login(remitente, password)
+        servidor.sendmail(remitente, destinatario, msg.as_string())
+        servidor.quit()
+        logging.info(f"📩 Reporte semanal enviado a {destinatario}")
+        return True
+    except smtplib.SMTPException as e:
+        logging.error(f"❌ Error al enviar el reporte semanal: {e}")
+        return False
+    except Exception as e:
+        logging.error(f"❌ Error inesperado en el envío del correo: {e}")
+        return False
+
+
+def enviar_reporte_mensual(destinatario, parcela, cliente, reporte):
+    remitente = os.getenv('EMAIL_USER')
+    password = os.getenv('EMAIL_PASSWORD')
+    host = os.getenv('EMAIL_HOST')
+    port = os.getenv('EMAIL_PORT')
+
+    if not all([remitente, password, host, port]):
+        logging.error("❌ Configuración SMTP incompleta.")
+        return False
+
+    asunto = f"📊 Reporte Mensual - {parcela}"
+
+    mensaje = f"""
+    📅 Reporte Mensual del cultivo para {parcela} - Cliente {cliente}
+
+    📆 Periodo: {reporte.get('Fecha', 'No disponible')}
+    📍 Parcela: {reporte.get('Parcela', 'No asignada')}
+    👤 Cliente: {reporte.get('Cliente', 'No registrado')}
+    🔢 ChipID: {reporte.get('ChipID', 'Desconocido')}
+
+    🌡️ Temperatura Máxima mensual: {reporte.get('Temperatura Máxima', 'N/A')}°C
+    ❄️ Temperatura Mínima mensual: {reporte.get('Temperatura Mínima', 'N/A')}°C
+    💦 Humedad Máxima mensual: {reporte.get('Humedad Máxima', 'N/A')}%
+    💧 Humedad Mínima mensual: {reporte.get('Humedad Mínima', 'N/A')}%
+
+    🌿 Porcentaje de condiciones óptimas en el mes: {reporte.get('Porcentaje Óptimo', 'N/A')}%
 
     Saludos,
     Equipo de ECA Innovation
@@ -491,8 +642,9 @@ def enviar_reporte_diario(destinatario, cultivo, fase, reporte):
         servidor.login(remitente, password)
         servidor.sendmail(remitente, destinatario, msg.as_string())
         servidor.quit()
-        print(f"📩 Reporte diario enviado a {destinatario}")
+        logging.info(f"📩 Reporte mensual enviado a {destinatario}")
         return True
-    except smtplib.SMTPException as e:
-        print(f"❌ Error al enviar el reporte diario al cliente: {e}")
+    except Exception as e:
+        logging.error(f"❌ Error enviando correo mensual: {e}")
         return False
+
