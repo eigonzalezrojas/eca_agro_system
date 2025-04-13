@@ -13,7 +13,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.append(BASE_DIR)
 
 from app.extensions import db
-from app.models import Registro, DataP0, HistorialClima, Usuario, Dispositivo, Parcela
+from app.models import Registro, DataNodoAmbiente, HistorialClima, Usuario, Dispositivo, Parcela
 from app.services.email_service import enviar_reporte_diario
 from app.config import config_by_name
 
@@ -51,8 +51,8 @@ def obtener_umbral_para_cultivo_fase(df_umbrales, cultivo, fase):
 
 
 def calcular_porcentajes_condiciones(fecha, session, chipid, umbrales):
-    registros = session.query(DataP0).filter(
-        and_(DataP0.fecha.between(f"{fecha} 08:00:00", f"{fecha} 18:00:00"), DataP0.chipid == chipid)
+    registros = session.query(DataNodoAmbiente).filter(
+        and_(DataNodoAmbiente.fecha.between(f"{fecha} 08:00:00", f"{fecha} 18:00:00"), DataNodoAmbiente.chipid == chipid)
     ).all()
     total_registros = len(registros)
     if total_registros == 0:
@@ -145,16 +145,19 @@ if __name__ == "__main__":
                     # Enviar WhatsApp si hay número
                     if usuario.fono:
                         from app.services.whatssap_service import enviar_whatsapp
-                        mensaje = f"""📊 Reporte Diario - {reporte['Parcela']}
-                        Cliente: {reporte['Cliente']}
-                        🌡️ Temp. Máx: {reporte['Temperatura Máxima']}°C
-                        ❄️ Temp. Mín: {reporte['Temperatura Mínima']}°C
-                        ✅ Óptimo: {reporte['Porcentaje Óptimo']}%"""
-
+                        mensaje = (
+                            f"📊 *Reporte Diario - {reporte['Parcela']}*\n"
+                            f"👤 *Cliente:* {reporte['Cliente']}\n"
+                            f"📅 *Fecha:* {reporte['Fecha']}\n"
+                            f"🌡️ *Temp. Máx:* {reporte['Temperatura Máxima']}°C\n"
+                            f"❄️ *Temp. Mín:* {reporte['Temperatura Mínima']}°C\n"
+                            f"🌿 *% Óptimo cultivo:* {reporte['Porcentaje Óptimo']}%\n"
+                            f"🔥 *GDA:* {reporte['GDA']}\n"
+                            f"🥶 *Horas Frío:* {reporte['Horas Frío']}"
+                        )
                         enviar_whatsapp(usuario.fono, mensaje)
 
                     logger.info(f"Correo (y WhatsApp) enviado a: {usuario.correo}")
                 except Exception as e:
                     logger.error(f"Error enviando notificaciones a {usuario.correo}: {e}")
         session.close()
-

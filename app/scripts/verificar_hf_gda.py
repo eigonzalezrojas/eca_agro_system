@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from app.extensions import db
-from app.models import HistorialClima, DataNodoAmbiente, Registro, Dispositivo
+from app.models import HistorialClima, DataNodoAmbiente
 from app.config import config_by_name
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -26,14 +26,12 @@ def create_app():
 
 app = create_app()
 
-def obtener_rut_por_chipid(session, chipid):
-    dispositivo = session.query(Dispositivo).filter_by(chipid=chipid).first()
-    if not dispositivo:
-        return None
-    registro = session.query(Registro).filter_by(fk_dispositivo=dispositivo.id).first()
-    if not registro:
-        return None
-    return registro.fk_usuario
+def obtener_hora_registro(session, chipid, fecha, orden):
+    registro = session.query(DataNodoAmbiente.fecha).filter(
+        DataNodoAmbiente.chipid == chipid,
+        func.date(DataNodoAmbiente.fecha) == fecha
+    ).order_by(orden(DataNodoAmbiente.temperatura)).first()
+    return registro.fecha.strftime("%H:%M:%S") if registro else "N/A"
 
 def procesar_fecha(session, chipid, fecha):
     registro_existente = session.query(HistorialClima).filter_by(
@@ -46,6 +44,16 @@ def procesar_fecha(session, chipid, fecha):
     ).scalar()
 
     temp_min = session.query(func.min(DataNodoAmbiente.temperatura)).filter(
+        DataNodoAmbiente.chipid == chipid,
+        func.date(DataNodoAmbiente.fecha) == fecha
+    ).scalar()
+
+    hum_max = session.query(func.max(DataNodoAmbiente.humedad)).filter(
+        DataNodoAmbiente.chipid == chipid,
+        func.date(DataNodoAmbiente.fecha) == fecha
+    ).scalar()
+
+    hum_min = session.query(func.min(DataNodoAmbiente.humedad)).filter(
         DataNodoAmbiente.chipid == chipid,
         func.date(DataNodoAmbiente.fecha) == fecha
     ).scalar()
@@ -66,7 +74,7 @@ def procesar_fecha(session, chipid, fecha):
     gda_diario = max(((temp_max + temp_min) / 2) - 10, 0) if temp_max and temp_min else 0
     gda = round(gda_acumulado_anterior + gda_diario, 3)
 
-    logger.info(f"📌 ChipID: {chipid} | Fecha: {fecha} | TempMax: {temp_max} | TempMin: {temp_min} | HorasFrío: {horas_frio} | GDA: {gda}")
+    logger.info(f"📌 ChipID: {chipid} | Fecha: {fecha} | TempMax: {temp_max} | TempMin: {temp_min} | HumMax: {hum_max} | HumMin: {hum_min} | HorasFrío: {horas_frio} | GDA: {gda}")
 
     if temp_max is None or temp_min is None:
         logger.warning(f"⚠️ Datos insuficientes para ChipID {chipid} en {fecha}. Se omite.")
@@ -80,12 +88,7 @@ def procesar_fecha(session, chipid, fecha):
             registro_existente.gda = gda
             logger.info(f"✅ Registro actualizado para ChipID {chipid} en {fecha}.")
         else:
-            rut = obtener_rut_por_chipid(session, chipid)
-            if not rut:
-                logger.warning(f"❌ No se pudo obtener el RUT para el ChipID {chipid}. Registro omitido.")
-                return
             nuevo_registro = HistorialClima(
-                rut=rut,
                 chipid=chipid,
                 fecha=fecha,
                 temp_max=temp_max,
@@ -95,6 +98,7 @@ def procesar_fecha(session, chipid, fecha):
             )
             session.add(nuevo_registro)
             logger.info(f"✅ Nuevo registro insertado para ChipID {chipid} en {fecha}.")
+
         session.commit()
     except exc.SQLAlchemyError as e:
         session.rollback()
@@ -113,10 +117,8 @@ def calcular_hf_gda():
                 chipid = dispositivo[0]
                 logger.info(f"\n🔍 Procesando ChipID: {chipid}")
 
-                # Siempre intenta procesar el día anterior
                 procesar_fecha(session, chipid, fecha_ayer)
 
-                # Si falta el día anterior, intenta procesar hoy para no perder continuidad
                 existe_ayer = session.query(HistorialClima).filter_by(
                     chipid=chipid, fecha=fecha_ayer
                 ).first()
