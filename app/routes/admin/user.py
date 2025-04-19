@@ -50,7 +50,7 @@ def validar_correo(correo):
 
 def validar_telefono(telefono):
     """Valida un número de teléfono formato de 9 dígitos """
-    patron = r'^\d{9}$'
+    patron = r'^\+569\d{8}$'
     return bool(re.match(patron, telefono))
 
 
@@ -126,7 +126,6 @@ def crear_usuario():
 @user.route('/editar/<rut>', methods=['POST'])
 def editar_usuario(rut):
     usuario = Usuario.query.get_or_404(rut)
-    print(usuario)
 
     # Actualizar los datos del usuario
     usuario.nombre = request.form.get('editNombre', usuario.nombre)

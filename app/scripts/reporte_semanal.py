@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
             # Enviar Correo
             if reg.usuario.correo:
-                enviar_reporte_semanal(reg.usuario.correo, reporte)
+                enviar_reporte_semanal(reg.usuario.correo, reg.cultivo_nombre, reg.fase_nombre, reporte)
 
             # Enviar WhatsApp
 
