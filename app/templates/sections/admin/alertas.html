@@ -9,13 +9,13 @@
 
     <!-- Mensajes alertas -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li class="alert alert-{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="alert alert-{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endwith %}
 
     <div class="mb-6">
@@ -39,17 +39,17 @@
     <!-- Tabla de alertas -->
     <table class="min-w-full bg-white border border-gray-200">
         <thead>
-            <tr>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Cliente</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Mensaje</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Fecha</th>
-                <th class="py-2 px-4 bg-gray-200 border text-center">Opciones</th>
-            </tr>
+        <tr>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Cliente</th>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Mensaje</th>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Fecha</th>
+            <th class="py-2 px-4 bg-gray-200 border text-center">Opciones</th>
+        </tr>
         </thead>
         <tbody>
-            {% for alerta in alertas %}
+        {% for alerta in alertas %}
             <tr>
                 <td class="border px-4 py-2 text-center">{{ alerta.cultivo }}</td>
                 <td class="border px-4 py-2 text-center">{{ alerta.fase }}</td>
@@ -63,17 +63,46 @@
                                 <path d="M17.414 2.586a2 2 0 00-2.828 0L13 4.172 15.828 7l1.586-1.586a2 2 0 000-2.828zM12 5l3 3-9 9H3v-3l9-9z"/>
                             </svg>
                         </button>
+
                         <button class="btn-delete bg-red-500 text-white p-2 rounded" onclick="openDeleteAlertaModal('{{ alerta.id }}')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8 4a1 1 0 011-1h2a1 1 0 011 1v1h5a1 1 0 110 2h-1v9a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 110-2h5V4zm1 3a1 1 0 00-1 1v7a1 1 0 102 0V8a1 1 0 00-1-1zm4 1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
                             </svg>
                         </button>
+
                     </div>
                 </td>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
+
+    <!-- Bloque de paginación -->
+    <div class="mt-6 mb-10 flex justify-center space-x-2">
+        {% if paginacion.has_prev %}
+            <a href="{{ url_for('alertasAdmin.mostrar_alertas', page=paginacion.prev_num) }}"
+               class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                « Anterior
+            </a>
+        {% else %}
+            <span class="px-3 py-1 bg-gray-200 text-gray-400 rounded cursor-not-allowed">« Anterior</span>
+        {% endif %}
+
+        <span class="px-4 py-1 bg-blue-100 text-blue-700 font-semibold rounded">
+        Página {{ paginacion.page }} de {{ paginacion.pages }}
+    </span>
+
+        {% if paginacion.has_next %}
+            <a href="{{ url_for('alertasAdmin.mostrar_alertas', page=paginacion.next_num) }}"
+               class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                Siguiente »
+            </a>
+        {% else %}
+            <span class="px-3 py-1 bg-gray-200 text-gray-400 rounded cursor-not-allowed">Siguiente »</span>
+        {% endif %}
+    </div>
+    <div class="h-12"></div>
+
 
     <!-- Modal editar Alerta -->
     <div id="editAlertaModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">

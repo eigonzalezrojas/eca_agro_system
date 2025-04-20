@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, session, jsonify
-from app.models import Registro, Alerta, Cultivo, Usuario
+from flask import Blueprint, render_template, session, jsonify, request
+from app.models import Registro, Alerta, Usuario
 from app.extensions import db
 
 alertasCliente = Blueprint('alertasCliente', __name__)
@@ -23,12 +23,17 @@ def listar_alertas():
         return render_template('sections/cliente/alertas.html', usuario=usuario, alertas=[])
 
     # Obtener alertas asociadas a los dispositivos del usuario
-    alertas = (
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+
+    alertas_query = (
         Alerta.query
         .filter(Alerta.fk_dispositivo.in_(dispositivos_usuario))
         .order_by(Alerta.fecha_alerta.desc())
-        .all()
     )
+
+    paginacion = alertas_query.paginate(page=page, per_page=per_page)
+    alertas = paginacion.items
 
     # Marcar todas las alertas como leídas
     from app.extensions import db
@@ -48,8 +53,10 @@ def listar_alertas():
         for alerta in alertas
     ]
 
-    return render_template('sections/cliente/alertas.html', usuario=usuario, alertas=alertas_data)
-
+    return render_template('sections/cliente/alertas.html',
+                           usuario=usuario,
+                           alertas=alertas_data,
+                           paginacion=paginacion)
 
 
 @alertasCliente.route('/notificaciones', methods=['GET'])

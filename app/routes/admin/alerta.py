@@ -12,6 +12,9 @@ ARCHIVO_ALERTAS = os.path.join(UPLOAD_FOLDER, "tabla_alertas.xlsx")
 @alertasAdmin.route('/')
 def mostrar_alertas():
     user_id = session.get('user_id')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+
     if not user_id:
         return jsonify({"error": "Usuario no autenticado"}), 401
 
@@ -19,8 +22,7 @@ def mostrar_alertas():
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
-    # Obtener todas las alertas con información relevante
-    alerta = (
+    alertas_query = (
         Alerta.query
         .join(Registro, Alerta.fk_dispositivo == Registro.fk_dispositivo)
         .join(Usuario, Registro.fk_usuario == Usuario.rut)
@@ -35,26 +37,26 @@ def mostrar_alertas():
             Fase.nombre.label("fase"),
             Usuario.rut.label("usuario_rut")
         )
-        .all()
     )
 
-    alerta_data = [
+    paginacion = alertas_query.paginate(page=page, per_page=per_page)
+    alertas = [
         {
-            "id": alerta.id,
-            "mensaje": alerta.mensaje,
-            "fecha": alerta.fecha_alerta.strftime("%d-%m-%Y %H:%M"),
-            "nivel": alerta.nivel_alerta,
-            "cultivo": alerta.cultivo,
-            "fase": alerta.fase,
-            "usuario": alerta.usuario_rut
+            "id": a.id,
+            "mensaje": a.mensaje,
+            "fecha": a.fecha_alerta.strftime("%d-%m-%Y %H:%M"),
+            "nivel": a.nivel_alerta,
+            "cultivo": a.cultivo,
+            "fase": a.fase,
+            "usuario": a.usuario_rut
         }
-        for alerta in alerta
+        for a in paginacion.items
     ]
 
     return render_template('sections/admin/alertas.html',
-                           alertas=alerta_data,
+                           alertas=alertas,
+                           paginacion=paginacion,
                            usuario=usuario)
-
 
 
 @alertasAdmin.route('/editar/<int:id>', methods=['POST'])

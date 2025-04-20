@@ -3,14 +3,14 @@
 {% block title %}Alertas{% endblock %}
 
 {% block content %}
-<div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-6 mt-6">
-    <h1 class="mb-6 text-2xl font-bold">Historial Alertas</h1>
+    <div class="w-full px-4 py-6 bg-white shadow-md rounded-lg p-6 mt-6">
+        <h1 class="mb-6 text-2xl font-bold">Historial Alertas</h1>
 
-    <!-- Flash Messages -->
-    <div id="flash-messages" class="mb-4"></div>
+        <!-- Flash Messages -->
+        <div id="flash-messages" class="mb-4"></div>
 
-    <table class="min-w-full bg-white border border-gray-200">
-        <thead>
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead>
             <tr>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Cultivo</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Fase</th>
@@ -18,27 +18,52 @@
                 <th class="py-2 px-4 bg-gray-200 border text-center">Mensaje</th>
                 <th class="py-2 px-4 bg-gray-200 border text-center">Nivel</th>
             </tr>
-        </thead>
-        <tbody id="alertas-table-body">
+            </thead>
+            <tbody id="alertas-table-body">
             {% for alerta in alertas %}
-            <tr>
-                <td class="border px-4 py-2 text-center">{{ alerta.cultivo }}</td>
-                <td class="border px-4 py-2 text-center">{{ alerta.fase }}</td>
-                <td class="border px-4 py-2 text-center">{{ alerta.fecha }}</td>
-                <td class="border px-4 py-2 text-center">{{ alerta.mensaje }}</td>
-                <td class="border px-4 py-2 text-center">
+                <tr>
+                    <td class="border px-4 py-2 text-center">{{ alerta.cultivo }}</td>
+                    <td class="border px-4 py-2 text-center">{{ alerta.fase }}</td>
+                    <td class="border px-4 py-2 text-center">{{ alerta.fecha }}</td>
+                    <td class="border px-4 py-2 text-center">{{ alerta.mensaje }}</td>
+                    <td class="border px-4 py-2 text-center">
                     <span class="px-2 py-1 rounded 
                         {% if alerta.nivel == 'Crítica' %} bg-red-500 text-white 
                         {% elif alerta.nivel == 'Advertencia' %} bg-yellow-500 text-black 
                         {% else %} bg-green-500 text-white {% endif %}">
                         {{ alerta.nivel }}
                     </span>
-                </td>
-            </tr>
+                    </td>
+                </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+        <!-- Bloque de paginación -->
+        <div class="mt-6 mb-10 flex justify-center space-x-2">
+            {% if paginacion.has_prev %}
+                <a href="{{ url_for('alertasCliente.listar_alertas', page=paginacion.prev_num) }}"
+                   class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                   « Anterior
+                </a>
+            {% else %}
+                <span class="px-3 py-1 bg-gray-200 text-gray-400 rounded cursor-not-allowed">« Anterior</span>
+            {% endif %}
 
-<script defer src="{{ url_for('static', filename='js/client/alertas.js') }}"></script>
+            <span class="px-4 py-1 bg-blue-100 text-blue-700 font-semibold rounded">
+                Página {{ paginacion.page }} de {{ paginacion.pages }}
+            </span>
+
+            {% if paginacion.has_next %}
+                <a href="{{ url_for('alertasCliente.listar_alertas', page=paginacion.next_num) }}"
+                   class="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                   Siguiente »
+                </a>
+            {% else %}
+                <span class="px-3 py-1 bg-gray-200 text-gray-400 rounded cursor-not-allowed">Siguiente »</span>
+            {% endif %}
+        </div>
+        <div class="h-12"></div>
+    </div>
+
+    <script defer src="{{ url_for('static', filename='js/client/alertas.js') }}"></script>
 {% endblock %}

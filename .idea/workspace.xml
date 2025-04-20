@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22965ad8-f30d-448c-94fd-103ecc021c2b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.env-example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ECA_System.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECA_System.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/admin/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/scripts/reporte_semanal.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/scripts/reporte_semanal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/eca_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/img/eca_logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/usuarios.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/usuarios.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/admin/alerta.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/admin/alerta.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/client/alertas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/client/alertas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/admin/alertas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/admin/alertas.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/sections/cliente/alertas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/sections/cliente/alertas.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,26 +62,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Flask server.ECA_System.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/eigon/OneDrive/Documentos/ECA_System&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.2631579&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Flask server.ECA_System.executor": "Run",
+    "Python.ECA_System.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/eigon/OneDrive/Documentos/ECA_System",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "proofread",
+    "settings.editor.splitter.proportion": "0.2631579",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/data" />
@@ -223,7 +220,8 @@
       <workItem from="1744555835883" duration="4737000" />
       <workItem from="1745029341020" duration="740000" />
       <workItem from="1745068019048" duration="1100000" />
-      <workItem from="1745069152744" duration="1577000" />
+      <workItem from="1745069152744" duration="4691000" />
+      <workItem from="1745155156486" duration="4489000" />
     </task>
     <servers />
   </component>
@@ -242,6 +240,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1741779392377" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ECA_System$ECA_System.coverage" NAME="ECA_System Coverage Results" MODIFIED="1745156488431" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
