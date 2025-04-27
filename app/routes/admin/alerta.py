@@ -2,12 +2,15 @@ from flask import Blueprint, session, jsonify, render_template, request, flash, 
 from werkzeug.utils import secure_filename
 from app.models import Alerta, Usuario, Registro, Fase
 from app.extensions import db
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import func
 import os
 
 alertasAdmin = Blueprint('alertasAdmin', __name__)
 
 UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data"))
 ARCHIVO_ALERTAS = os.path.join(UPLOAD_FOLDER, "tabla_alertas.xlsx")
+
 
 @alertasAdmin.route('/')
 def mostrar_alertas():
@@ -22,20 +25,34 @@ def mostrar_alertas():
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
+    # Subconsulta: obtener la alerta más reciente por dispositivo
+    subq = (
+        db.session.query(
+            Alerta.fk_dispositivo,
+            func.max(Alerta.fecha_alerta).label("fecha_max")
+        )
+        .group_by(Alerta.fk_dispositivo)
+        .subquery()
+    )
+
+    AlertaAlias = aliased(Alerta)
+
     alertas_query = (
-        Alerta.query
-        .join(Registro, Alerta.fk_dispositivo == Registro.fk_dispositivo)
-        .join(Usuario, Registro.fk_usuario == Usuario.rut)
-        .join(Fase, Alerta.fk_fase == Fase.id)
-        .order_by(Alerta.fecha_alerta.desc())
+        db.session.query(AlertaAlias)
+        .join(subq, db.and_(
+            AlertaAlias.fk_dispositivo == subq.c.fk_dispositivo,
+            AlertaAlias.fecha_alerta == subq.c.fecha_max
+        ))
+        .join(Fase, AlertaAlias.fk_fase == Fase.id)
+        .order_by(AlertaAlias.fecha_alerta.desc())
         .add_columns(
-            Alerta.id,
-            Alerta.mensaje,
-            Alerta.fecha_alerta,
-            Alerta.nivel_alerta,
+            AlertaAlias.id,
+            AlertaAlias.mensaje,
+            AlertaAlias.fecha_alerta,
+            AlertaAlias.nivel_alerta,
             Fase.cultivo.label("cultivo"),
             Fase.nombre.label("fase"),
-            Usuario.rut.label("usuario_rut")
+            AlertaAlias.fk_dispositivo.label("chipid")
         )
     )
 
@@ -48,7 +65,7 @@ def mostrar_alertas():
             "nivel": a.nivel_alerta,
             "cultivo": a.cultivo,
             "fase": a.fase,
-            "usuario": a.usuario_rut
+            "chipid": a.chipid
         }
         for a in paginacion.items
     ]
